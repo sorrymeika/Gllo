@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "用户管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #grid { margin-top: 10px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var grid=new $.Grid({
+                id: "grid",
+                pageEnabled: true,
+                onRowSelect: function () {
+                    $("btnDel").prop("disabled",false).css("btn");
+                    $("btnModify").prop("disabled",false).css("btn");
+                    $("btnResetPassword").prop("disabled",false).css("btn");
+                    $("btnAddress").prop("disabled",false).css("btn");
+                    $("pm").prop("disabled",false).css("btn");
+
+                },
+                columns: [{
+                    header: "编号",
+                    columnName: "UserID",
+                    width: 40
+                },{
+                    header: "用户名",
+                    columnName: "UserName",
+                    width: 80
+                },{
+                    header: "邮箱",
+                    columnName: "Email",
+                    width: 80
+                },{
+                    header: "注册日期",
+                    columnName: "RegDate",
+                    width: 80
+                },{
+                    header: "性别",
+                    width: 40,
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.Gender?"女":"男");
+                    }
+                },{
+                    header: "生日",
+                    columnName: "BirthDay",
+                    width: 60,
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.BirthDay?data.BirthDay.replace(/\s*\d{2}:\d{2}:\d{2}/,""):"");
+                    }
+                }],
+                children: [{
+                    dataName: "Address",
+                    columns: [{
+                        header: "地址",
+                        columnName: "Address",
+                        width: 300
+                    },{
+                        header: "邮编",
+                        columnName: "Zip",
+                        width: 60
+                    },{
+                        header: "收货人",
+                        columnName: "Receiver",
+                        width: 100
+                    },{
+                        header: "手机",
+                        columnName: "Mobile",
+                        width: 100
+                    },{
+                        header: "固话",
+                        columnName: "Phone",
+                        width: 100
+                    },{
+                        header: "地区",
+                        type: "custom",
+                        custom: function (cell,data) {
+                            cell.html(data.ProvinceName+"/"+data.CityName+"/"+data.RegionName);
+                        },
+                        width: 100
+                    }]
+                }]
+            });
+
+            var search=function (page,pageSize) {
+                $("btnDel").prop("disabled",true).css("btnDsb");
+                $("btnModify").prop("disabled",true).css("btnDsb");
+                $("btnResetPassword").prop("disabled",true).css("btnDsb");
+                $("btnAddress").prop("disabled",true).css("btnDsb");
+                $("pm").prop("disabled",true).css("btnDsb");
+
+                grid.load("/Manage/User/GetUsers/",{
+                    page: page,
+                    pageSize: pageSize,
+                    regDateFrom: $("txtRegDateFrom").value,
+                    regDateTo: $("txtRegDateTo").value,
+                    keywords: $("txtKeywords").value
+                });
+            };
+
+            search(1,15);
+
+            $("btnSearch").on("click",function () {
+                search(1,15);
+            });
+
+            new $.Calendar("txtRegDateFrom");
+            new $.Calendar("txtRegDateTo");
+
+            $("btnDel").on("click",function () {
+                if(!this.disabled&&window.confirm("确认删除该会员？")) {
+                    var row=grid.getSelectedRow();
+                    $.post("/Manage/User/DeleteUser/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！")
+                            search(1,15);
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: row.data.UserID
+                    });
+                }
+
+            });
+
+            $("btnResetPassword").on("click",function () {
+                if(!this.disabled&&window.confirm("确认重置该会员的密码？")) {
+                    var row=grid.getSelectedRow();
+                    $.post("/Manage/User/ResetPassword/",function (res) {
+                        if(res.success) {
+                            alert("重置成功！")
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: row.data.UserID
+                    });
+                }
+
+            });
+
+            $("btnModify").on("click",function () {
+                if(this.disabled)
+                    return;
+
+                var row=grid.getSelectedRow();
+                openDialog("修改会员信息",300,180,"/Manage/User/ModifyUser.html?id="+row.data.UserID,function () {
+                    search(1,15);
+                });
+            });
+
+            $("btnAddress").on("click",function () {
+                if(this.disabled)
+                    return;
+
+                var row=grid.getSelectedRow();
+                openDialog("修改地址信息",800,400,"/Manage/User/ModifyAddress.html?id="+row.data.UserID,function () {
+                    search(1,15);
+                });
+            });
+
+            $("pmall").on("click",function () {
+                openDialog("群发短消息",700,400,"/Manage/User/AddPM.html?id=0",function () {
+                });
+            });
+
+            $("pm").on("click",function () {
+                if(this.disabled)
+                    return;
+
+                var row=grid.getSelectedRow();
+                openDialog("发送短消息",700,400,"/Manage/User/AddPM.html?id="+row.data.UserID,function () {
+                });
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <a id="btnDel" class="btnDsb"><em><span class="ico4">删除会员</span></em></a>
+                <a id="btnResetPassword" class="btnDsb"><em><span class="ico1">重置密码</span></em></a>
+                <a id="btnModify" class="btnDsb"><em><span class="ico3">修改信息</span></em></a>
+                <a id="btnAddress" class="btnDsb"><em><span class="ico3">地址信息</span></em></a>
+                <a id="pmall" class="btn"><em><span class="ico7">群发短消息</span></em></a>
+                <a id="pm" class="btnDsb"><em><span class="ico7">发短消息</span></em></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>注册日期 从</td>
+                        <td><input id="txtRegDateFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="txtRegDateTo" class="txt" /></td>
+                        <td>&nbsp;关键字</td>
+                        <td><input id="txtKeywords" class="txt" /></td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid">
+            </div>
+        </div>
+    </div>
+</div>

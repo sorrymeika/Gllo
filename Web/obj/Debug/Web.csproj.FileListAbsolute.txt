@@ -1,0 +1,135 @@
+E:\channel\Web\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\Web\bin\Channel.Web.dll
+E:\channel\Web\bin\Channel.Web.pdb
+E:\channel\Web\obj\Debug\Channel.Web.dll
+E:\channel\Web\obj\Debug\Channel.Web.pdb
+E:\channel\Web\bin\Channel.Sys.dll
+E:\channel\Web\bin\Channel.Models.dll
+E:\channel\Web\bin\Channel.Sys.pdb
+E:\channel\Web\bin\Channel.Models.pdb
+E:\channel\Web\bin\Channel.BLL.dll
+E:\channel\Web\bin\Channel.DAL.dll
+E:\channel\Web\bin\Channel.BLL.pdb
+E:\channel\Web\bin\Channel.DAL.pdb
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Web.dll
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Web.pdb
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.BLL.dll
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Sys.dll
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.DAL.dll
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.BLL.pdb
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.Sys.pdb
+E:\Visual Studio 2010\Projects\channel\Web\bin\Channel.DAL.pdb
+E:\Visual Studio 2010\Projects\channel\Web\obj\Debug\ResolveAssemblyReference.cache
+E:\Visual Studio 2010\Projects\channel\Web\obj\Debug\Channel.Web.dll
+E:\Visual Studio 2010\Projects\channel\Web\obj\Debug\Channel.Web.pdb
+E:\Projects\Gllo\Web\bin\Gllo.Web.dll
+E:\Projects\Gllo\Web\bin\Gllo.Web.pdb
+E:\Projects\Gllo\Web\bin\Gllo.BLL.dll
+E:\Projects\Gllo\Web\bin\Gllo.Models.dll
+E:\Projects\Gllo\Web\bin\Gllo.Sys.dll
+E:\Projects\Gllo\Web\bin\Gllo.DAL.dll
+E:\Projects\Gllo\Web\bin\Gllo.BLL.pdb
+E:\Projects\Gllo\Web\bin\Gllo.Models.pdb
+E:\Projects\Gllo\Web\bin\Gllo.Sys.pdb
+E:\Projects\Gllo\Web\bin\Gllo.DAL.pdb
+E:\Projects\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Gllo\Web\obj\Debug\Gllo.Web.dll
+E:\Projects\Gllo\Web\obj\Debug\Gllo.Web.pdb
+H:\Gllo\Web\bin\Gllo.Web.dll
+H:\Gllo\Web\bin\Gllo.Web.pdb
+H:\Gllo\Web\bin\Gllo.BLL.dll
+H:\Gllo\Web\bin\Gllo.Models.dll
+H:\Gllo\Web\bin\Gllo.Sys.dll
+H:\Gllo\Web\bin\Gllo.DAL.dll
+H:\Gllo\Web\bin\Gllo.BLL.pdb
+H:\Gllo\Web\bin\Gllo.Models.pdb
+H:\Gllo\Web\bin\Gllo.Sys.pdb
+H:\Gllo\Web\bin\Gllo.DAL.pdb
+H:\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+H:\Gllo\Web\obj\Debug\Gllo.Web.dll
+H:\Gllo\Web\obj\Debug\Gllo.Web.pdb
+K:\Gllo\Web\bin\Gllo.Web.dll
+K:\Gllo\Web\bin\Gllo.Web.pdb
+K:\Gllo\Web\bin\Gllo.BLL.dll
+K:\Gllo\Web\bin\Gllo.Models.dll
+K:\Gllo\Web\bin\Gllo.Sys.dll
+K:\Gllo\Web\bin\Gllo.DAL.dll
+K:\Gllo\Web\bin\Gllo.BLL.pdb
+K:\Gllo\Web\bin\Gllo.Models.pdb
+K:\Gllo\Web\bin\Gllo.Sys.pdb
+K:\Gllo\Web\bin\Gllo.DAL.pdb
+K:\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+K:\Gllo\Web\obj\Debug\Gllo.Web.dll
+K:\Gllo\Web\obj\Debug\Gllo.Web.pdb
+K:\Gllo\Web\bin\UserCenter.Common.dll
+K:\Gllo\Web\bin\UserCenter.DBUtility.dll
+K:\Gllo\Web\bin\UserCenter.UserCenter.dll
+K:\Gllo\Web\bin\UserCenter.UserCenter.pdb
+K:\Gllo\Web\bin\UserCenter.Common.pdb
+K:\Gllo\Web\bin\UserCenter.DBUtility.pdb
+L:\Gllo\Web\bin\Gllo.Web.dll
+L:\Gllo\Web\bin\Gllo.Web.pdb
+L:\Gllo\Web\bin\Gllo.BLL.dll
+L:\Gllo\Web\bin\Gllo.Models.dll
+L:\Gllo\Web\bin\Gllo.Sys.dll
+L:\Gllo\Web\bin\UserCenter.Common.dll
+L:\Gllo\Web\bin\UserCenter.DBUtility.dll
+L:\Gllo\Web\bin\UserCenter.UserCenter.dll
+L:\Gllo\Web\bin\Gllo.DAL.dll
+L:\Gllo\Web\bin\Gllo.BLL.pdb
+L:\Gllo\Web\bin\Gllo.Models.pdb
+L:\Gllo\Web\bin\Gllo.Sys.pdb
+L:\Gllo\Web\bin\UserCenter.UserCenter.pdb
+L:\Gllo\Web\bin\UserCenter.Common.pdb
+L:\Gllo\Web\bin\UserCenter.DBUtility.pdb
+L:\Gllo\Web\bin\Gllo.DAL.pdb
+L:\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+L:\Gllo\Web\obj\Debug\Gllo.Web.dll
+L:\Gllo\Web\obj\Debug\Gllo.Web.pdb
+K:\Projects\Gllo\Web\bin\Gllo.Web.dll
+K:\Projects\Gllo\Web\bin\Gllo.Web.pdb
+K:\Projects\Gllo\Web\bin\Gllo.BLL.dll
+K:\Projects\Gllo\Web\bin\Gllo.Models.dll
+K:\Projects\Gllo\Web\bin\Gllo.Sys.dll
+K:\Projects\Gllo\Web\bin\UserCenter.Common.dll
+K:\Projects\Gllo\Web\bin\UserCenter.DBUtility.dll
+K:\Projects\Gllo\Web\bin\UserCenter.UserCenter.dll
+K:\Projects\Gllo\Web\bin\Gllo.DAL.dll
+K:\Projects\Gllo\Web\bin\Gllo.BLL.pdb
+K:\Projects\Gllo\Web\bin\Gllo.Models.pdb
+K:\Projects\Gllo\Web\bin\Gllo.Sys.pdb
+K:\Projects\Gllo\Web\bin\UserCenter.UserCenter.pdb
+K:\Projects\Gllo\Web\bin\UserCenter.Common.pdb
+K:\Projects\Gllo\Web\bin\UserCenter.DBUtility.pdb
+K:\Projects\Gllo\Web\bin\Gllo.DAL.pdb
+K:\Projects\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+K:\Projects\Gllo\Web\obj\Debug\Gllo.Web.dll
+K:\Projects\Gllo\Web\obj\Debug\Gllo.Web.pdb
+G:\Projects\Gllo\Web\bin\Gllo.Web.dll
+G:\Projects\Gllo\Web\bin\Gllo.Web.pdb
+G:\Projects\Gllo\Web\bin\Gllo.BLL.dll
+G:\Projects\Gllo\Web\bin\Gllo.Models.dll
+G:\Projects\Gllo\Web\bin\Gllo.Sys.dll
+G:\Projects\Gllo\Web\bin\Gllo.DAL.dll
+G:\Projects\Gllo\Web\bin\Gllo.BLL.pdb
+G:\Projects\Gllo\Web\bin\Gllo.Models.pdb
+G:\Projects\Gllo\Web\bin\Gllo.Sys.pdb
+G:\Projects\Gllo\Web\bin\Gllo.DAL.pdb
+G:\Projects\Gllo\Web\obj\Debug\ResolveAssemblyReference.cache
+G:\Projects\Gllo\Web\obj\Debug\Gllo.Web.dll
+G:\Projects\Gllo\Web\obj\Debug\Gllo.Web.pdb
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Web.dll
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Web.pdb
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.BLL.dll
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Sys.dll
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.DAL.dll
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.BLL.pdb
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.Sys.pdb
+D:\Projects\AspNet\XX\Gllo\Web\bin\Gllo.DAL.pdb
+D:\Projects\AspNet\XX\Gllo\Web\obj\Debug\Web.csprojResolveAssemblyReference.cache
+D:\Projects\AspNet\XX\Gllo\Web\obj\Debug\Gllo.Web.dll
+D:\Projects\AspNet\XX\Gllo\Web\obj\Debug\Gllo.Web.pdb

@@ -1,0 +1,258 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .cates { float: left; width: 182px; height: 480px; margin-left: -188px; display: inline; }
+        #cates { margin-top: 0px; width: 160px; height: 440px; overflow: auto; }
+        .main { padding-left: 188px; }
+        .news { float: left; width: 100%; }
+        .search { padding: 4px 0px; color: #666; }
+        .search input { border: 1px solid #bdbdbd; height: 18px; }
+        #txtDtFrom { width: 80px; }
+        #txtDtTo { width: 80px; }
+        #txtKeywords { width: 80px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var selectedRow;
+
+        function loadCates() {
+            $("btnAdd").css("btnDsb").prop("disabled",true);
+            $("cates").innerHTML="正在载入...";
+            $.post("/manage/news/GetNewsCates/",function (res) {
+
+                if(res.success) {
+                    $("cates").innerHTML="";
+                    loadCateData(res.data,0);
+                }
+                else
+                    $("cates").innerHTML=res.msg;
+            });
+        };
+        function loadCateData(data,deep,container,parentData) {
+            deep=deep||0;
+            container=container||$("cates");
+            var c=0,n=data.length;
+            $.each(data,function (dataRow) {
+                c++;
+                var childDeep=deep+1;
+                var row=$("UL",container).on("click",function () {
+                    if(selectedRow)
+                        selectedRow.css("");
+                    this.css("selected");
+                    selectedRow=this;
+                    $("btnAdd").css("btn").prop("disabled",false);
+                    $("txtDtFrom").value="";
+                    $("txtDtTo").value="";
+                    $("txtKeywords").value="";
+                    search(1,10);
+                });
+                dataRow._isLastLeave=c==n;
+                dataRow._parentData=parentData;
+                row.data=dataRow;
+                var leaveH=[dataRow._isLastLeave?"treeLast":"space"];
+                var pdata=dataRow._parentData;
+                while(pdata) {
+                    leaveH.push(pdata._isLastLeave?"treeNo":"treeSpace");
+                    pdata=pdata._parentData;
+                }
+                for(var i=deep-1;i>=0;i--) {
+                    $("LI",row).css(leaveH[i]);
+                }
+                if(dataRow.children) {
+                    $("LI",row).css("minus").on("click",function () {
+                        if(row.childHidden) {
+                            this.css("minus");
+                            row.childrenCon.style.display="block";
+                        } else {
+                            this.css("plus");
+                            row.childrenCon.style.display="none";
+                        }
+                        row.childHidden=!row.childHidden;
+                    });
+                    row.childrenCon=$("DIV",container);
+                    loadCateData(dataRow.children,childDeep,row.childrenCon,dataRow)
+                }
+                else
+                    $("LI",row).css("no");
+
+                $("LI",row).html(dataRow.categoryName);
+            });
+        };
+    </script>
+    <script type="text/javascript">
+        var selectedNewsRow;
+        function search(page,pageSize) {
+            $("btnModify").css("btnDsb").prop("disabled",true);
+            $("btnDelete").css("btnDsb").prop("disabled",true);
+            $("gridCon").innerHTML="正在载入...";
+            $.post("/manage/news/SearchNews/",function (res) {
+                if(res.success) {
+                    $("gridCon").html("");
+                    loadData(res.data);
+
+                    $.page(page,pageSize,res.total,$("page"),function (v) {
+                        search(v,pageSize)
+                    });
+                }
+                else
+                    $("gridCon").innerHTML=res.msg;
+            },{
+                categoryID: selectedRow?selectedRow.data.categoryID:0,
+                page: page,
+                pageSize: pageSize,
+                dtFrom: $("txtDtFrom").value,
+                dtTo: $("txtDtTo").value,
+                keywords: $("txtKeywords").value
+            });
+        };
+
+        function loadData(data) {
+            if(data&&data.length) {
+                $.each(data,function (dataRow) {
+                    var row=$("UL",$("gridCon")).on("click",function () {
+                        if(selectedNewsRow)
+                            selectedNewsRow.css("");
+
+                        $("btnModify").css("btn").prop("disabled",false);
+                        $("btnDelete").css("btn").prop("disabled",false);
+
+                        this.css("selected");
+                        selectedNewsRow=this;
+                    });
+                    row.data=dataRow;
+
+                    $("LI",row).css({ width: "50px" }).html(dataRow.NewsID);
+                    $("LI",row).css({ width: "400px" }).html(dataRow.Title);
+                    $("LI",row).css({ width: "100px" }).html(dataRow.Writer||"");
+                    $("LI",row).css({ width: "100px" }).html(dataRow.CategoryName);
+                    $("LI",row).html(dataRow.PublishDate);
+
+                });
+            } else
+                $("gridCon").html("暂无数据");
+
+            $("cates").style.height="440px";
+
+        }
+
+    </script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var grid=new $.Grid({
+                id: "gridCon1",
+                url: "/manage/news/SearchNews/",
+                params: {
+                    categoryID: selectedRow?selectedRow.data.categoryID:0,
+                    page: 1,
+                    pageSize: 10,
+                    dtFrom: $("txtDtFrom").value,
+                    dtTo: $("txtDtTo").value,
+                    keywords: $("txtKeywords").value
+                },
+                columns: [{
+                    width: 50,
+                    header: "编号",
+                    columnName: "NewsID"
+                },{
+                    width: 400,
+                    header: "标题",
+                    columnName: "Title"
+                },{
+                    width: 100,
+                    header: "作者",
+                    columnName: "Writer"
+                },{
+                    width: 100,
+                    header: "分类",
+                    columnName: "CategoryName"
+                },{
+                    width: 150,
+                    header: "时间",
+                    columnName: "PublishDate"
+                }],
+                child: {
+                    columns: [{
+                        width: 50,
+                        header: "编号",
+                        columnName: "ID"
+                    },{
+                        width: 50,
+                        header: "名称",
+                        columnName: "Name"
+                    }]
+                }
+            });
+
+            new $.Calendar("txtDtFrom");
+            new $.Calendar("txtDtTo");
+
+            $("btnModify").css("btnDsb").prop("disabled",true);
+            $("btnDelete").css("btnDsb").prop("disabled",true);
+
+            loadCates();
+
+            $("btnSearch").on("click",function () {
+                search(1,10);
+            });
+
+            $("btnAdd").on("click",function () {
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+                window.location.href="/Manage/News/NewsAdd.html?categoryID="+selectedRow.data.categoryID;
+                return false;
+            });
+
+            $("btnModify").on("click",function () {
+                if(this.prop("disabled")||!selectedNewsRow)
+                    return false;
+
+                window.location.href="/Manage/News/NewsModify.html?id="+selectedNewsRow.data.NewsID;
+                return false;
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="cates">
+        <div class="container">
+            <div class="content">
+                <div class="tree">
+                    <strong>新闻分类</strong>
+                    <div id="cates">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="news">
+        <div class="container">
+            <div class="content">
+                <div class="toolbar">
+                    <a id="btnAdd" class="btn"><em><span class="ico2">新建新闻</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">编辑新闻</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除新闻</span></em></a>
+                </div>
+                <div class="search">
+                    <table>
+                        <tr>
+                            <td>从</td>
+                            <td><input id="txtDtFrom" /></td>
+                            <td>到</td>
+                            <td><input id="txtDtTo" /></td>
+                            <td>&nbsp;关键词:</td>
+                            <td><input id="txtKeywords" /></td>
+                            <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="gridCon1">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear">
+    </div>
+</div>

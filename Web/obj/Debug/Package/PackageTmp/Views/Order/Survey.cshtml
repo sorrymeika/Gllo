@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "订单信息";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderObj = ViewBag.orderInfo;
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/cart.css" />
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+    </script>
+    <script type="text/javascript" src="/scripts/website/survey.js"></script>
+}
+<div class="main">
+    <div class="cart">
+        <div class="order" style='margin-top: 10px;'>
+            <div class="orderTit">上 门 测 量 预 约 表</div>
+            <div class="orderCon">
+                <form method="post" enctype="multipart/form-data" action="" id="surveyBlk" name="surveyBlk" class="surveyBlk">
+                    <table>
+                        <tr>
+                            <th colspan="2">A、意向方案</th>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" name="like" value="0" checked="checked" />
+                                有中意的样板间</td>
+                            <td><input type="radio" name="like" value="1" />
+                                没想法，量房时和设计师沟通确定</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input type="radio" name="like" value="2" />
+                                自己构想的卫生间</td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">B、客户信息</th>
+                        </tr>
+                        <tr>
+                            <td><span class="need">*</span>姓名：<input type="text" class="txt" id="name" name="name" /></td>
+                            <td>性别：<label><input name="gender" type="radio" checked="checked" value="0" />男</label>
+                                <label><input name="gender" type="radio" value="1" />女</label></td>
+                        </tr>
+                        <tr>
+                            <td><span class="need">*</span>手机：<input type="text" class="txt" id="mobile" name="mobile" /></td>
+                            <td><span class="need">*</span>邮箱：<input type="text" class="txt" id="email" name="email" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span class="need">*</span>省份：<select id="cmbProvince">
+                                <option value="0">请选择</option>
+                            </select>
+                                市：<select id="cmbCity">
+                                    <option value="0">请选择</option>
+                                </select>
+                                区域：
+                                <select id="cmbRegion" name="regionID">
+                                    <option value="0">请选择</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="need">*</span>量房地址：<input type="text" class="txt" id="address" name="address" /></td>
+                            <td><span class="need">*</span>装修类型： <input name="type" type="radio" checked="checked" value="0" />毛坯房 <input name="type" type="radio" value="1" />精装修房 <input name="type" type="radio" value="2" />二次装修</td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">C、卫生间信息</th>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td valign="top"><span class="need">*</span>面积：</td>
+                            <td><input name="square" type="radio" checked="checked" value="0" />3平米以下 <input name="square" type="radio" value="1" />3-4平米 <input name="square" type="radio" value="2" />4-6平米 <input name="square" type="radio" value="3" />6-8平米 <input name="square" type="radio" value="4" />8平米以上 </td>
+                        </tr>
+                        <tr>
+                            <td valign="top"><span class="need">*</span>计划配置：</td>
+                            <td>
+                                <table class="options">
+                                    <tr>
+                                        <td><input name="options" type="checkbox" value="0" />蹲便器</td>
+                                        <td><input name="options" type="checkbox" value="1" />马桶</td>
+                                        <td><input name="options" type="checkbox" value="2" />柱盆</td>
+                                        <td><input name="options" type="checkbox" value="3" />柜盆</td>
+                                        <td><input name="options" type="checkbox" value="4" />吊顶</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input name="options" type="checkbox" value="5" />淋浴间</td>
+                                        <td><input name="options" type="checkbox" value="6" />普通浴缸</td>
+                                        <td><input name="options" type="checkbox" value="7" />独立浴缸</td>
+                                        <td><input name="options" type="checkbox" value="8" />瓷砖</td>
+                                        <td><input name="options" type="checkbox" value="9" />管道</td>
+                                    </tr>
+                                </table>
+                                其他：<input type="text" class="txt" id="otherOptions" name="otherOptions" /></td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td valign="top"><span class="need">*</span>希望量房日期：</td>
+                            <td><input name="days" type="radio" value="0" />三天内 <input name="days" type="radio" value="1" />一周内 <input name="days" type="radio" value="2" />10天内 <input name="days" type="radio" value="3" />15天内 <input name="days" type="radio" value="4" />15天之后 </td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td valign="top"><span class="need">*</span>希望上门时间：</td>
+                            <td><input name="time" type="radio" value="0" />工作日 <input name="time" type="radio" value="1" />周末 <input name="time" type="radio" value="2" />都行 其他<input type="text" class="txt" id="otherTime" name="otherTime" /><br>
+                                <input name="hour" type="radio" value="0" />10点~12点 <input name="hour" type="radio" value="1" />12点~15点 <input name="hour" type="radio" value="2" />15点~18点 </td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td colspan="2" style="color: #c00; font-size: 14px;">备注：我们会尽快安排工作人员，在24小时内与您联系。工作人员将根据实际工作计划和 您约定具体时间。</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size: 14px;">为了方便准确的测量空间，请上传房屋构架图。</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span class="need">*</span>上传：<input name="pic" type="file" /></td>
+                        </tr>
+                        <tr>
+                            <td valign="top">其他备注：</td>
+                            <td>
+                                <textarea id="txtMemo" name="memo" style="width: 600px; height: 200px;"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center"><input type="submit" id="apply" value="" />
+                                @if (ViewBag.errors != null)
+                                { 
+                                    <div class="error">@(new MvcHtmlString(ViewBag.errors))</div>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                @if (ViewBag.success != null && ViewBag.success == true)
+                { 
+                    <script>
+                        alert("保存成功！");
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</div>

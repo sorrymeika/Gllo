@@ -1,0 +1,263 @@
+﻿@{
+    ViewBag.Title = "AddPackageDetail";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #grid { margin-top: 6px; }
+        .prds { margin-top: 6px; }
+        .prds strong { display: block; }
+        .prds strong a { color: #cc0000; }
+        .txt { width: 150px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var ProductDialog=function (callback) {
+            var frg=document.createDocumentFragment();
+            var tr;
+            $("TD",tr=$("TR",$("TBODY",$("TABLE",frg).css("search")))).html("关键字:");
+            var keywords=$("INPUT",$("TD",tr)).css("txt");
+            $("EM",$("A",$("TD",tr)).css("btn1").on("click",function () {
+
+                search();
+
+
+            })).html("搜索");
+
+            var search=function () {
+                var params={
+                    categoryID: 0,
+                    page: 1,
+                    pageSize: 15,
+                    keywords: keywords.value,
+                    isOnSale: -1,
+                    isRecommend: -1,
+                    isNew: -1,
+                    status: 1,
+                    canPurchasedSeparately: -1
+                };
+                grid.load("/manage/Product/SearchProducts/",params,function () {
+                    dlg.fixPlace();
+                });
+
+            };
+
+            var gridCont=$("DIV",frg).css("margin-top:6px;");
+            var grid=new $.Grid({
+                id: gridCont,
+                pageEnabled: true,
+                columns: [{
+                    width: 50,
+                    header: "编号",
+                    columnName: "ProductID"
+                },{
+                    width: 300,
+                    header: "商品名",
+                    columnName: "Name"
+                },{
+                    width: 100,
+                    header: "型号",
+                    columnName: "Code"
+                },{
+                    width: 50,
+                    header: "库存",
+                    columnName: "Quantity"
+                },{
+                    width: 80,
+                    header: "价格",
+                    columnName: "Price"
+                },{
+                    width: 80,
+                    header: "特价",
+                    columnName: "SpecialPrice"
+                },{
+                    width: 40,
+                    header: "促销",
+                    columnName: "IsOnSale",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsOnSale?"是":"否");
+                    }
+                },{
+                    width: 40,
+                    header: "新品",
+                    columnName: "IsNew",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsNew?"是":"否");
+                    }
+                },{
+                    width: 40,
+                    header: "推荐",
+                    columnName: "IsRecommend",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsRecommend?"是":"否");
+                    }
+                },{
+                    width: 50,
+                    header: "选择",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.append($("A",true).html("[选择]").css("color:#cc0000;").prop("href","javascript:;").on("click",function () {
+                            callback(data);
+
+                        }));
+                    }
+                }]
+            });
+
+            var dlg=new $.Dialog({
+                title: "商品选择",
+                width: 900,
+                content: frg
+            });
+
+            this.close=function () {
+                dlg.close();
+            };
+
+            this.show=function () {
+                dlg.show();
+            };
+        };
+
+        $.ready(function () {
+
+            var grid=new $.Grid({
+                id: "grid",
+                columns: [{
+                    width: 50,
+                    header: "编号",
+                    columnName: "ProductID"
+                },{
+                    width: 300,
+                    header: "商品名",
+                    columnName: "Name"
+                },{
+                    width: 100,
+                    header: "型号",
+                    columnName: "Code"
+                },{
+                    width: 60,
+                    header: "库存",
+                    columnName: "Quantity"
+                },{
+                    width: 100,
+                    header: "价格",
+                    columnName: "Price"
+                },{
+                    width: 100,
+                    header: "特价",
+                    columnName: "SpecialPrice"
+                },{
+                    width: 50,
+                    header: "促销",
+                    columnName: "IsOnSale",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsOnSale?"是":"否");
+                    }
+                },{
+                    width: 50,
+                    header: "新品",
+                    columnName: "IsNew",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsNew?"是":"否");
+                    }
+                },{
+                    width: 50,
+                    header: "推荐",
+                    columnName: "IsRecommend",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.IsRecommend?"是":"否");
+                    }
+                },{
+                    width: 50,
+                    header: "移除",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.append($("A",true).html("[移除]").prop("href","javascript:;").on("click",function () {
+                            cell.row.remove();
+                        }));
+                    }
+                }]
+            });
+
+            $.post("/manage/Package/GetPackageDetailByID/",function (res) {
+                if(res.success) {
+                    $("name").value=res.data.PpcName;
+                    grid.loadData(res.data.children);
+
+                } else
+                    alert(res.msg);
+            },{
+                id: $.getQueryString("id")
+            });
+
+            var prodDialog;
+            $("addProd").on("click",function () {
+                if(!prodDialog) {
+
+                    prodDialog=new ProductDialog(function (data) {
+                        grid.addRow(data);
+                        prodDialog.close();
+                    });
+                }
+
+                prodDialog.show();
+            });
+
+            var vld=new $.Validation();
+            vld.add("name",{ emptyAble: false,emptyText: "请填写组名" });
+            $("btnAdd").on("click",function () {
+                if(vld.validate()) {
+                    if(grid.rows.length==0) {
+                        alert("请至少添加一个商品");
+                        return;
+                    }
+                    var ids=[];
+                    $.each(grid.rows,function (row) {
+                        ids.push(row.data.ProductID);
+                    });
+
+                    $.post("/Manage/Package/ModifyPackageDetail/",function (res) {
+                        if(res.success) {
+                            alert("修改成功！");
+                            window.location.href="/manage/package/PackageDetails.html?id="+$.getQueryString("packageID");
+
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: $.getQueryString("id"),
+                        packageID: $.getQueryString("packageID"),
+                        name: $("name").value,
+                        products: ids.join(",")
+                    });
+
+                }
+
+            });
+
+            $("btnBack").on("click",function () {
+                window.location.href="/manage/package/PackageDetails.html?id="+$.getQueryString("packageID");
+            });
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th>组名：</th>
+            <td><input id="name" class="txt" /></td>
+        </tr>
+    </table>
+    <div class="prds"><strong><a id="addProd" href="javascript:;">[添加商品]</a></strong>
+        <div id="grid"></div>
+    </div>
+    <div class="buttons"><a id="btnAdd" class="btn" href="javascript:;"><em>修改产品组</em></a>
+        <a id="btnBack" class="btn" href="javascript:;"><em>返回产品组列表</em></a>
+    </div>
+</div>

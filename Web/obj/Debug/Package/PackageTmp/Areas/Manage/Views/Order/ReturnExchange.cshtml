@@ -1,0 +1,133 @@
+﻿@{
+    ViewBag.Title = "退换货管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var R={
+                grid: new $.Grid({
+                    id: "grid",
+                    onRowSelect: function (row) {
+                        $("btnView").prop("disabled",false).css("btn");
+                        $("btnDelete").prop("disabled",false).css("btn");
+                    },
+                    pageEnabled: true,
+                    columns: [{
+                        width: 100,
+                        header: "订单号",
+                        columnName: "OrderCode"
+                    },{
+                        width: 60,
+                        header: "类型",
+                        columnName: "OrderID"
+                    },{
+                        width: 100,
+                        header: "申请日",
+                        columnName: "AddTime"
+                    },{
+                        width: 80,
+                        header: "会员",
+                        columnName: "UserName"
+                    },{
+                        width: 100,
+                        header: "退货商品",
+                        columnName: "ReturnProductName"
+                    },{
+                        width: 60,
+                        header: "退货数",
+                        columnName: "ReturnQty"
+                    },{
+                        width: 100,
+                        header: "换货商品",
+                        columnName: "ExchangeProductName"
+                    },{
+                        width: 60,
+                        header: "换货数",
+                        columnName: "ExchangeQty"
+                    },{
+                        width: 100,
+                        header: "退货原因",
+                        columnName: "Reason"
+                    }]
+                }),
+                search: function () {
+                    $("btnView").prop("disabled",true).css("btnDsb");
+                    $("btnDelete").prop("disabled",true).css("btnDsb");
+
+                    R.grid.load("/Manage/Order/GetReturnExchangeList/",{
+                        page: 1,
+                        pageSize: 10,
+                        dtFrom: $("dtFrom").value,
+                        dtTo: $("dtTo").value,
+                        userName: $("userName").value,
+                        orderCode: $("orderCode").value
+                    });
+
+                },
+                init: function () {
+                    R.search();
+
+                    $("btnSearch").on("click",R.search);
+                    $("btnView").on("click",function () {
+                        if(this.disabled)
+                            return false;
+
+                        var row=R.grid.getSelectedRow();
+                        openDialog("退换货详情",800,400,"/Manage/Order/ViewReturnExchange.html?id="+row.data.ExchangeID,function () {
+                        });
+                    });
+
+                    $("btnDelete").on("click",function () {
+                        if(this.disabled)
+                            return false;
+                        if(window.confirm("您确定要删除该申请单吗？")) {
+                            var row=R.grid.getSelectedRow();
+
+                            $.post("/Manage/Order/DeleteReturnExchange/",function (res) {
+                                if(res.success) {
+                                    alert("删除成功！");
+                                    R.search();
+                                }
+                            },{
+                                id: row.data.ExchangeID
+                            })
+                        }
+                    });
+
+                }
+            };
+
+            R.init();
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar"><a id="btnView" class="btn"><em><span class="ico10">查看</span></em></a>
+                <a id="btnDelete" class="btn"><em><span class="ico4">删除</span></em></a></div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>申请日期 从</td>
+                        <td><input id="dtFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="dtTo" class="txt" /></td>
+                        <td>&nbsp;&nbsp;用户名</td>
+                        <td><input id="userName" class="txt" /></td>
+                        <td>&nbsp;&nbsp;订单号</td>
+                        <td><input id="orderCode" class="txt" /></td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid"></div>
+        </div>
+    </div>
+</div>

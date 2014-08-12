@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.navIndex = 3;
+    Gllo.Models.JsonArray products = ViewBag.data;
+    int total = ViewBag.total;
+
+    ViewBag.Title = "促销专区";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main">
+    <div class="here">
+        <a href="/">首页</a>&gt;<span>促销专区</span>
+    </div>
+    <div class="onsale">
+        <div class="onsaleCon">
+            @if (products != null)
+            {
+                foreach (Gllo.Models.JsonObject prd in products)
+                {
+                    Gllo.Models.JsonArray pics = prd["pictures"] == null ? null : (Gllo.Models.JsonArray)prd["pictures"];
+                <dl>
+                    <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + (pics == null ? "" : pics[0]["Url"]))" /></a></dt>
+                    <dd><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></dd>
+                    <dd>价格：<span>￥@((decimal)prd["SpecialPrice"] == 0 ? prd["Price"] : prd["SpecialPrice"])</span></dd>
+                </dl>
+                }
+            }
+        </div>
+        <div id="page" class="page">
+            @if (ViewBag.page != 1)
+            {
+                <a href="/list/@(ViewBag.page - 1).html">上一页</a>
+            }
+            @if (ViewBag.page != total)
+            {
+                <a href="/list/@(ViewBag.page + 1).html">下一页</a>
+            }
+        </div>
+        <script type="text/javascript">
+            $.ready(function () {
+                $.page(@ViewBag.page,@ViewBag.pageSize,@total,$("page"),function (pageIndex) {
+                    window.location.href="/list/@ViewBag.page_"+pageIndex+".html";
+                });
+            });
+        </script>
+    </div>
+</div>

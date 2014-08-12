@@ -1,0 +1,204 @@
+﻿@{
+    ViewBag.Title = "";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var F={
+                grid: new $.Grid({
+                    id: "grid",
+                    pageEnabled: true,
+                    onRowSelect: function () {
+                        $("del").prop("disabled",false).css("btn");
+                        $("modify").prop("disabled",false).css("btn");
+                    },
+                    columns: [{
+                        header: "编号",
+                        columnName: "ModelID",
+                        width: 50
+                    },{
+                        header: "模板名称",
+                        columnName: "ModelName",
+                        align: "left",
+                        width: 150
+                    },{
+                        header: "模板名称",
+                        columnName: "ExpressName",
+                        width: 150
+                    },{
+                        header: "运费",
+                        columnName: "Freight",
+                        width: 100
+                    },{
+                        header: "次件运费",
+                        columnName: "Freight1",
+                        width: 100
+                    }],
+                    children: [{
+                        dataName: "children",
+                        columns: [{
+                            header: "地区",
+                            type: "custom",
+                            width: 200,
+                            custom: function (cell,data) {
+
+                                var ids=data.AreaID.split(",");
+                                var areas="";
+                                ids.each(function (aid) {
+                                    if(data.AreaType==1) {
+                                        F.P.each(function (item) {
+                                            if(item.ProvinceID==aid) {
+                                                areas+=item.ProvinceName+",";
+                                                return false;
+                                            }
+                                        });
+                                    } else if(data.AreaType==2) {
+                                        F.C.each(function (item) {
+                                            if(item.CityID==aid) {
+                                                areas+=item.CityName+",";
+                                                return false;
+                                            }
+                                        });
+                                    } else {
+                                        F.R.each(function (item) {
+                                            if(item.RegionID==aid) {
+                                                areas+=item.RegionName+",";
+                                                return false;
+                                            }
+                                        });
+                                    }
+                                });
+                                areas=areas.replace(/,$/,"");
+                                cell.html("<input readonly=readonly style='width:100%;margin:1px 0px 0px -1px;border:1px solid #bdbdbd;' value='"+areas+"' />");
+                            }
+                        },{
+                            header: "地区类型",
+                            type: "custom",
+                            width: 100,
+                            custom: function (cell,data) {
+                                cell.html({ 1: "省",2: "市",3: "区"}[data.AreaType]);
+                            }
+                        },{
+                            header: "运费",
+                            columnName: "Freight",
+                            width: 100
+                        },{
+                            header: "次件运费",
+                            columnName: "Freight1",
+                            width: 100
+                        }]
+                    }]
+                }),
+                search: function () {
+                    $("del").prop("disabled",true).css("btnDsb");
+                    $("modify").prop("disabled",true).css("btnDsb");
+                    F.grid.load("/Manage/Freight/GetFreightModelList/",{
+                        page: 1,
+                        pageSize: 10,
+                        keywords: $("keywords").value,
+                        expressID: $("expressID").value
+                    });
+                },
+                init: function () {
+                    F.search();
+                    $("search").on("click",F.search);
+                    $("add").on("click",function () {
+                        openDialog("添加运费模板",700,400,"/Manage/Freight/AddFreightModel.html",function () {
+                            F.search();
+                        });
+                    });
+
+                    $("set").on("click",function () {
+                        if(!this.disabled) {
+                            var row=F.grid.getSelectedRow();
+                            openDialog("设置默认运费模板",700,400,"/Manage/Freight/ModifyFreightModel.html?id=1",function () {
+                                F.search();
+                            });
+                        }
+                    });
+
+                    $("modify").on("click",function () {
+                        if(!this.disabled) {
+                            var row=F.grid.getSelectedRow();
+                            openDialog("修改运费模板",700,400,"/Manage/Freight/ModifyFreightModel.html?id="+row.data.ModelID,function () {
+                                F.search();
+                            });
+                        }
+                    });
+
+                    $("del").on("click",function () {
+                        if(!this.disabled&&window.confirm("您确定要删除吗？")) {
+                            var row=F.grid.getSelectedRow();
+
+                            $.post("/Manage/Freight/DeleteFreightModel/",function (res) {
+                                if(res.success) {
+                                    alert("删除成功！");
+                                    F.search();
+
+                                } else {
+                                    alert(res.msg);
+                                }
+
+                            },{
+                                id: row.data.ModelID
+                            });
+
+                        }
+                    });
+
+                }
+            };
+
+            $.post("/Manage/Freight/GetArea/",function (res) {
+                if(res.success) {
+                    F.P=res.p;
+                    F.R=res.r;
+                    F.C=res.c;
+                    F.init();
+                }
+            },null,false);
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <a id="set" class="btn"><em><span class="ico1">设置默认模板</span></em></a>
+                <a id="add" class="btn"><em><span class="ico2">新增运费模板</span></em></a>
+                <a id="modify" class="btnDsb"><em><span class="ico3">修改</span></em></a>
+                <a id="del" class="btnDsb"><em><span class="ico4">删除</span></em></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>物流公司：</td>
+                        <td><select id="expressID">
+                            <option value="0">请选择</option>
+                            @if (ViewBag.express != null)
+                            {
+                                IList<Gllo.Models.ExpressObj> exp = ViewBag.express;
+                                for (int i = 0; i < exp.Count; i++)
+                                { 
+                                <option value="@exp[i].ExpressID">@exp[i].ExpressName</option>
+                                }
+                            }
+                        </select>
+                        </td>
+                        <td>&nbsp;模板名</td>
+                        <td><input id="keywords" class="txt" /></td>
+                        <td><a id="search" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid">
+            </div>
+        </div>
+    </div>
+</div>

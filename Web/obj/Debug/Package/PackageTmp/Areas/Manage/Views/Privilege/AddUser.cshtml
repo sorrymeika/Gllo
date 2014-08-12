@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "AddPrivilege";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .form { margin: 0px auto 0px auto; }
+        .form span { color: #c00; }
+        .txt { width: 150px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var P={
+                vld: new $.Validation(),
+                add: function () {
+                    if(P.vld.validate()) {
+                        $.post("/Manage/Privilege/AddUser/",function (res) {
+                            if(res.success) {
+                                alert("添加成功！");
+                                closeDialog(true);
+                            } else
+                                alert(res.msg)
+                        },{
+                            userName: $("userName").value,
+                            password: $("password").value,
+                            groupID: $("group").value||0
+                        });
+                    }
+                },
+                init: function () {
+                    P.vld.add("userName",{
+                        emptyAble: false,
+                        emptyText: "请填写用户名"
+                    });
+                    P.vld.add("password",{
+                        emptyAble: false,
+                        emptyText: "请填写密码"
+                    });
+                    P.vld.add("rePassword",{
+                        compare: $("password"),
+                        compareText: "两次密码不一致"
+                    });
+                    P.vld.add("group",{
+                        emptyAble: false,
+                        emptyText: "请选择用户组！"
+                    });
+                    $("add").on("click",P.add);
+                }
+            }
+
+            P.init();
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th valign="top"><span>*</span>用户名：</th>
+            <td><input id="userName" type="text" class="txt" /></td>
+        </tr>
+        <tr>
+            <th valign="top"><span>*</span>密码：</th>
+            <td><input id="password" type="password" class="txt" /></td>
+        </tr>
+        <tr>
+            <th valign="top"><span>*</span>重复密码：</th>
+            <td><input id="rePassword" type="password" class="txt" /></td>
+        </tr>
+        <tr>
+            <th valign="top"><span>*</span>用户组：</th>
+            <td>
+                <select id="group">
+                    <option value="">请选择</option>
+                    @if (ViewBag.groups != null)
+                    {
+                        Gllo.Models.JsonArray groups = ViewBag.groups;
+                        for (int i = 0; i < groups.Count; i++)
+                        { 
+                        <option value="@(groups[i]["GroupID"])">@(groups[i]["GroupName"])</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+    </table>
+    <div class="buttons"><a id="add" class="btn"><em>添加</em></a></div>
+</div>

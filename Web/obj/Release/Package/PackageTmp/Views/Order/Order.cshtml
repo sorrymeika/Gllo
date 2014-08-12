@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "填写订单信息";
+    Layout = "~/Views/Shared/_CartLayout.cshtml";
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/cart.css" />
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+    </script>
+    <script type="text/javascript" src="/scripts/grid.js"></script>
+    <script type="text/javascript" src="/scripts/website/order.js"></script>
+}
+<div class="main">
+    <div class="cart">
+        <div class="cartTit"><em>1.我的购物车</em> &gt; <span>2.填写核对订单信息</span> &gt; <em>3.成功提交订单</em> </div>
+        <div class="order">
+            <div class="orderTit">填写核对订单信息 </div>
+            <div class="orderCon">
+                <div id="addressInfo" class="orderEditor">
+                    <h6>收货人信息<a id="change1" href="javascript:;">[修改]</a></h6>
+                    <div class="info">
+                        <ul>
+                            <li>收货人姓名：<span id="lblReceiver"></span></li>
+                            <li>配送省/市/区：<span id="lblArea"></span></li>
+                            <li>详细地址：<span id="lblAddress"></span></li>
+                            <li>邮政编码：<span id="lblZip"></span></li>
+                            <li>手机/固话：<span id="lblMobile"></span><span id="lblPhone"></span></li>
+                        </ul>
+                    </div>
+                    <div class="edit">
+                        <div id="addressCon" class="addressList"><b>常用地址</b>
+                            <ul id="addressList">
+                                <li><input type="radio" /><b>姓名</b><span>省/市/区/地址</span><a href="javascript:void(0);">[删除]</a></li>
+                            </ul>
+                        </div>
+                        <div class="form">
+                            <dl>
+                                <dt><span>*</span>收货人姓名：</dt>
+                                <dd><input id="txtReceiver" class="txt" /></dd>
+                            </dl>
+                            <dl>
+                                <dt><span>*</span>配送省/市/区：</dt>
+                                <dd>
+                                    <select id="cmbProvince">
+                                        <option value="0">请选择</option>
+                                    </select>
+                                    <select id="cmbCity">
+                                        <option value="0">请选择</option>
+                                    </select>
+                                    <select id="cmbRegion">
+                                        <option value="0">请选择</option>
+                                    </select>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt><span>*</span>详细地址：</dt>
+                                <dd><input id="txtAddress" class="txt" /></dd>
+                            </dl>
+                            <dl>
+                                <dt>邮政编码：</dt>
+                                <dd><input id="txtZip" class="txt" /></dd>
+                            </dl>
+                            <dl>
+                                <dt>手机：</dt>
+                                <dd><input id="txtMobile" class="txt" /></dd>
+                            </dl>
+                            <dl>
+                                <dt>固话：</dt>
+                                <dd><input id="txtPhone" class="txt" /><em>手机或固话必填一项</em></dd>
+                            </dl>
+                        </div>
+                        <div class="buttons"><input id="btnAddAddress" type="button" class="redBtn" value="添加到常用地址" />
+                            <input id="btnSaveAddress" type="button" class="redBtn" value="保存收货人地址" />
+                        </div>
+                    </div>
+                </div>
+                <div id="payInfo" class="orderEditor">
+                    <h6>支付方式及备注<a id="change2" href="javascript:;">[修改]</a></h6>
+                    <div class="info">
+                        <ul>
+                            <li>支付方式：<span id="lblPayType">支付宝</span></li>
+                            <li>订单备注：<div id="lblMemo">暂无备注</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="edit">
+                        <div class="form">
+                            <dl>
+                                <dt><span>*</span>支付方式：</dt>
+                                <dd>
+                                    <ul class="pay">
+                                        <li><label><input name="payType" type="radio" value="1" checked="checked" />支付宝</label></li>
+                                        <li><label><input name="payType" type="radio" value="2" />银行转账</label></li>
+                                        <li><label><input name="payType" type="radio" value="3" />电汇</label></li>
+                                    </ul>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>订单备注：</dt>
+                                <dd>
+                                    <textarea id="txtMemo" class="memo"></textarea></dd>
+                            </dl>
+                        </div>
+                        <div class="buttons"><input id="btnSavePay" type="button" class="redBtn" value="保存支付方式及备注" />
+                        </div>
+                    </div>
+                </div>
+                <div id="payInfo" class="orderInfo" style="padding: 5px 0px 10px 0px;">
+                    <h6><a href="/Cart.html" class="more">返回购物车修改&gt;&gt;</a>商品清单</h6>
+                    <div id="cart" style="margin-top: 5px;"></div>
+                </div>
+                <div class="wareInfo">
+                    <h6>结算信息</h6>
+                    <div class="orderEditor">
+                        <div class="ware"><em id="message"></em>商品金额：<span id="lblOrderAmount"></span>元 + 运费：<span id="lblOrderFreight"></span>元 - 优惠券：<span id="lblCoupon">0</span>元 </div>
+                        <div class="wareAmount">应付总额：<span id="lblTotalAmount"></span> 元</div>
+                        <div class="confirmOrder"><input id="btnConfirmOrder" type="button" class="confirmOrderBtn" value="" /></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

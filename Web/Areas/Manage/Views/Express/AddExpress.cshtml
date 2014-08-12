@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "添加快递";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .search { margin: 10px auto 0px auto; }
+        .txt { width: 150px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var vld=new $.Validation();
+            vld.add("txtName",{ emptyAble: false,emptyText: "不可为空" });
+
+            $("btnAdd").on("click",function () {
+                if(vld.validate()) {
+                    $.post("/Manage/Express/AddExpress/",function (res) {
+
+                        if(res.success) {
+                            alert("添加成功！");
+                            closeDialog(true);
+                        } else
+                            alert(res.msg);
+                    },{
+                        name: $("txtName").value,
+                        url: $("txtUrl").value
+                    });
+                }
+            });
+
+        });
+
+       
+    </script>
+}
+<table class="search">
+    <tr>
+        <th>快递名称：</th>
+        <td><input type="text" id="txtName" class="txt" /></td>
+    </tr>
+    <tr>
+        <th>快递官网：</th>
+        <td><input type="text" id="txtUrl" class="txt" /></td>
+    </tr>
+</table>
+<div class="buttons"><a id="btnAdd" href="javascript:void(0);" class="btn1"><em>添加快递</em></a></div>

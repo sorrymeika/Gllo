@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "友情链接";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+    
+}
+@section header{
+    <style type="text/css">
+        #gridList { margin-top: 6px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+        $.ready(function () {
+            var gridList=new $.Grid({
+                id: "gridList",
+                rowHeight: 70,
+                onRowSelect: function () {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    header: "编号",
+                    columnName: "FriendID",
+                    width: 10
+                },{
+                    header: "图片",
+                    width: 25,
+                    align: "left",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html("<img src='"+media+data.Pic+"' width='120' height='60' />");
+                    }
+                },{
+                    header: "名称",
+                    columnName: "FriendName",
+                    align: "left",
+                    width: 50
+                },{
+                    header: "链接",
+                    columnName: "Url",
+                    type: "custom",
+                    align: "left",
+                    width: 50,
+                    custom: function (cell,data) {
+                        cell.html("<a target='_blank' href='"+data.Url+"'>"+data.Url+"</a>");
+                    }
+                }]
+            });
+
+            var load=function () {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+                gridList.load("/Manage/FriendLink/GetFriendLink/");
+            };
+
+            load();
+
+            $("btnAdd").on("click",function () {
+                if(this.disabled)
+                    return false;
+
+                openDialog("添加友情链接",550,200,"/Manage/FriendLink/AddFriendLink.html",function () {
+                    load();
+                });
+
+            });
+
+            $("btnModify").on("click",function () {
+                var selecteRow=gridList.getSelectedRow();
+
+                if(this.disabled&&selecteRow)
+                    return false;
+
+                openDialog("修改友情链接",550,200,"/Manage/FriendLink/ModifyFriendLink.html?id="+selecteRow.data.FriendID,function () {
+                    load();
+                });
+            });
+
+            $("btnDelete").on("click",function () {
+                var selecteRow=gridList.getSelectedRow();
+
+                if(this.disabled&&selecteRow)
+                    return false;
+
+                if(window.confirm("您确定要删除该友情链接吗？")) {
+
+                    $.post("/Manage/FriendLink/DeleteFriendLink/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            load();
+                        } else
+                            alert(res.msg)
+                    },{
+                        id: selecteRow.data.FriendID
+                    });
+                }
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico2">新建</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">编辑</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除</span></em></a>
+                </div>
+                <div id="gridList"></div>
+            </div>
+        </div>
+    </div>
+</div>

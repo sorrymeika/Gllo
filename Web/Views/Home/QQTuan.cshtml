@@ -1,0 +1,137 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QQTuan</title>
+    <style type="text/css">
+        body { background: #FFF6CE; padding: 0px; margin: 0px; }
+        .Main { width: 911px; margin: 0px auto; }
+        .Hid { display: none; }
+        .cont { width: 100%; overflow: hidden; margin-top: 15px; background: url(/Content/themes/default/qqtuan/top.gif) no-repeat; }
+        .txt { border: 1px solid #bdbdbd; height: 22px; line-break: 22px; padding: 2px; }
+        .vld { margin: 0px auto 0px auto; color: #f60; font-weight: bold; }
+        #acode { width: 150px; }
+        .steps { height: 57px; padding-left: 20px; }
+        .steps span { float: left; width: 176px; height: 57px; }
+        .step1 { background: url(/Content/themes/default/qqtuan/step1.gif) no-repeat; }
+        .step2 { background: url(/Content/themes/default/qqtuan/step2.gif) no-repeat; }
+        .step3 { background: url(/Content/themes/default/qqtuan/step3.gif) no-repeat; }
+        .step4 { background: url(/Content/themes/default/qqtuan/step4.gif) no-repeat; }
+        #view { border: 0px; background: url(/Content/themes/default/qqtuan/yz.gif) no-repeat; width: 199px; height: 50px; cursor: pointer; }
+        .Center { text-align: center; }
+        .con { background: url(/Content/themes/default/qqtuan/bg.gif) repeat-y; padding-top: 60px; }
+        .ins { background: url(/Content/themes/default/qqtuan/btm.gif) no-repeat 0px bottom; }
+    </style>
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript">
+
+        window.onload = function () {
+        @if (ViewBag.vc)
+        {
+          <text>
+          var needCC=true;
+          $("ccBlk").css("Shw");
+          </text>
+        }
+        else
+        {
+          <text>var needCC=false;</text>
+        }
+            var Q = {
+                init: function () {
+                    $("view").on("click", function () {
+                        $.post("/home/QQTuanValidate/", function (res) {
+                            if (res.success) {
+                                var RET_COMMON = {
+                                    retdata: {}
+                                };
+                                eval(res.data);
+                                if (RET_COMMON.retcode == '-70' || RET_COMMON.retcode == '-190') {
+                                    $('v:res').innerHTML = '验证码不存在';
+                                    $('v:vcode').innerHTML = RET_COMMON.retdata.stoken;
+                                    $('v:mercname').innerHTML = "";
+                                } else if (RET_COMMON.retcode == '-120') {
+                                    $('v:TimeTitle').innerHTML = '退款时间';
+                                    $('v:res').innerHTML = '已退款，验证无效';
+                                    $('v:vcode').innerHTML = RET_COMMON.retdata.stoken;
+                                    $('v:mercname').innerHTML = RET_COMMON.retdata.mercname;
+                                    $('v:time').innerHTML = RET_COMMON.retdata.lastmodtime;
+                                } else if (RET_COMMON.retcode == '-110') {
+                                    $('v:TimeTitle').innerHTML = '使用时间';
+                                    $('v:res').innerHTML = '之前已经使用';
+                                    $('v:vcode').innerHTML = RET_COMMON.retdata.stoken;
+                                    $('v:mercname').innerHTML = RET_COMMON.retdata.mercname;
+                                    $('v:time').innerHTML = RET_COMMON.retdata.usetime;
+                                } else if (RET_COMMON.retcode == '-100') {
+                                    $('v:TimeTitle').innerHTML = '过期时间';
+                                    $('v:res').innerHTML = '已过期';
+                                    $('v:vcode').innerHTML = RET_COMMON.retdata.stoken;
+                                    $('v:mercname').innerHTML = RET_COMMON.retdata.mercname;
+                                    $('v:time').innerHTML = RET_COMMON.retdata.validtime;
+                                } else if (RET_COMMON.retcode == '0') {
+                                    $('v:TimeTitle').innerHTML = '有效期至';
+                                    $('v:res').innerHTML = '有效，验证成功';
+                                    $('v:vcode').innerHTML = RET_COMMON.retdata.stoken;
+                                    $('v:mercname').innerHTML = RET_COMMON.retdata.mercname;
+                                    $('v:time').innerHTML = RET_COMMON.retdata.validtime;
+                                } else if (RET_COMMON.retcode == '-100003') {
+                                    alert("没有查询该团购ID的权限");
+                                } else if (RET_COMMON.retcode == '-80') {
+                                    alert("尚未成团，该验证码无效！");
+                                } else if (RET_COMMON.retcode == '-90') {
+                                    alert("尚未支付，该验证码无效！");
+                                }
+
+                            } else {
+                                $("v:res").html(res.msg);
+                            }
+                        }, {
+                            verifycode: needCC ? $("cc").value : "",
+                            acode: $("acode").value
+                        });
+
+                    });
+
+                }
+            };
+            Q.init();
+        }
+    </script>
+</head>
+<body>
+    <div class="Main">
+        <div class="top"><img src="/Content/themes/default/qqtuan/steps.png" /></div>
+        <div class="cont">
+            <div class="steps"><span class="step1"></span><span class="step2"></span><span class="step3"></span><span class="step4"></span></div>
+            <div class="con">
+                <div class="ins">
+                    <table class="vld">
+                        <tr>
+                            <td>请输入验证码：</td>
+                            <td><input id="acode" class="txt" value="5920315656" /></td>
+                        </tr>
+                        <tr id="ccBlk" class="Hid">
+                            <td>请输入图片上的文字：</td>
+                            <td><input id="cc" class="txt" /></td>
+                            <td><img id="" src="/home/testimage/?d=@(DateTime.Now.Ticks)" /></td>
+                        </tr>
+                    </table>
+                    <br>
+                    <div class="Center"><input id="view" type="button" value="" /></div>
+                    <br>
+                    <br>
+                    <ul>
+                        <li id="v:res"></li>
+                        <li id="v:vcode"></li>
+                        <li id="v:mercname"></li>
+                        <li><label id="v:TimeTitle"></label>
+                            <span id="v:time"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

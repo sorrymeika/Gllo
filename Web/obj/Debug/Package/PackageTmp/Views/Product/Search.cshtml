@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.navIndex = 2;
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main">
+    <div class="here">商品搜索&nbsp;&nbsp;&gt;<span>“@ViewBag.keywords”</span></div>
+    <div class="sidebar">
+        @if (ViewBag.data == null)
+        {
+            if (ViewBag.cates != null)
+            {
+                Gllo.Models.JsonArray cates = ViewBag.cates;
+            <div class="cates">
+                <div class="catesTit">
+                    <div class="catesTitL">
+                        <div class="catesTitR">商品分类 </div>
+                    </div>
+                </div>
+                <div class="catesCon">
+                    @for (int i = 0; i < cates.Count; i++)
+                    {
+                        <dl>
+                            <dt id="pCate@(i)"><a href="/list/@(cates[i]["categoryID"]).html">@cates[i]["categoryName"]</a></dt>
+                            @if (cates[i].ContainsKey("children"))
+                            {
+                                Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)cates[i]["children"];
+                                <dd id="sCate@(i)">
+                                    <ul>
+                                        @for (int j = 0; j < children.Count; j++)
+                                        {
+                                            <li><a href="/list/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></li>
+                                        }
+                                    </ul>
+                                </dd>
+                            }
+                        </dl>
+                    }
+                </div>
+                <script type="text/javascript"> $.ready(function () { var currentIndex=-1; for(var i=0;i<@(cates.Count);i++) { $("pCate"+i).on("mouseover",(function (j) { return function () { if (currentIndex!=j&&document.getElementById("sCate"+j)) { if (currentIndex!==-1) $("sCate"+currentIndex).css({display:"none"}); $("sCate"+j).css({display:"block"}); currentIndex=j; } } })(i)); } }); </script>
+            </div>
+            }
+        }
+        else
+        {
+            <div class="cates">
+                <div class="catesTit">
+                    <div class="catesTitL">
+                        <div class="catesTitR">分类筛选 </div>
+                    </div>
+                </div>
+                <div class="cates1Con">
+                    @if (ViewBag.cates != null)
+                    {
+                        Gllo.Models.JsonArray cates = ViewBag.cates;
+                        for (int i = 0; i < cates.Count; i++)
+                        {
+                        <li class="@(ViewBag.categoryID == (int)cates[i]["CategoryID"] ? "curr" : "")"><a href="/Search/?cid=@(cates[i]["CategoryID"])&keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))">@cates[i]["CategoryName"]</a><span>(@cates[i]["Qty"])</span></li>
+                        }
+                    }
+                </div>
+            </div>
+        }
+        <div class="cates recommend">
+            <div class="recommendTit">产品推荐 </div>
+            <div class="recommendCon">
+                @if (ViewBag.recommends != null)
+                {
+                    Gllo.Models.JsonArray products = ViewBag.recommends;
+                    foreach (Gllo.Models.JsonObject prd in products)
+                    {
+                    <dl>
+                        <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                        <dd>
+                            <p><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></p>
+                            <span>￥@((decimal)prd["SpecialPrice"] == 0 ? ((decimal)prd["Price"]).ToString("0") : ((decimal)prd["SpecialPrice"]).ToString("0"))</span></dd>
+                    </dl>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="searchRes">
+        <div class="searchResTit">“@ViewBag.keywords”搜索结果(@ViewBag.total) </div>
+        <div class="searchCon">
+            @if (ViewBag.data == null)
+            {
+                <div class="noSearch">很抱歉，没有找到与“@ViewBag.keywords”相关的商品 </div>
+            }
+            else
+            {
+                if (ViewBag.tags != null)
+                {
+                    Gllo.Models.JsonArray tags = ViewBag.tags;
+                <div class="searchTags">相关搜索：@for (int i = 0; i < tags.Count; i++)
+                                             {
+                    <a href="/Search/?keywords=@(HttpUtility.UrlEncode(tags[i]["Tag"].ToString(), System.Text.Encoding.UTF8))">@tags[i]["Tag"]</a>
+                                             }
+                </div>
+                }
+                <div class="prdSort">
+                    <div class="prdSortTit">排序：</div>
+                    <ul>
+                        <li@(ViewBag.sort == 0 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=0">默认</a>
+                        </li>
+                        <li@(ViewBag.sort == 4 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=4">销量</a>
+                        <li@(ViewBag.sort == 1 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=1">价格↑</a>
+                        </li>
+                        <li@(ViewBag.sort == 5 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=5">价格↓</a>
+                        </li>
+                        <li@(ViewBag.sort == 2 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=2">上架时间</a>
+                        </li>
+                        <li@(ViewBag.sort == 3 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=3">好评度</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="prodList">
+                    @{Gllo.Models.JsonArray products = ViewBag.data;
+                      Gllo.Models.JsonObject prd;
+                    }
+                    @for (int i = 0; i < products.Count; i++)
+                    {
+                        prd = products[i];
+                        <dl>
+                            <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                            <dd><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></dd>
+                            @if ((decimal)prd["SpecialPrice"] == 0 || (decimal)prd["SpecialPrice"] >= (decimal)prd["Price"])
+                            {
+                                <dd>价格：￥@(((decimal)prd["Price"]).ToString("0"))</dd>
+                            }
+                            else
+                            {
+                                <dd>原价：<del>￥@(((decimal)prd["Price"]).ToString("0"))</del></dd>
+                                <dd>现价：<span>￥@(((decimal)prd["SpecialPrice"]).ToString("0"))</span></dd>
+                            }
+                        </dl>
+                            if ((i + 1) % 4 == 0)
+                            { 
+                        <div class="clear"></div>
+                            }
+                    }
+                </div>
+                <div id="page" class="page">
+                    @if (ViewBag.page != 1)
+                    {
+                        <a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=@(ViewBag.sort)&page=@(ViewBag.page - 1)">上一页</a>
+                    }
+                    @if (ViewBag.page != ViewBag.total)
+                    {
+                        <a href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=@(ViewBag.sort)&page=@(ViewBag.page + 1)">下一页</a>
+                    }
+                </div>
+                <script type="text/javascript">
+                    $.ready(function () {
+                        $.page(@ViewBag.page,@ViewBag.pageSize,@ViewBag.total,$("page"),function (pageIndex) {
+                            window.location.href="/Search/?keywords=@(HttpUtility.UrlEncode(ViewBag.keywords, System.Text.Encoding.UTF8))&cid=@(ViewBag.categoryID)&sort=@(ViewBag.sort)&page="+pageIndex;
+                        });
+                    });
+                </script>
+            }
+        </div>
+    </div>
+</div>

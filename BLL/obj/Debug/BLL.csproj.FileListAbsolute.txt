@@ -1,0 +1,88 @@
+E:\channel\BLL\bin\Debug\Channel.BLL.dll
+E:\channel\BLL\bin\Debug\Channel.BLL.pdb
+E:\channel\BLL\bin\Debug\Channel.DAL.dll
+E:\channel\BLL\bin\Debug\Channel.Models.dll
+E:\channel\BLL\bin\Debug\Channel.Sys.dll
+E:\channel\BLL\bin\Debug\Channel.DAL.pdb
+E:\channel\BLL\bin\Debug\Channel.Models.pdb
+E:\channel\BLL\bin\Debug\Channel.Sys.pdb
+E:\channel\BLL\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\BLL\obj\Debug\Channel.BLL.dll
+E:\channel\BLL\obj\Debug\Channel.BLL.pdb
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.BLL.dll
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.BLL.pdb
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.DAL.dll
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.Sys.dll
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.DAL.pdb
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\BLL\bin\Debug\Channel.Sys.pdb
+E:\Visual Studio 2010\Projects\channel\BLL\obj\Debug\ResolveAssemblyReference.cache
+E:\Visual Studio 2010\Projects\channel\BLL\obj\Debug\Channel.BLL.dll
+E:\Visual Studio 2010\Projects\channel\BLL\obj\Debug\Channel.BLL.pdb
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.Models.dll
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+E:\Projects\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+E:\Projects\Gllo\BLL\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+E:\Projects\Gllo\BLL\obj\Debug\Gllo.BLL.pdb
+H:\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+H:\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+H:\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+H:\Gllo\BLL\bin\Debug\Gllo.Models.dll
+H:\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+H:\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+H:\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+H:\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+H:\Gllo\BLL\obj\Debug\ResolveAssemblyReference.cache
+H:\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+H:\Gllo\BLL\obj\Debug\Gllo.BLL.pdb
+K:\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+K:\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+K:\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+K:\Gllo\BLL\bin\Debug\Gllo.Models.dll
+K:\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+K:\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+K:\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+K:\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+K:\Gllo\BLL\obj\Debug\ResolveAssemblyReference.cache
+K:\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+K:\Gllo\BLL\obj\Debug\Gllo.BLL.pdb
+L:\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+L:\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+L:\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+L:\Gllo\BLL\bin\Debug\Gllo.Models.dll
+L:\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+L:\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+L:\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+L:\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+L:\Gllo\BLL\obj\Debug\ResolveAssemblyReference.cache
+L:\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+L:\Gllo\BLL\obj\Debug\Gllo.BLL.pdb
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.Models.dll
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+G:\Projects\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+G:\Projects\Gllo\BLL\obj\Debug\ResolveAssemblyReference.cache
+G:\Projects\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+G:\Projects\Gllo\BLL\obj\Debug\Gllo.BLL.pdb
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.BLL.dll
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.BLL.pdb
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.DAL.dll
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.Sys.dll
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.DAL.pdb
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\BLL\bin\Debug\Gllo.Sys.pdb
+D:\Projects\AspNet\XX\Gllo\BLL\obj\Debug\BLL.csprojResolveAssemblyReference.cache
+D:\Projects\AspNet\XX\Gllo\BLL\obj\Debug\Gllo.BLL.dll
+D:\Projects\AspNet\XX\Gllo\BLL\obj\Debug\Gllo.BLL.pdb

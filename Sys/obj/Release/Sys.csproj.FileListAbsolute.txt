@@ -1,0 +1,14 @@
+E:\Projects\Gllo\Sys\bin\Release\Gllo.Sys.dll
+E:\Projects\Gllo\Sys\bin\Release\Gllo.Sys.pdb
+E:\Projects\Gllo\Sys\bin\Release\Gllo.Models.dll
+E:\Projects\Gllo\Sys\bin\Release\Gllo.Models.pdb
+E:\Projects\Gllo\Sys\obj\Release\ResolveAssemblyReference.cache
+E:\Projects\Gllo\Sys\obj\Release\Gllo.Sys.dll
+E:\Projects\Gllo\Sys\obj\Release\Gllo.Sys.pdb
+H:\Gllo\Sys\bin\Release\Gllo.Sys.dll
+H:\Gllo\Sys\bin\Release\Gllo.Sys.pdb
+H:\Gllo\Sys\bin\Release\Gllo.Models.dll
+H:\Gllo\Sys\bin\Release\Gllo.Models.pdb
+H:\Gllo\Sys\obj\Release\ResolveAssemblyReference.cache
+H:\Gllo\Sys\obj\Release\Gllo.Sys.dll
+H:\Gllo\Sys\obj\Release\Gllo.Sys.pdb

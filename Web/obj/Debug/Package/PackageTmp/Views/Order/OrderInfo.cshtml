@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "订单信息";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderObj = ViewBag.orderInfo;
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/cart.css" />
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+        var orderStatus=@(orderObj.Status);
+    </script>
+    <script type="text/javascript" src="/scripts/grid.js"></script>
+    <script type="text/javascript" src="/scripts/website/orderInfo.js"></script>
+}
+<div class="main">
+    <div class="cart">
+        @if (ViewBag.success)
+        {
+            <div class="cartTit" style="border-top: 0px; margin: 10px 10px 0px 0px;">
+                <em>1.我的购物车</em> &gt; <em>2.填写核对订单信息</em> &gt; <span>3.成功提交订单</span>
+            </div>
+        }
+        <div class="order" @(ViewBag.success ? null : new MvcHtmlString(" style='margin-top:10px;'"))>
+            <div class="orderTit">
+                我的订单</div>
+            <div class="orderCon">
+                @if (ViewBag.success)
+                {
+                    <h6 class="thx">订单提交成功，感谢您的订购！</h6>
+                    <div class="orderNote">
+                        恭喜您，您的订单提交成功！我们的工作人员会尽快与您联系，核对您的订单信息，谢谢！<br>
+                        <b>注:</b> 只有付款成功后，才能完成本次交易哦！</div>
+                }
+                else
+                { 
+                    <h6 class="thx">订单信息</h6>
+                }
+                <div class="orderInfo">
+                    <div class="myOrder">
+                        <ul>
+                            <li>订单号：<span>@orderObj.OrderCode</span></li>
+                            <li>订单金额：<span>￥@orderObj.Amount</span></li>
+                            <li>订单运费：<span>￥@orderObj.Freight</span></li>
+                            <li>订单总金额：<span>￥@(orderObj.Amount + orderObj.Freight)</span></li>
+                            <li>订单日期：<span>@orderObj.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")</span></li>
+                            <li>支付方式：@(orderObj.PayType == 1 ? "支付宝" : orderObj.PayType == 2 ? "银行转账" : "电汇")，@(orderObj.PayStatus == 1 ? "已支付" : "未支付")@(orderObj.Status == 2 ? new MvcHtmlString("，已取消") : orderObj.Status == 3 ? new MvcHtmlString("，<span style='color:blue'>已发货</span>") : orderObj.Status == 4 ? new MvcHtmlString("<span style='color:blue'>，已收货</span>") : null)</li>
+                            @if (orderObj.Status == 3 || orderObj.Status == 4)
+                            { 
+                                <li>物流公司：<a class="survey" href="@orderObj.ExpressUrl" target=_blank>@orderObj.ExpressName</a></li>
+                            }
+                        </ul>
+                        <ul>
+                            <li>收货人姓名：<span>@(orderObj.Receiver)</span></li>
+                            <li>省、市、区：<span>@(orderObj.ProvinceName)/@(orderObj.CityName)@(string.IsNullOrEmpty(orderObj.RegionName) ? "" : ("/" + orderObj.RegionName))</span></li>
+                            <li>递送地址：<span>@(orderObj.Address)</span></li>
+                            <li>递送邮编：<span>@(orderObj.Zip)</span></li>
+                            <li>联系方式：<span>@(string.IsNullOrEmpty(orderObj.Phone) ? orderObj.Mobile : (orderObj.Mobile + ", "))@(orderObj.Phone)</span></li>
+                            @*<li>物流公司：<a target=_blank href="@(orderObj.ExpressUrl)"><span>@(orderObj.ExpressName)</span></a></li>*@ </ul>
+                    </div>
+                    @if (orderObj.PayType == 1 && orderObj.PayStatus == 0 && orderObj.Status != 2)
+                    { 
+                        <div class="payBtns">
+                            <input id="btnPay" orderid="" type="button" class="payBtn" /></div>
+                        <script type="text/javascript">
+                            $("btnPay").on("click",function () {
+                                window.location.href="/Order/alipayto/?orderId=@orderObj.OrderID";
+                            });
+                        </script>
+                    }
+                    else if (orderObj.Status > 2 || orderObj.PayStatus == 1)
+                    { 
+                        <div class="payBtns">
+                            <a href="/Survey/@(orderObj.OrderID).html" class="survey" id="survey">[上门测试申请]</a><a href="/ReturnExchange/@(orderObj.OrderID).html" class="survey" id="survey">[退货申请]</a></div>
+                    }
+                </div>
+                <h6 class="thx">商品清单</h6>
+                <div class="orderDetail">
+                    <div id="productList">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

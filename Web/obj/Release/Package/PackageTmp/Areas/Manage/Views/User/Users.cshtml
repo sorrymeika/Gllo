@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "用户管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #grid { margin-top: 10px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var grid=new $.Grid({
+                id: "grid",
+                pageEnabled: true,
+                columns: [{
+                    header: "编号",
+                    columnName: "UserID",
+                    width: 40
+                },{
+                    header: "用户名",
+                    columnName: "UserName",
+                    width: 80
+                },{
+                    header: "邮箱",
+                    columnName: "Email",
+                    width: 80
+                },{
+                    header: "注册日期",
+                    columnName: "RegDate",
+                    width: 80
+                },{
+                    header: "性别",
+                    width: 40,
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.Gender?"女":"男");
+                    }
+                },{
+                    header: "生日",
+                    columnName: "BirthDay",
+                    width: 60,
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.BirthDay?data.BirthDay.replace(/\s*\d{2}:\d{2}:\d{2}/,""):"");
+                    }
+                }]
+            });
+
+            var search=function (page,pageSize) {
+                grid.load("/Manage/User/GetUsers/",{
+                    page: page,
+                    pageSize: pageSize,
+                    regDateFrom: $("txtRegDateFrom").value,
+                    regDateTo: $("txtRegDateTo").value,
+                    keywords: $("txtKeywords").value
+                });
+            };
+
+            search(1,15);
+
+            $("btnSearch").on("click",function () {
+                search(1,15);
+            });
+
+            new $.Calendar("txtRegDateFrom");
+            new $.Calendar("txtRegDateTo");
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            @*<div class="toolbar"><a id="btnSendMsg" class="btn"><span class="ico7"><em>发送消息</em></span></a>
+            </div>*@
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>注册日期 从</td>
+                        <td><input id="txtRegDateFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="txtRegDateTo" class="txt" /></td>
+                        <td>&nbsp;关键字</td>
+                        <td><input id="txtKeywords" class="txt" /></td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid"></div>
+        </div>
+    </div>
+</div>

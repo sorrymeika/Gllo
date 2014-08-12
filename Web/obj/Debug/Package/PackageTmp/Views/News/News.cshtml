@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.navIndex = 6;
+    Gllo.Models.NewsObj news = ViewBag.news;
+    ViewBag.Title = news.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main">
+    <div class="article">
+        <h1 class="articleTit">@(new MvcHtmlString(news.Title))</h1>
+        <div class="artiTime">发布时间：@news.PublishDate.ToString("yyyy-MM-dd")</div>
+        <div class="articleCon">
+            @(new MvcHtmlString(news.Content))
+        </div>
+        <div class="articlePN">
+            @if (ViewBag.prevNews == null)
+            {
+                <span style="float: left">已是第一篇</span> 
+            }
+            else
+            { 
+                <a href="/news/@(ViewBag.prevNews.NewsID).html" style="float: left">上一篇：@(ViewBag.prevNews.Title)</a>
+            }
+            @if (ViewBag.nextNews == null)
+            {
+                <span style="float: right">已是最后一篇</span> 
+            }
+            else
+            { 
+                <a href="/news/@(ViewBag.nextNews.NewsID).html" style="float: right">下一篇：@(ViewBag.nextNews.Title)</a>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "ModifyFriendLink";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header {
+    <style type="text/css">
+        td { padding-top: 6px; }
+        .view { display: block; width: 60px; height: 40px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            window.handleViewPic=function (res) {
+                if(res.success) {
+                    $("view").src="/home/ViewPic/?picGuid="+res.guid;
+                }
+                else
+                    alert(res.msg)
+            };
+
+            window.handleResult=function (res) {
+                if(res.success) {
+                    alert("添加成功！");
+                    closeDialog(true);
+                }
+                else
+                    alert(res.msg);
+            };
+
+            $("pic").on("change",function () {
+                $("form1").action="/home/ViewPic/?width=60&height=40";
+                $("form1").submit();
+            });
+
+            $("btnAdd").on("click",function () {
+                $("form1").action="/Manage/FriendLink/AddFriendLink/";
+                $("form1").submit();
+            })
+        });
+    </script>
+}
+<form id="form1" method="post" action="/home/ViewPic/?width=60&height=40" target="iframeMedia" enctype="multipart/form-data">
+    <table style="margin: 0px auto;">
+        <tr>
+            <td><span style="color: #cc0000;">*</span>图片选择：</td>
+            <td><input id="pic" name="pic" type="file" /></td>
+            <td>(160px × 90px)</td>
+            <td rowspan="3" valign="top"><img id="view" class="view" /></td>
+        </tr>
+        <tr>
+            <td><span style="color: #cc0000;">*</span>描述：</td>
+            <td><input name="name" type="text" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><span style="color: #cc0000;">*</span>链接地址：</td>
+            <td><input name="url" type="text" /></td>
+            <td></td>
+        </tr>
+    </table>
+    <div class="buttons"><a id="btnAdd" class="btn" href="javascript:;"><em>添加友情链接</em></a></div>
+    <iframe id="iframeMedia" name="iframeMedia" scrolling="no" height="0" width="0" frameborder="0"></iframe>
+</form>

@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "退、换货申请";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderInfo = ViewBag.order;
+    Gllo.Models.ExchangeInfo exchangeInfo = ViewBag.exchangeInfo;
+    Gllo.Models.ProductObj returnProduct = ViewBag.returnProduct;
+    Gllo.Models.ProductObj exchangeProduct = ViewBag.exchangeProduct;
+    Gllo.Models.JsonObject area = ViewBag.area;
+    
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/cart.css" />
+    <style type="text/css">
+        .txt { height: 20px; }
+        #returnProductCode, #exchageProductCode { width: 100px; }
+        #zip, #returnProductQty, #exchageProductQty { width: 80px; }
+        #reason { width: 400px; height: 100px; border: 1px solid #bdbdbd; }
+        #mobile, #phone { width: 100px; }
+    </style>
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+        var provinceID = @(area["ProvinceID"]);
+        var cityID = @(area["CityID"]);
+        var regionID = @(area["RegionID"]);
+        var orderID = @(orderInfo.OrderID);
+    </script>
+    <script type="text/javascript" src="/scripts/website/userexchange.js"></script>
+}
+<div class="main">
+    <div class="cart">
+        <div class="order" style='margin-top: 10px;'>
+            <div class="orderTit">GLLO·5S官方网店退换货申请单</div>
+            <div class="orderCon">
+                <h6>&nbsp;&nbsp;如果您需要退换货，请务必填写并附上此单</h6>
+                <table class="returnExchange">
+                    <tr>
+                        <th>申请日</th>
+                        <td>@(exchangeInfo.AddTime.ToString())</td>
+                        <th>处理方式</th>
+                        <td><input type="radio" name="type" value="0" @(exchangeInfo.ExchangeProductID == 0 ? null : new MvcHtmlString("checked='checked'")) />换货 &nbsp;&nbsp; <input type="radio" name="type" value="1" @(exchangeInfo.ExchangeProductID != 0 ? null : new MvcHtmlString("checked='checked'"))/>退货 </td>
+                    </tr>
+                    <tr>
+                        <th>订单编号</th>
+                        <td><a href="/Order/@(orderInfo.OrderID).html">@(orderInfo.OrderCode)</a></td>
+                        <th>订单金额</th>
+                        <td>@(orderInfo.Amount)</td>
+                    </tr>
+                    <tr>
+                        <th>购买日期</th>
+                        <td>@(orderInfo.CreationTime.ToString())</td>
+                        <th>登陆账号</th>
+                        <td>@(Gllo.Sys.AppData.SessionUser.UserName)</td>
+                    </tr>
+                    <tr>
+                        <th>姓名</th>
+                        <td>@(orderInfo.Receiver)</td>
+                        <th>联系电话<span class="need">*</span></th>
+                        <td>手&nbsp;&nbsp;&nbsp;&nbsp;机：<input class="txt" id="mobile" value="@(exchangeInfo.Mobile)" /><br>
+                            固定电话：<input class="txt" id="phone" value="@(exchangeInfo.Phone)" /></td>
+                    </tr>
+                    <tr>
+                        <th>收货地址<span class="need">*</span></th>
+                        <td>
+                            <select id="cmbProvince">
+                                <option value="0">请选择</option>
+                            </select>
+                            <select id="cmbCity">
+                                <option value="0">请选择</option>
+                            </select>
+                            <select id="cmbRegion" name="regionID">
+                                <option value="0">请选择</option>
+                            </select>
+                            <br>
+                            地址：<input class="txt" id="address" value="@(exchangeInfo.Address)" />
+                        </td>
+                        <th>邮 编</th>
+                        <td><input class="txt" id="zip" value="@(exchangeInfo.Zip)" /></td>
+                    </tr>
+                </table>
+                <table class="returnExchange">
+                    <tr>
+                        <th colspan="6">
+                            <h6>我要退货/换货商品是：（一张申请单只能申请退/换货商品一种）</h6>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>商品型号<span class="need">*</span></th>
+                        <td><input id="returnProductCode" class="txt" value="@(returnProduct.Code)" /></td>
+                        <th>购买数量<span class="need">*</span></th>
+                        <td><input id="returnProductQty" class="txt" value="@(exchangeInfo.ReturnQty)"/></td>
+                        <th>购买金额</th>
+                        <td id="returnAmount">0</td>
+                    </tr>
+                    <tr id="exc0" @(exchangeInfo.ExchangeProductID != 0 ? null : new MvcHtmlString("style='display:none'"))>
+                        <th colspan="6">
+                            <h6>我要换成的商品是：</h6>
+                        </th>
+                    </tr>
+                    <tr id="exc1" @(exchangeInfo.ExchangeProductID != 0 ? null : new MvcHtmlString("style='display:none'"))>
+                        <th>商品型号<span class="need">*</span></th>
+                        <td><input id="exchageProductCode" class="txt" value="@(exchangeInfo.ExchangeProductID != 0 ? exchangeProduct.Code : "")" /></td>
+                        <th>购买数量<span class="need">*</span></th>
+                        <td><input id="exchageProductQty" class="txt" value="@(exchangeInfo.ExchangeProductID != 0 ? exchangeInfo.ExchangeQty.ToString() : "")"  /></td>
+                        <th>购买金额</th>
+                        <td id="exchangeAmount">@(exchangeInfo.ExchangeProductID != 0 ? exchangeInfo.ExchangeQty * (exchangeProduct.IsOnSale ? exchangeProduct.SpecialPrice : exchangeProduct.Price) : 0)</td>
+                    </tr>
+                    <tr>
+                        <th>退换货原因<span class="need">*</span></th>
+                        <td colspan="5">
+                            <textarea id="reason">@(exchangeInfo.Reason)</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td colspan="4"><input value="提交退换货申请单" id="submit" type="button" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

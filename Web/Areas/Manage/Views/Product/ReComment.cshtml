@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "回复评论";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #re { width: 360px; height: 140px; }
+        .bottons { text-align: center; margin-top: 10px; }
+    </style>
+    <script language="javascript">
+        $.ready(function () {
+            $("btnRe").on("click",function () {
+                $.post("/Manage/Product/ReComment/",function (res) {
+                    if(res.success) {
+                        alert("回复成功");
+                        closeDialog(true);
+                    }
+                },{
+                    id: $.getQueryString("id"),
+                    re: $("re").value
+                });
+            });
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th valign="top">回复内容：</th>
+            <td>
+                <textarea id="re" name="re">@ViewBag.re</textarea></td>
+        </tr>
+    </table>
+    <div class="bottons"><a id="btnRe" class="btn" href="javascript:;"><em>回复</em></a></div>
+</div>

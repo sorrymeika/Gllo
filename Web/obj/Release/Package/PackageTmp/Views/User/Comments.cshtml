@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "我的评论";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/user.css" />
+    <script type="text/javascript">
+        $.ready(function () {
+            var media="@Gllo.Sys.Config.MediaServer";
+
+            function clearAllNode(parentNode) {
+                while(parentNode.firstChild) {
+                    var oldNode=parentNode.removeChild(parentNode.firstChild);
+                    oldNode=null;
+                }
+            }
+            function showMsg(msg) {
+                clearAllNode($("list"));
+                $("TD",$("TR",$("list"))).html(msg).prop({ "align": "left","colSpan": 2 });
+            }
+
+            function load(page,pageSize) {
+                showMsg("正在载入...");
+                $.post("/User/GetComments/",function (res) {
+                    if(res.success) {
+                        if(res.total==0) {
+                            showMsg("您还未发表过评论");
+                        } else {
+                            clearAllNode($("list"));
+                            var tr;
+                            $.each(res.data,function (data) {
+                                $("IMG",$("A",$("TD",row=$("TR",$("list"))).css({ padding: "10px 0px 0px 0px","textAlign": "center" })).prop("href","/Product/"+data.ProductID+".html")).prop("src",media+data.PictureUrl).css("height: 60px; width: 60px; border: 1px solid #ddd; padding: 2px;");
+                                var td=$("TD",row).prop("vAlign","top").css("padding-top:6px;");
+
+                                $("A",$("B",td)).prop("href","/product/"+data.ProductID+".html").html(data.Name);
+                                $("SPAN",td).html("评分："+data.Score).css("margin-left:15px;color:#666;");
+                                $("SPAN",td).html("["+data.CommentTime+"]").css("margin-left:15px;color:#666;");
+                                $("BR",td);
+
+                                $("DIV",td).html(data.Content).css("padding:2px 4px;;color:#333;");
+
+                                if(data.Re) {
+                                    $("P",td).html("<b>客服回复：</b>"+data.Re).css("border:1px solid #dedede;color:#666;padding:4px;margin:4px;background:#f1f1f1;");
+                                }
+                            });
+
+                        }
+                        $.page(page,pageSize,res.total,$("page"),function (pageIndex) {
+                            load(pageIndex,pageSize);
+                        });
+
+                    } else
+                        showMsg(res.msg);
+                },{
+                    page: page,
+                    pageSize: pageSize
+                });
+            };
+
+            load(1,10)
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="here"><a href="/">首页</a>&gt;<a href="/Account.html">我的账户</a>&gt;<span>我的评论</span></div>
+    <div class="sidebar">
+        <div class="newsCates">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine"></div>
+                    <div class="boxTitBG"><strong>用户中心</strong></div>
+                </div>
+            </div>
+            <div class="boxCon">
+                <div class="catesCon">
+                    <dl>
+                        <dt><a>交易管理</a></dt>
+                        <dd style="display: block">
+                            <ul>
+                                <li><b><a href="/User/Orders.html">我的订单</a></b></li>
+                                <li><b><a href="/Cart.html">购物车</a></b></li>
+                                <li><b><a href="/User/Fav.html">我的收藏</a></b></li>
+                                <li class="cur"><b><a href="/User/Comments.html">我的评论</a></b></li>
+                            </ul>
+                        </dd>
+                        <dt><a>账号管理</a></dt>
+                        <dd style="display: block">
+                            <ul>
+                                <li><b><a href="/User/Info.html">个人设置</a></b></li>
+                                <li><b><a href="/User/Password.html">修改密码</a></b></li>
+                                <li><b><a href="/User/Msgs.html">信息管理</a></b></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="helpcenter">
+        <div class="helpcenterCon">
+            <h2>评论列表</h2>
+            <table class="list">
+                <tr>
+                    <th width="80">商品</th>
+                    <th>详情</th>
+                </tr>
+                <tbody id="list">
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="2" id="page" class="page"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

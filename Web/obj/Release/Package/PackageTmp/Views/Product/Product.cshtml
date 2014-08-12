@@ -1,0 +1,489 @@
+﻿@{
+    ViewBag.navIndex = 2;
+    Gllo.Models.ProductObj productObj = ViewBag.product;
+    Gllo.Models.JsonArray allCates = ViewBag.allCates;
+    Gllo.Models.JsonArray cates = ViewBag.cates;
+    IList<Gllo.Models.ProductPictureObj> pics = productObj.ProductPictures;
+    IList<Gllo.Models.ExpressObj> express = ViewBag.express;
+
+    ViewBag.Title = productObj.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #txtComment{ width: 550px; height:70px; border: 1px solid #bdbdbd; }
+        #txtCmtCC { width: 60px; }
+        .cmtCC{ float: left; }
+        .cmtCC input{ float: left; height: 19px; }
+        .cmtCC img{ float: left; margin-left: 2px; }
+        .cmtCC a{ float: left;margin: 2px 0px 0px 2px; }
+        #comments { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
+    </style>
+
+    <script type="text/javascript">
+        var colorId=0;
+
+        $.ready(function () {
+            var pics=$("prodSPicList").getElementsByTagName("IMG");
+            var bPics=$("prodPics").getElementsByTagName("IMG");
+            var vPics=$("viewPics").getElementsByTagName("IMG");
+            if(pics&&pics.length>0) {
+                var curr=0;
+                $.each(pics,function (pic,i) {
+                    $(pic).on("click",function () {
+                        if(i!=curr) {
+                            bPics[curr].style.display="none";
+                            vPics[curr].style.display="none";
+                            pics[curr].css("");
+                            curr=i;
+                            bPics[curr].style.display="";
+                            vPics[curr].style.display="";
+                            pics[curr].css("curr");
+                        }
+
+                    });
+
+                    $(bPics[i]).on("mousemove",function (e) {
+                        $("viewPics").style.display="block";
+                        $("cmbExpress").style.display="none";
+                        var x,y;
+                        if(window.event) {
+                            x=window.event.offsetX;
+                            y=window.event.offsetY;
+                        } else {
+                            x=e.layerX;
+                            y=e.layerY;
+                        }
+                        var x=x*2-150;
+                        var y=y*2-150;
+                        vPics[i].style.cssText="left:"+(x* -1)+"px;top:"+(y* -1)+"px";
+
+                    }).on("mouseout",function () {
+                        $("viewPics").style.display="none";
+                        $("cmbExpress").style.display="block";
+                    });
+
+                });
+                if(pics.length>3) {
+                    var index=0;
+                    var pic=$("picC");
+
+                    function checkBtn() {
+                        if(index==0)
+                            $("prevPic").css("dsb");
+                        else
+                            $("prevPic").css("")
+
+                        if(index==pics.length-3)
+                            $("nextPic").css("dsb");
+                        else
+                            $("nextPic").css("")
+                    };
+
+                    $("nextPic").css("").on("click",function () {
+                        if(index!=pics.length-3) {
+                            var w=index* -90,end=(index+1)* -90;
+                            var timer=window.setInterval(function () {
+                                w-=6;
+
+                                if(w<=end) {
+                                    pic.style.marginLeft=end+"px";
+                                    window.clearInterval(timer);
+                                } else
+                                    pic.style.marginLeft=w+"px";
+
+                            },20);
+
+                            index+=1;
+                        }
+
+                        checkBtn();
+
+                    });
+
+                    $("prevPic").css("dsb").on("click",function () {
+                        if(index!=0) {
+                            var w=index* -90,end=(index-1)* -90;
+                            var timer=window.setInterval(function () {
+                                w+=6;
+
+                                if(w>=end) {
+                                    pic.style.marginLeft=end+"px";
+                                    window.clearInterval(timer);
+                                } else
+                                    pic.style.marginLeft=w+"px";
+
+                            },20);
+
+                            index-=1;
+                        }
+
+                        checkBtn();
+                    });
+                }
+            }
+
+            var colorsCon=$("colors");
+            if(colorsCon) {
+                var clrs=colorsCon.getElementsByTagName("IMG");
+                var currClr=0;
+                $.each(clrs,function (color,i) {
+                    $(color).on("click",function () {
+                        if(currClr!=i) {
+                            clrs[currClr].css("");
+                            currClr=i;
+                            clrs[currClr].css("curr");
+                        }
+                        colorId=parseInt(currClr[i].attr("color"));
+                    });
+                });
+            }
+        });
+    </script>
+}
+<div class="main">
+    <div class="here"><a href="/">首页</a>&gt;<a href="/product.html">产品中心</a>@ViewBag.current&gt;<span>@productObj.Name</span></div>
+    <div class="prdMain">
+        <div class="sidebar">
+            <div class="cates">
+                <div class="catesTit">
+                    <div class="catesTitL">
+                        <div class="catesTitR">商品分类 </div>
+                    </div>
+                </div>
+                <div class="catesCon">
+                    @for (int i = 0; i < allCates.Count; i++)
+                    {
+                        <dl>
+                            <dt id="pCate@(i)"><a href="/list/@(allCates[i]["categoryID"]).html">@allCates[i]["categoryName"]</a></dt>
+                            @if (allCates[i].ContainsKey("children"))
+                            {
+                                Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)allCates[i]["children"];
+                                <dd id="sCate@(i)">
+                                    <ul>
+                                        @for (int j = 0; j < children.Count; j++)
+                                        {
+                                            <li @(productObj.CategoryID == (int)children[j]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><b><a href="/list/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></b></li>
+                                                                                                                                                                                                      if (productObj.CategoryID == (int)children[j]["categoryID"])
+                                                                                                                                                                                                      {
+                                            <script>
+                                                $.ready(function () { $("sCate@(i)").style.display="block"; });</script>
+                                                                                                                                                                                                      }
+                                        }
+                                    </ul>
+                                </dd>
+                                        if (productObj.CategoryID == (int)allCates[i]["categoryID"])
+                                        {
+                                <script>
+                                    $.ready(function () { $("sCate@(i)").style.display="block";$("pCate@(i)").css("cur"); });</script>
+                                        }
+                            }
+                        </dl>
+                    }
+                </div>
+                <script type="text/javascript">
+                $.ready(function () {
+                    var currentIndex= -1;
+                    for(var i=0;i<@(allCates.Count);i++) {
+                        $("pCate"+i).on("click",(function (j) {
+                            return function () {
+                                if(currentIndex!=j&&document.getElementById("sCate"+j)) {
+                                    if(currentIndex!== -1)
+                                        $("sCate"+currentIndex).css({ display: "none" });
+                                    $("sCate"+j).css({ display: "block" });
+                                    currentIndex=j;
+                                }
+                            }
+                        })(i));
+                    }
+                }); 
+                function addToFav(id){
+                    $.post("/User/AddFav/",function (res) {
+                        if(res.success) {
+                            alert("您选择的商品已加入您的收藏！");
+
+                        } else if(res.msg=="IS_NOT_LOGIN") {
+                            login();
+                        } else {
+                            alert(res.msg);
+                        }
+                    },{
+                        ids: id
+                    });
+                };
+                </script>
+            </div>
+            <div class="cates recommend">
+                <div class="recommendTit">产品推荐 </div>
+                <div class="recommendCon">
+                    @if (ViewBag.recommends != null)
+                    {
+                        Gllo.Models.JsonArray products = ViewBag.recommends;
+                        foreach (Gllo.Models.JsonObject prd in products)
+                        {
+                        <dl>
+                            <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                            <dd>
+                                <p><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></p>
+                                <span>￥@((decimal)prd["SpecialPrice"] == 0 || (decimal)prd["SpecialPrice"] >= (decimal)prd["Price"] ? prd["Price"] : prd["SpecialPrice"])</span></dd>
+                        </dl>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="prodContent">
+            <div class="prodCon">
+                <h1>@productObj.Name</h1>
+                <div class="prodPics">
+                    <div id="prodPics">
+                        @if (pics != null)
+                        {
+                            for (int i = 0; i < pics.Count; i++)
+                            { 
+                            <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                            }
+                        }
+                    </div>
+                    <div style="text-align:center;padding:5px;"><a href="javascript:addToFav(@(productObj.ProductID));">(收藏该商品)</a></div>
+                    <div class="prodSPicList"><a id="prevPic" class="dsb"></a>
+                        <div id="prodSPicList">
+                            <ul id="picC">
+                                @if (pics != null)
+                                {
+                                    for (int i = 0; i < pics.Count; i++)
+                                    { 
+                                    <li><img@(i == 0 ? new MvcHtmlString(" class='curr'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)"/></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <a id="nextPic" class="dsb"></a>
+                    </div>
+                </div>
+                <div class="prodInfo">
+                    <div id="viewPics" class="viewPic" style="display: none;">
+                        @if (pics != null)
+                        {
+                            for (int i = 0; i < pics.Count; i++)
+                            { 
+                            <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                            }
+                        }
+                    </div>
+                    <space[]></space>
+                    <ul>
+                        @if (productObj.SpecialPrice == 0 || productObj.SpecialPrice >= productObj.Price)
+                        { 
+                            <li>价　　格：<b>￥@(productObj.Price.ToString("0"))</b></li>
+                        }
+                        else
+                        { 
+                            <li>原　　价：<del>￥@(productObj.Price.ToString("0"))</del></li>
+                            <li>现　　价：<b>￥@(productObj.SpecialPrice.ToString("0"))</b></li>
+                        }
+                        <li>库　　存：@(productObj.Quantity)</li>
+                        <li>累计卖出：@(productObj.SellNum)</li>
+                    </ul>
+                    @if (productObj.Colors != null && productObj.Colors.Count != 0)
+                    {
+                        <div id="colors" class="colors">
+                            <div class="colorsTit">颜　　色：</div>
+                            @for (int i = 0; i < productObj.Colors.Count; i++)
+                            { 
+                                <img@(i == 0 ? new MvcHtmlString(" class='curr'") : null) src="@(Gllo.Sys.Config.MediaServer + productObj.Colors[i].Url)" color='@productObj.Colors[i].PictureID' /> 
+                            }
+                        </div>
+                    }
+                    <div class="express">
+                        <table>
+                            <tr>
+                                <th valign="top">运　　费：</th>
+                                <td>￥@(productObj.Freight)</td>
+                            </tr>
+                            @if (productObj.Freight != productObj.Freight1)
+                            {
+                            <tr>
+                                <th style='padding-top:15px'>次件运费：</th>
+                                <td style='padding-top:15px'>￥@(productObj.Freight1)</td>
+                            </tr>
+                            }
+                        </table>
+                    </div>
+<table style="display:none">
+<tr><td><input type="radio" name="radFreight" value="1" checked="checked" />
+                                    快递：</td>
+                                <td>
+                                    <select id="cmbExpress">
+                                        @if (express != null)
+                                        {
+                                            for (int i = 0; i < express.Count; i++)
+                                            {
+                                            <option value="@express[i].ExpressID">@express[i].ExpressName</option>
+                                            }
+                                        }
+                                    </select>
+                                </td></tr>
+<tr>
+                                <td><input type="radio" name="radFreight" value="0" />
+                                    物流：</td>
+                                <td>由客户自己承担</td>
+                            </tr>
+</table>
+
+                    <div class="buy">
+                        <div>我 要 买：<input id="buyQty" value="1" /></div>
+                        <div class="buyBtns"><input id="btnBuyNow" type="button" value="" onclick="addToCart(1)" />
+                        <input id="btnAddToCart" type="button" value="" onclick="addToCart(0)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prodDesc">
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">规格参数</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    <ul>
+                        <li>产品类型：@(productObj.Type)</li>
+                        <li>系列：@(productObj.Serial)</li>
+                        <li>型号：@(productObj.Code)</li>
+                        <li>材质：@(productObj.Material)</li>
+                        <li>尺寸重量：@(productObj.Weight)</li>
+                        <li>产品特征：@(productObj.Characteristic)</li>
+                        <li>设计师：@(productObj.Designer)</li>
+                    </ul>
+                </div>
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">产品介绍</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    @(new MvcHtmlString(productObj.Description))
+                </div>
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">会员评论</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    <table class="prodCmt">
+                        <tr>
+                            <td valign=top style="padding-top:6px;">您的评分：</td>
+                            <td>
+                                <ul id="score" class="score">
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign=top style="padding-top:6px;">您的评价：</td>
+                            <td style="padding-top:6px;"><textarea id="txtComment"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td style="padding-top:6px;">验 证 码：</td>
+                            <td><div class="cmtCC"><input id="txtCmtCC" class="txt" /><img id="cmtCC" src="/CheckCode/2.jpg" /><a href="javascript:changeCheckCode('cmtCC');" style="color:#cc0000;">看不清换一张</a></div><div style="float:right"><input class="redBtn" type="button" id="btnComment" value="发表评论" /></div></td>
+                        </tr>
+                    </table>
+                    <div id="comments"></div>
+                    <div id="page" class="page"></div>
+                </div>
+                <script type="text/javascript">
+
+                    $.ready(function () {
+                        var scoreNum=5;
+                        var stars=$("score").getElementsByTagName("LI");
+                        $.each(stars,function (item,i) {
+                            $(item).on("click",function () {
+                                scoreNum=i+1;
+                                $.each(stars,function (starj,j) {
+                                    if(j<=i) {
+                                        starj.css("s");
+                                    } else
+                                        starj.css("");
+                                });
+                            });
+                        });
+
+                        var loadCmt=function (page,pageSize) {
+                            $("comments").html("正在载入用户评论..");
+                            $.post("/Product/GetComments/", function(res){
+                                if(res.success) {
+                                    if (res.total==0)
+                                        $("comments").html("暂无评论。");
+                                    else {
+                                        $("comments").html("");
+                                        $.each(res.data, function(data) {
+                                            var cmtRow=$("DIV",$("comments")).css("margin:10px 10px 0px 10px; padding-bottom:10px;height:100%;overflow:hidden;border-bottom:1px dotted #ddd;line-height:19px;");
+                                            $("SPAN",cmtRow).html(data.UserName).css("color:#666;");
+                                            $("SPAN",cmtRow).html(data.CommentTime).css("margin-left:10px;color:#999;");
+                                            $("SPAN",cmtRow).html("评分:"+data.Score).css("margin-left:10px;color:#999;");
+                                            $("BR",cmtRow);
+                                            $("P",cmtRow).html(data.Content.replace("\r\n","<br>").replace("\r","<br>").replace("\n","<br>")).css("padding:4px;");
+                                            if (data.Re) {
+                                                $("P",cmtRow).html("<b>客服回复</b>"+data.Re.replace("\r\n","<br>").replace("\r","<br>").replace("\n","<br>")).css("border:1px solid #dedede;color:#666;padding:4px;margin:4px;background:#f1f1f1;");
+                                            }
+                                        });
+                                    }
+                                    $.page(page,pageSize,res.total,$("page"),function (pageIndex) {
+                                        load(pageIndex,pageSize);
+                                    });
+                                } else
+                                    $("comments").html(res.msg);
+                            }, {
+                                id: @(productObj.ProductID),
+                                page: page,
+                                pageSize: pageSize
+                            });
+                        };
+
+                        loadCmt(1,10);
+
+                        $("btnComment").on("click",function () {
+                            if (!$("txtComment").value) {
+                                alert("请填写您的评价！");
+                                return;
+                            }
+                            $.post("/Product/AddComment/",function (res) {
+                                if(res.success) {
+                                    alert("恭喜，评价成功！");
+                                    $("txtComment").value="";
+                                    $("txtCmtCC").value="";
+                                    loadCmt(1,10);
+
+                                } else if(res.msg=="IS_NOT_LOGIN") {
+                                    login();
+                                } else {
+                                    alert(res.msg);
+                                }
+                            },{
+                                productId: @(productObj.ProductID),
+                                content: $("txtComment").value,
+                                checkCode:$("txtCmtCC").value,
+                                score: scoreNum
+                            });
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"> function addToCart(a) { var expressType=$$("radFreight").value();if (expressType==1)expressType=$("cmbExpress").value;$.post("/Order/AddToCart/",function (res) { if (res.success) { if(a) window.location.href = "/Cart.html"; else alert("放入购物车成功！"); } else alert(res.msg); },{ productId: @(productObj.ProductID), quantity: $("buyQty").value,express:expressType,color:(colorId||0) }); };
+    $.ready(function(){
+        if (!$.ie6)
+            $("toTop").style.left=(document.documentElement.clientWidth-950)/2+950+"px";
+        $("toTop").on("click",function(){
+            window.scrollTo(0,0);
+        })
+    });
+</script>
+<a id="toTop" class="toTop" href="javascript:void(0);"></a>
+

@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.navIndex = 6;
+    Gllo.Models.NewsObj news = ViewBag.news;
+    ViewBag.Title = "帮助中心";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="main">
+    <div class="here">
+        <a href="/">首页</a>&nbsp;&nbsp;&gt;<span>帮助中心</span></div>
+    <div class="sidebar">
+        @if (ViewBag.cates != null)
+        {
+            Gllo.Models.JsonArray cates = ViewBag.cates;
+            <div class="newsCates">
+                <div class="box">
+                    <div class="boxTit">
+                        <div class="boxTLine">
+                        </div>
+                        <div class="boxTitBG">
+                            <strong>帮助中心</strong></div>
+                    </div>
+                </div>
+                <div class="boxCon">
+                    <div class="catesCon">
+                        @for (int i = 0; i < cates.Count; i++)
+                        {
+                            <dl>
+                                <dt><a>@cates[i]["categoryName"]</a></dt>
+                                @if (cates[i].ContainsKey("news"))
+                                {
+                                    Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)cates[i]["news"];
+                                    <dd style="display: block"><ul>
+                                        @if (children != null)
+                                        {
+                                            for (int j = 0; j < children.Count; j++)
+                                            {
+                                            <li @((int)children[j]["NewsID"] == news.NewsID ? new MvcHtmlString(" class='cur'") : null)><b><a href="/help/@(children[j]["NewsID"]).html">@children[j]["Title"]</a></b></li>
+                                            }
+                                        }
+                                    </ul>
+                                    </dd>
+                                }
+                            </dl>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="helpcenter">
+        <h1>@(new MvcHtmlString(news.Title))</h1>
+        <div class="helpcenterCon">
+                @(new MvcHtmlString(news.Content))
+        </div>
+    </div>
+</div>

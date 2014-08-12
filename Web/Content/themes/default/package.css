@@ -1,0 +1,46 @@
+﻿.searchPkg { margin-top: 30px; background-color: #ececec; border-top: 1px solid #dbdbdb; border-bottom: 1px solid #dbdbdb; padding: 8px 10px; }
+.searchPkg table { width: 100%; }
+.floor { padding-left: 30px; font-size: 14px; color: #217272; }
+.pkgBlk { width: 100%; overflow: hidden; }
+.pkgBlk dl { width: 355px; float: left; margin: 8px 0px 0px 8px; _display: inline; border: 1px solid #ddd; overflow: hidden; padding: 5px 0px 6px 0px; }
+.pkgBlk img { width: 190px; height: 190px; border: 1px solid #dbdbdb; }
+.pkgBlk dt { line-height: 25px; height: 25px; overflow: hidden; margin: 0px 6px; }
+.pkgBlk dt a { font-size: 14px; }
+.pkgBlk dd { margin: 10px 0px 0px 6px; }
+.pkgBlk dd a { float: left; }
+.pkgBlk dd p { float: right; width: 142px; _display: inline; margin: 10px 10px 0px 0px; height: 180px; overflow: hidden; }
+
+.page { margin-bottom: 10px; }
+
+.pkg { margin-top: 10px; }
+
+.prodContent { float: right; width: 740px; overflow: hidden; }
+.prodCon { overflow: hidden; width: 740px; }
+.prodInfo { width: 420px; }
+.prodDescCon { width: 729px; overflow: hidden; padding: 6px 0px 6px 8px; }
+
+
+.group { }
+.group .item { float: left; width: 140px; margin: 5px 5px 0px 0px; _display: inline; }
+.group .item .itemCon { border: 1px solid #ddd; }
+.group .item strong { text-align: center; color: #217272; margin-left: 6px; }
+.group .item img { width: 138px; height: 138px; display: block; }
+.group .item p { width: 138px; line-height: 20px; padding: 4px 5px; }
+.group .item a { display: block; background: #217272; color: #fff; font-weight: bold; height: 20px; text-align: center; line-height: 21px; overflow: hidden; margin-top: 4px; }
+.group .item a.curr { background: url(images/propack_bg0.gif) -3px -4px; height: 36px; }
+
+.dcon { width: 100%; overflow: hidden; display: none; }
+.pcont { width: 100%; overflow: hidden; clear: both; height: 0px; padding-top: 10px; }
+.citem { float: left; width: 234px; margin: 5px 0px 0px 5px; _display: inline; text-align: center; background: #f1f1f1; line-height: 20px; }
+.citem img { width: 234px; height: 234px; display: block; }
+.citem a { width: 234px; background: #217272; color: #fff; font-weight: bold; height: 22px; text-align: center; line-height: 23px; overflow: hidden; margin-top: 4px; display: block; }
+.citem p { line-height: 20px; padding: 4px 5px; }
+
+h1 { font-size: 14px; font-weight: normal; text-align: center; color: #8ad5be; }
+#btnBuyPkg { width: 114px; height: 33px; background: url(images/pkgBuy.gif) no-repeat; margin-left: 15px; cursor: pointer; border: 0px; }
+#btnPkgCart { width: 154px; height: 34px; background: url(images/pkgCart.gif) no-repeat; cursor: pointer; border: 0px; margin-top: 15px; }
+.buy { border: 1px solid #f1f1f1; background: #fdfdfd; padding: 10px; font-size: 14px; }
+.buy b { font-size: 16px; color: #cc0000; }
+.buyBtm { margin: 15px 0px 0px 15px; }
+.fav { color:#7b3600; display: inline-block; background: url(images/pkgFav.gif) no-repeat; padding-left: 13px; font-size: 12px; }
+

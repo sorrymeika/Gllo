@@ -1,0 +1,218 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .cates { float: left; width: 182px; height: 460px; margin-left: -188px; display: inline; }
+        #cates { margin-top: 0px; width: 160px; height: 430px; overflow: auto; }
+        .main { padding-left: 188px; }
+        .news { float: left; width: 100%; }
+        .search { padding: 4px 0px; color: #666; }
+        #txtPriceFrom { width: 80px; }
+        #txtPriceTo { width: 80px; }
+        #txtKeywords { width: 80px; }
+        .search select { margin-right: 2px; }
+        label input { margin: 1px 3px 0px 0px;*margin-top: -4px;vertical-align: top; }
+        .select { width: 80px; overflow: hidden; height: 18px; border: 1px solid #bdbdbd; margin-left:2px; }
+        .select div { width: 78px; overflow: hidden; height: 16px; border: 1px solid #fff; }
+        .select select { height: 20px; float: left; margin: -2px 0px 0px -2px; width: 82px; *font-size: 11px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var selectedRow;
+
+            function loadCates() {
+                $("cates").innerHTML="正在载入...";
+                $.post("/manage/Package/GetPackageCates/",function (res) {
+
+                    if(res.success) {
+                        $("cates").innerHTML="";
+                        loadCateData(res.data,0);
+                    }
+                    else
+                        $("cates").innerHTML=res.msg;
+                });
+            };
+            function loadCateData(data,deep,container,parentData) {
+                deep=deep||0;
+                container=container||$("cates");
+                var c=0,n=data.length;
+                $.each(data,function (dataRow) {
+                    c++;
+                    var childDeep=deep+1;
+                    var row=$("UL",container).on("click",function () {
+                        if(selectedRow)
+                            selectedRow.css("");
+                        this.css("selected");
+                        selectedRow=this;
+                        search(1);
+                    });
+                    dataRow._isLastLeave=c==n;
+                    dataRow._parentData=parentData;
+                    row.data=dataRow;
+                    var leaveH=[dataRow._isLastLeave?"treeLast":"space"];
+                    var pdata=dataRow._parentData;
+                    while(pdata) {
+                        leaveH.push(pdata._isLastLeave?"treeNo":"treeSpace");
+                        pdata=pdata._parentData;
+                    }
+                    for(var i=deep-1;i>=0;i--) {
+                        $("LI",row).css(leaveH[i]);
+                    }
+                    if(dataRow.children) {
+                        $("LI",row).css("minus").on("click",function () {
+                            if(row.childHidden) {
+                                this.css("minus");
+                                row.childrenCon.style.display="block";
+                            } else {
+                                this.css("plus");
+                                row.childrenCon.style.display="none";
+                            }
+                            row.childHidden=!row.childHidden;
+                        });
+                        row.childrenCon=$("DIV",container);
+                        loadCateData(dataRow.children,childDeep,row.childrenCon,dataRow)
+                    }
+                    else
+                        $("LI",row).css("no");
+
+                    $("LI",row).html(dataRow.categoryName);
+                });
+            };
+
+            var grid=new $.Grid({
+                id: "gridCon",
+                pageEnabled: true,
+                onRowSelect: function (row) {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    width: 50,
+                    header: "编号",
+                    columnName: "PhotoID"
+                },{
+                    width: 300,
+                    header: "名称",
+                    align: "left",
+                    columnName: "Name"
+                },{
+                    width: 400,
+                    header: "简介",
+                    align: "left",
+                    columnName: "Info"
+                }]
+            });
+
+            var page=1;
+            var pageSize=10;
+
+            var selectedProductRow,urlData="";
+            function search() {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+
+                var params={
+                    categoryIDs: selectedRow?selectedRow.data.categoryID:0,
+                    page: page,
+                    pageSize: pageSize,
+                    keywords: $("txtKeywords").value
+                };
+                grid.load("/manage/Photo/GetPhotos/",params);
+            };
+
+            search();
+
+            $("btnModify").css("btnDsb").prop("disabled",true);
+            $("btnDelete").css("btnDsb").prop("disabled",true);
+
+            loadCates();
+
+            $("btnSearch").on("click",function () {
+                search(1);
+            });
+
+            $("btnAdd").on("click",function () {
+                if(this.prop("disabled"))
+                    return false;
+
+                openDialog("新建照片",850,"90%","/Manage/Photo/AddPhoto.html",function () {
+                    search(1);
+                });
+
+                return false;
+            });
+
+            $("btnModify").on("click",function () {
+                selectedProductRow=grid.getSelectedRow();
+                if(this.prop("disabled")||!selectedProductRow)
+                    return false;
+
+                openDialog("修改照片",850,"90%","/Manage/Photo/ModifyPhoto.html?id="+selectedProductRow.data.PhotoID,function () {
+                    search(1,10);
+                });
+
+                return false;
+            });
+
+            $("btnDelete").on("click",function () {
+                selectedProductRow=grid.getSelectedRow();
+                if(this.prop("disabled")||!selectedProductRow)
+                    return false;
+
+                if(window.confirm("您确定要删除该照片吗？")) {
+                    $.post("/Manage/Photo/DeletePhoto/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            search(1);
+                        }
+                        else
+                            alert(res.msg);
+                    },{
+                        id: selectedProductRow.data.PhotoID
+                    });
+                }
+
+                return false;
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="cates">
+        <div class="container">
+            <div class="content">
+                <div class="tree">
+                    <strong>整体空间分类</strong>
+                    <div id="cates">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="news">
+        <div class="container">
+            <div class="content">
+                <div class="toolbar">
+                    <a id="btnAdd" class="btn"><em><span class="ico2">新建照片</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">编辑照片</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除照片</span></em></a>
+                </div>
+                <div class="search">
+                    <table>
+                        <tr>
+                            <td>&nbsp;关键词:</td>
+                            <td colspan="2"><input id="txtKeywords" class="txt" /></td>
+                            <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="gridCon">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

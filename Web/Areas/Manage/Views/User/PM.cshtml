@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "短消息管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var P={
+                grid: new $.Grid({
+                    id: "grid",
+                    pageEnabled: true,
+                    onRowSelect: function () {
+                        $("del").prop("disabled",false).css("btn");
+                        $("modify").prop("disabled",false).css("btn");
+                    },
+                    columns: [{
+                        header: "编号",
+                        columnName: "PMID",
+                        width: 40
+                    },{
+                        header: "标题",
+                        columnName: "Title",
+                        align: "left",
+                        width: 150
+                    },{
+                        header: "用户",
+                        width: 80,
+                        type: "custom",
+                        custom: function (cell,data) {
+                            cell.html(data.UserID==0?"群发":data.UserName);
+                        }
+                    },{
+                        header: "发送日期",
+                        columnName: "PMTime",
+                        width: 80
+                    }],
+                    children: [{
+                        custom: function (container,data,row) {
+                            $("B",container).html("正文：");
+                            $("DIV",container).html(data.Content);
+                        }
+                    }]
+
+                }),
+                search: function () {
+                    $("del").prop("disabled",true).css("btnDsb");
+                    $("modify").prop("disabled",true).css("btnDsb");
+                    P.grid.load("/Manage/User/GetPM/",{
+                        page: 1,
+                        pageSize: 10,
+                        userName: $("userName").value,
+                        dtFrom: $("dtFrom").value,
+                        dtTo: $("dtTo").value
+                    });
+                },
+                init: function () {
+                    $("pmall").on("click",function () {
+                        openDialog("群发短消息",700,400,"/Manage/User/AddPM.html?id=0",function () {
+                            P.search();
+                        });
+                    });
+
+                    new $.Calendar("dtFrom");
+                    new $.Calendar("dtTo");
+                    P.search();
+
+                    $("search").on("click",P.search);
+
+                    $("del").on("click",function () {
+
+                        if(!this.disabled&&window.confirm("您确定要删除吗？")) {
+                            var row=P.grid.getSelectedRow();
+                            $.post("/Manage/User/DeletePM/",function (res) {
+                                if(res.success) {
+                                    alert("删除成功！");
+                                    P.search();
+                                } else {
+                                    alert(res.msg);
+                                }
+                            },{
+                                id: row.data.PMID
+                            });
+                        }
+                    });
+
+                    $("modify").on("click",function () {
+                        if(!this.disabled) {
+                            var row=P.grid.getSelectedRow();
+
+                            openDialog("修改短消息",700,400,"/Manage/User/ModifyPM.html?id="+row.data.PMID,function () {
+                                P.search();
+                            });
+                        }
+                    })
+                }
+            };
+
+            P.init();
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <a id="pmall" class="btn"><em><span class="ico7">群发短消息</span></em></a>
+                <a id="modify" class="btnDsb"><em><span class="ico3">修改短消息</span></em></a>
+                <a id="del" class="btnDsb"><em><span class="ico4">删除短消息</span></em></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>发送日期 从</td>
+                        <td><input id="dtFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="dtTo" class="txt" /></td>
+                        <td>&nbsp;用户名</td>
+                        <td><input id="userName" class="txt" /></td>
+                        <td><a id="search" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid">
+            </div>
+        </div>
+    </div>
+</div>

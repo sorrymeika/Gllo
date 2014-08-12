@@ -1,0 +1,336 @@
+﻿@{
+    ViewBag.navIndex = 2;
+    Gllo.Models.ProductObj productObj = ViewBag.product;
+    Gllo.Models.JsonArray allCates = ViewBag.allCates;
+    Gllo.Models.JsonArray cates = ViewBag.cates;
+    IList<Gllo.Models.ProductPictureObj> pics = productObj.ProductPictures;
+    IList<Gllo.Models.ExpressObj> express = ViewBag.express;
+
+    ViewBag.Title = productObj.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #txtComment{ width: 550px; height:70px; border: 1px solid #bdbdbd; }
+        #txtMessage { width: 550px; height:60px; border: 1px solid #bdbdbd; }
+        #btnMessage { margin-left: 10px; }
+        #txtCmtCC { width: 60px; }
+        #txtMsgCC { width: 60px; }
+        .cmtCC{ float: left; }
+        .cmtCC input{ float: left; height: 19px; }
+        .cmtCC img{ float: left; margin-left: 2px; }
+        .cmtCC a{ float: left;margin: 2px 0px 0px 2px; }
+        #comments { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
+        #sendto { color:#c00; position: absolute; }
+        #areas { position: absolute; margin-top: 20px; padding: 10px; border: 2px solid #c00; background:#fff; }
+        #areas select { width: 80px; }
+    </style>
+
+    <script type="text/javascript">
+        var productID=@(productObj.ProductID);
+        var colorId=0;
+        @if (express != null)
+        {
+        <text>var expressID=@(express[0].ExpressID);</text>
+        }
+    </script>
+    <script type="text/javascript" src="/Scripts/website/product.js"></script>
+}
+<div class="main">
+    <div class="here"><a href="/">首页</a>&gt;<a href="/product.html">产品中心</a>@ViewBag.current&gt;<span>@productObj.Name</span></div>
+    <div class="prdMain">
+        <div class="sidebar">
+            <div class="cates">
+                <div class="catesTit">
+                    <div class="catesTitL">
+                        <div class="catesTitR">商品分类 </div>
+                    </div>
+                </div>
+                <div class="catesCon">
+                    @for (int i = 0; i < allCates.Count; i++)
+                    {
+                        <dl>
+                            <dt id="pCate@(i)"><a href="/list/@(allCates[i]["categoryID"]).html">@allCates[i]["categoryName"]</a></dt>
+                            @if (allCates[i].ContainsKey("children"))
+                            {
+                                Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)allCates[i]["children"];
+                                <dd id="sCate@(i)">
+                                    <ul>
+                                        @for (int j = 0; j < children.Count; j++)
+                                        {
+                                            <li @(productObj.CategoryID == (int)children[j]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><b><a href="/list/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></b></li>
+                                                                                                                                                                                                      if (productObj.CategoryID == (int)children[j]["categoryID"])
+                                                                                                                                                                                                      {
+                                            <script>
+                                                $.ready(function () { $("sCate@(i)").style.display="block"; });</script>
+                                                                                                                                                                                                      }
+                                        }
+                                    </ul>
+                                </dd>
+                                        if (productObj.CategoryID == (int)allCates[i]["categoryID"])
+                                        {
+                                <script>
+                                    $.ready(function () { $("sCate@(i)").style.display="block";$("pCate@(i)").css("cur"); });</script>
+                                        }
+                            }
+                        </dl>
+                    }
+                </div>
+                <script type="text/javascript">
+                $.ready(function () {
+                    var currentIndex= -1;
+                    for(var i=0;i<@(allCates.Count);i++) {
+                        $("pCate"+i).on("click",(function (j) {
+                            return function () {
+                                if(currentIndex!=j&&document.getElementById("sCate"+j)) {
+                                    if(currentIndex!== -1)
+                                        $("sCate"+currentIndex).css({ display: "none" });
+                                    $("sCate"+j).css({ display: "block" });
+                                    currentIndex=j;
+                                }
+                            }
+                        })(i));
+                    }
+                }); 
+                </script>
+            </div>
+            <div class="cates recommend">
+                <div class="recommendTit">浏览历史 </div>
+                <div class="recommendCon">
+                    @if (ViewBag.recommends != null)
+                    {
+                        Gllo.Models.JsonArray products = ViewBag.recommends;
+                        foreach (Gllo.Models.JsonObject prd in products)
+                        {
+                        <dl>
+                            <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                            <dd>
+                                <p><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></p>
+                                <span>￥@((decimal)prd["SpecialPrice"] == 0 || (decimal)prd["SpecialPrice"] >= (decimal)prd["Price"] ? prd["Price"] : prd["SpecialPrice"])</span></dd>
+                        </dl>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="prodContent">
+            <div class="prodCon">
+                <h1>@productObj.Name</h1>
+                <div class="prodPics">
+                    <div id="prodPics">
+                        @if (pics != null)
+                        {
+                            for (int i = 0; i < pics.Count; i++)
+                            { 
+                            <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                            }
+                        }
+                    </div>
+                    <div style="text-align:center;padding:5px;"><a href="javascript:addToFav(@(productObj.ProductID));">(收藏该商品)</a></div>
+                    <div class="prodSPicList"><a id="prevPic" class="dsb"></a>
+                        <div id="prodSPicList">
+                            <ul id="picC">
+                                @if (pics != null)
+                                {
+                                    for (int i = 0; i < pics.Count; i++)
+                                    { 
+                                    <li><img@(i == 0 ? new MvcHtmlString(" class='curr'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)"/></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <a id="nextPic" class="dsb"></a>
+                    </div>
+                </div>
+                <div class="prodInfo">
+                    <div id="viewPics" class="viewPic" style="display: none;">
+                        @if (pics != null)
+                        {
+                            for (int i = 0; i < pics.Count; i++)
+                            { 
+                            <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                            }
+                        }
+                    </div>
+                    <space[]></space>
+                    <ul>
+                        @if (productObj.SpecialPrice == 0 || productObj.SpecialPrice >= productObj.Price)
+                        { 
+                            <li>价　　格：<b>￥@(productObj.Price.ToString("0"))</b></li>
+                        }
+                        else
+                        { 
+                            <li>原　　价：<del>￥@(productObj.Price.ToString("0"))</del></li>
+                            <li>现　　价：<b>￥@(productObj.SpecialPrice.ToString("0"))</b></li>
+                        }
+                        <li>库　　存：@(productObj.Quantity)</li>
+                        <li>累计卖出：@(productObj.SellNum)</li>
+                        <li>评　　论：<a style="color:#c00;text-decoration:underline" href="#comment">@(ViewBag.commentCount)条</a></li>
+                        
+                    </ul>
+                    @if (productObj.Colors != null && productObj.Colors.Count != 0)
+                    {
+                        <div id="colors" class="colors">
+                            <div class="colorsTit">颜　　色：</div>
+                            @for (int i = 0; i < productObj.Colors.Count; i++)
+                            { 
+                                <img@(i == 0 ? new MvcHtmlString(" class='curr'") : null) src="@(Gllo.Sys.Config.MediaServer + productObj.Colors[i].Url)" color='@productObj.Colors[i].PictureID' /> 
+                            }
+                        </div>
+                    }
+                    <div class="express">
+                        <table>
+                            <tr>
+                                <th style='padding-top:15px'>送　　至：</th>
+                                <td><a id="sendto" href="javascript:void(0);">[请选择]</a>
+                                    <div id="areas" style="display:none">
+                                        <select id="cmbProvince">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="cmbCity">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="cmbRegion">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <div style="padding-top:5px; text-align: right;">
+                                        <input class="redBtn" type="button" id="acceptArea" value="确认" />
+                                        <input class="redBtn" type="button" id="closeArea" value="关闭" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th valign="top" style='padding-top:15px'>运　　费：</th>
+                                <td id="tdFreight" style='padding-top:15px'>￥@(productObj.Freight)</td>
+                            </tr>
+                            @if (productObj.Freight != productObj.Freight1)
+                            {
+                            <tr id="trFreight1">
+                                <th style='padding-top:15px'>次件运费：</th>
+                                <td style='padding-top:15px' id="tdFreight1">￥@(productObj.Freight1)</td>
+                            </tr>
+                            }
+                            else
+                            { 
+                                <tr id="trFreight1" style="display:none;">
+                                    <th style='padding-top:15px'>次件运费：</th>
+                                    <td style='padding-top:15px' id="tdFreight1">￥@(productObj.Freight1)</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+<table style="display:none">
+<tr><td><input type="radio" name="radFreight" value="1" checked="checked" />
+                                    快递：</td>
+                                <td>
+                                    <select id="cmbExpress">
+                                        @if (express != null)
+                                        {
+                                            for (int i = 0; i < express.Count; i++)
+                                            {
+                                            <option value="@express[i].ExpressID">@express[i].ExpressName</option>
+                                            }
+                                        }
+                                    </select>
+                                </td></tr>
+<tr>
+                                <td><input type="radio" name="radFreight" value="0" />
+                                    物流：</td>
+                                <td>由客户自己承担</td>
+                            </tr>
+</table>
+
+                    <div class="buy">
+                        <div>我 要 买：<input id="buyQty" value="1" /></div>
+                        <div class="buyBtns"><input id="btnBuyNow" type="button" value="" onclick="addToCart(1)" />
+                        <input id="btnAddToCart" type="button" value="" onclick="addToCart(0)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prodDesc">
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">规格参数</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    <ul>
+                        <li>产品类型：@(productObj.Type)</li>
+                        <li>系列：@(productObj.Serial)</li>
+                        <li>型号：@(productObj.Code)</li>
+                        <li>材质：@(productObj.Material)</li>
+                        <li>尺寸重量：@(productObj.Weight)</li>
+                        <li>产品特征：@(productObj.Characteristic)</li>
+                        <li>设计师：@(productObj.Designer)</li>
+                    </ul>
+                </div>
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">产品介绍</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    @(new MvcHtmlString(productObj.Description))
+                </div>
+                
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">会员评论<a name="comment"></a></li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    <table class="prodCmt">
+                        <tr>
+                            <td>您的评分：</td>
+                            <td class="score">
+                                <ul id="score">
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>您的评价：</td>
+                            <td><textarea id="txtComment"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>验 证 码：</td>
+                            <td><div class="cmtCC"><input id="txtCmtCC" onfocus="changeCheckCode('cmtCC')" class="txt" /><img id="cmtCC" src="/CheckCode/2.jpg" /><a href="javascript:changeCheckCode('cmtCC');" style="color:#cc0000;">看不清换一张</a></div><div style="float:right"><input class="redBtn" type="button" id="btnComment" value="发表评论" /></div></td>
+                        </tr>
+                    </table>
+                    <div id="comments"></div>
+                    <div id="page" class="page"></div>
+                </div>
+
+                <div class="prodDescTit">
+                    <ul>
+                        <li class="cur">咨询留言</li>
+                    </ul>
+                </div>
+                <div class="prodDescCon">
+                    <div id="messages">
+                    </div>
+                    <div id="msgPage" class="page"></div>
+                    <table class="prodCmt">
+                        <tr>
+                            <td>您的留言：</td>
+                            <td><textarea id="txtMessage"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>验 证 码：</td>
+                            <td><div class="cmtCC"><input id="txtMsgCC" onfocus="changeCheckCode('msgCC')" class="txt" /><img id="msgCC" src="/CheckCode/2.jpg" /><a href="javascript:changeCheckCode('msgCC');" style="color:#cc0000;">看不清换一张</a></div>
+                            <div style="float:right">匿名：<input id="isAnonymity" type="checkbox" /><input class="redBtn" type="button" id="btnMessage" value="发表留言" /></div></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a id="toTop" class="toTop" href="javascript:void(0);"></a>
+

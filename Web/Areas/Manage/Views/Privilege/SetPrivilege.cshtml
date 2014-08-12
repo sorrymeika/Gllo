@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "AddPrivilege";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        h1 { font-size: 14px; margin: 10px 0px 0px 0px; }
+        h2 { font-size: 12px; margin: 10px 0px 0px 0px; }
+        .prvlg ul { width: 100%; overflow: hidden; }
+        .prvlg ul li { width: 100px; float: left; line-height: 20px; height: 20px; _display: inline; margin: 6px 0px 0px 10px; }
+        .prvlg div { margin-top: 5px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var P={
+                setPrivilege: function () {
+                    $.post("/Manage/Privilege/SetPrivilege/",function (res) {
+                        if(res.success) {
+                            alert("设置成功！");
+                            closeDialog(true);
+                        } else
+                            alert(res.msg)
+                    },{
+                        groupID: $.getQueryString("id"),
+                        privileges: $$("prvlgs").value()
+                    });
+                },
+                init: function () {
+
+                    $.post("/Manage/Privilege/GetPrivileges/",function (res) {
+                        if(res.success) {
+                            var data=res.data;
+
+                            if(data) {
+                                $.each(data,function (item) {
+                                    var cks1=[],cks2=[];
+                                    $("H1",$("privileges")).html(item.CategoryName);
+                                    $("H2",$("privileges")).html("页面权限");
+                                    var cont=$("UL",$("privileges"));
+                                    var cont2=$("DIV",$("privileges"));
+                                    $("EM",$("A",cont2).css("btn1").on("click",function () {
+                                        $.each(cks1,function (ck) {
+                                            ck.checked=true;
+                                        });
+                                    })).html("全选");
+                                    $("EM",$("A",cont2).css("btn1").css("margin-left:6px;").on("click",function () {
+                                        $.each(cks1,function (ck) {
+                                            ck.checked=false;
+                                        });
+                                    })).html("全不选");
+
+                                    $("H2",$("privileges")).html("操作权限");
+                                    var cont1=$("UL",$("privileges"));
+                                    cont2=$("DIV",$("privileges"));
+                                    $("EM",$("A",cont2).css("btn1").on("click",function () {
+                                        $.each(cks2,function (ck) {
+                                            ck.checked=true;
+                                        });
+                                    })).html("全选");
+                                    $("EM",$("A",cont2).css("btn1").css("margin-left:6px;").on("click",function () {
+                                        $.each(cks2,function (ck) {
+                                            ck.checked=false;
+                                        });
+                                    })).html("全不选");
+
+                                    if(item.Privileges) {
+                                        $.each(item.Privileges,function (prvlg) {
+                                            var ck,li,eid="ck_"+prvlg.PrivilegeID;
+                                            if(prvlg.Type==0) {
+                                                li=$("LI",cont);
+                                                ck=$("CHECKBOX",li,"prvlgs").prop({ value: prvlg.PrivilegeID,id: eid });
+                                                $("LABEL",li).html(prvlg.PrivilegeName).prop("for",eid);
+                                                cks1.push(ck);
+                                            } else {
+                                                li=$("LI",cont1);
+                                                ck=$("CHECKBOX",li,"prvlgs").prop({ value: prvlg.PrivilegeID,id: eid });
+                                                $("LABEL",li).html(prvlg.PrivilegeName).prop("for",eid);
+                                                cks2.push(ck);
+                                            }
+                                            if(res.privileges) {
+                                                $.each(res.privileges,function (pid) {
+                                                    if(pid==prvlg.PrivilegeID) {
+                                                        ck.checked=true;
+                                                        return false;
+                                                    }
+                                                });
+                                            }
+
+                                        });
+                                    }
+
+                                });
+                            }
+
+                        } else
+                            alert(res.msg);
+                    },{
+                        groupID: $.getQueryString("id")
+                    });
+
+                    $("setPrivilege").on("click",P.setPrivilege);
+
+                    $("on").on("click",function () {
+                        var checks=$$("prvlgs");
+                        $.each(checks,function (ck) {
+                            ck.checked=true;
+                        });
+                    });
+                    $("off").on("click",function () {
+                        var checks=$$("prvlgs");
+                        $.each(checks,function (ck) {
+                            ck.checked=false;
+                        });
+                    });
+                }
+            }
+
+            P.init();
+        });
+    </script>
+}
+<div class="main">
+    <div id="privileges" class="prvlg"></div>
+    <div class="buttons"><a id="on" class="btn"><em>全选</em></a>
+        <a id="off" class="btn"><em>全不选</em></a>
+        <a id="setPrivilege" class="btn"><em>设置权限</em></a>
+    </div>
+</div>

@@ -1,0 +1,3 @@
+responseTxt=false
+ return_url_log:sign=asdf&mysign=7cac51f7595916e0a55964f455c515a8
+ return回来的参数：trad_no=1234&

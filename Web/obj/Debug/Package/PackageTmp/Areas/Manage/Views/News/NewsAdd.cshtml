@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="/Content/kindeditor/kindeditor.js"></script>
+    <style type="text/css">
+        #txtTitle { width: 400px; }
+        #txtTags { width: 200px; }
+        #txtDate { width: 100px; }
+        #txtTime { width: 40px; text-align: center; }
+        .form input { border: 1px solid #bdbdbd; }
+        .form td { padding-top: 8px; color: #999; }
+        .form th { padding: 8px 0px 0px 15px; font-weight: bold; color: #666; }
+        .form th span { color: #cc0000; }
+        .newsContent { padding: 0px 0px 0px 5px; color: #666; margin: 10px; }
+        .newsContent strong { display: block; line-height: 26px; }
+        .newsContent strong span { color: #cc0000; }
+        #txtContent { width: 800px; height: 500px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var validation=new $.Validation();
+            validation.add("txtTitle",{ emptyAble: false,emptyText: "新闻标题不可为空!" });
+
+            $("btnCancel").on("click",function () {
+                window.location.href="/manage/news/news.html";
+            });
+
+            $("btnAdd").on("click",function () {
+                if(validation.validate()) {
+                    KE.util.setData("txtContent");
+                    if(!$("txtContent").value) {
+                        alert("请填写新闻内容！");
+                        return;
+                    }
+
+                    $.post("/manage/news/AddNews/",function (res) {
+                        if(res.success) {
+                            alert("添加成功！");
+                            window.location.href="/manage/news/News.html";
+                        }
+                        else
+                            alert(res.msg);
+                    },{
+                        categoryID: "@ViewBag.categoryID",
+                        title: $("txtTitle").value,
+                        writer: $("txtWriter").value,
+                        tags: $("txtTags").value,
+                        content: encodeURIComponent($("txtContent").value)
+                    });
+
+                } else
+                    window.scrollTo(0,0)
+            });
+        });
+
+        KE.show({
+            id: 'txtContent',
+            imageUploadJson: '/manage/home/upload/',
+            fileManagerJson: '',
+            allowFileManager: true,
+            afterCreate: function (id) {
+                KE.event.ctrl(document,13,function () {
+                    submit();
+                });
+                KE.event.ctrl(KE.g[id].iframeDoc,13,function () {
+                    submit();
+                });
+            }
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <table class="form">
+                <tr>
+                    <th><span>*</span>标题：</th>
+                    <td><input id="txtTitle" type="text" /></td>
+                </tr>
+                <tr>
+                    <th>作者：</th>
+                    <td><input id="txtWriter" type="text" /></td>
+                </tr>
+                <tr>
+                    <th>关键字：</th>
+                    <td><input id="txtTags" type="text" />
+                        &nbsp;&nbsp;(多个关键字用空格隔开)</td>
+                </tr>
+            </table>
+            <div class="newsContent">
+                <strong><span>*</span>内容</strong>
+                <div>
+                    <textarea id="txtContent" name="txtContent"></textarea>
+                </div>
+                <br />
+                <div class="toolbar">
+                    <a id="btnAdd" class="btn"><em><span class="ico5">添加新闻</span></em></a>
+                    <a id="btnCancel" class="btn"><em>取消</em></a>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>

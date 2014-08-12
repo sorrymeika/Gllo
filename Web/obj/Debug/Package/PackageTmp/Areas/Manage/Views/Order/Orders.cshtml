@@ -1,0 +1,372 @@
+﻿@{
+    ViewBag.Title = "订单管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .txt { border: 1px solid #bdbdbd; height: 18px; width: 80px; }
+        .search { padding: 4px 0px; color: #666; }
+        img { border: 0px; }
+        .orderDetails { margin-left: 10px; padding: 6px 0px 10px 0px; }
+        .orderDetails b { color: #555; }
+        .orderDetails span { color: #666; margin-left: 4px; }
+        .GridScroll { margin-top: 10px; }
+        
+        .gridHeaderCon { padding-right: 16px; border-right: 1px solid #cdcdcd; width: auto; overflow: hidden; *padding-right: 0px; *border: 0px; }
+        .gridCon .gridHeaderCon { padding-right: 0px; border-right: 0px; width: 100%; }
+        .gridCon { height: 320px; overflow-y: scroll; overflow-x: hidden; }
+        .gridCon .gridCon { margin-top: 0px; height: auto; overflow-y: auto; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+        function formatPrice(price) {
+            price=Math.round(parseFloat(price)*100)/100+"";
+            return "￥"+price+(/^\d+$/.test(price)?".00":/^\d+\.\d{1}$/.test(price)?"0":"")
+        };
+        $.ready(function () {
+            new $.Calendar("dtFrom");
+            new $.Calendar("dtTo");
+
+            var orderList=new $.Grid({
+                id: "orders",
+                onRowSelect: function (row) {
+                    $("btnServiceMemo").css("btn").prop("disabled",false).style.display="";
+                    if(!row.data.SurveyID) {
+                        $("btnSurvey").css("btnDsb").prop("disabled",true).style.display="none";
+                    } else {
+                        $("btnSurvey").css("btn").prop("disabled",false).style.display="";
+                    }
+
+                    if(row.data.Status==2) {
+                        $("btnModify").css({ display: "none" });
+                        $("btnSend").css({ display: "none" });
+                        $("btnCancel").css({ display: "none" });
+                    } else {
+                        if(row.data.Status==1||row.data.Status==4||row.data.Status==3) {
+                            if(row.data.IsConsigned) {
+                                $("btnSend").css({ display: "none" });
+                            } else {
+                                $("btnSend").css("btn").prop("disabled",false).style.display="";
+                            }
+
+                            $("btnModify").css({ display: "none" });
+                            $("btnCancel").css({ display: "none" });
+                        }
+                        else {
+                            $("btnSend").css({ display: "none" });
+                            $("btnModify").css("btn").prop("disabled",false).style.display="";
+                            $("btnCancel").css("btn").prop("disabled",false).style.display="";
+                        }
+
+                    }
+                },
+                pageEnabled: true,
+                columns: [{
+                    width: 45,
+                    header: "编号",
+                    columnName: "OrderID"
+                },{
+                    width: 100,
+                    header: "订单号",
+                    columnName: "OrderCode"
+                },{
+                    width: 100,
+                    header: "订单日期",
+                    columnName: "CreationTime"
+                },{
+                    width: 100,
+                    header: "付款日期",
+                    columnName: "PayedTime"
+                },{
+                    width: 60,
+                    header: "支付方式",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html({ 1: "支付宝",2: "银行转账",3: "电汇"}[data.PayType]);
+                    }
+                },{
+                    width: 80,
+                    header: "支付状态",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html({ 0: "未支付",1: "<span style='color:#cc0000'>已支付</span>"}[data.PayStatus]+(data.Status==2?"/已取消":data.Status==3?"/<span style='color:blue'>已发货</span>":data.Status==4?"<span style='color:blue'>/已收货</span>":""));
+                    }
+                },{
+                    width: 80,
+                    header: "订单金额",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html("￥"+data.Amount);
+                    }
+                },{
+                    width: 80,
+                    header: "订单运费",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html("￥"+data.Freight);
+                    }
+                },{
+                    width: 80,
+                    header: "总计",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html("￥"+(data.Amount+data.Freight));
+                    }
+                },{
+                    width: 60,
+                    header: "客服备注",
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html(data.ServiceMemo?"<span style='color:#cc0000'>"+data.ServiceMemo+"</span>":"");
+                    }
+                }],
+                children: [{
+                    custom: function (container,data) {
+                        var content=$("DIV",container).css("orderDetails");
+                        var con=$("UL",content).css({ lineHeight: "22px" });
+                        var row=$("LI",con);
+                        if(data.Status==2) {
+                            $("SPAN",row).html("该订单已被取消").style.color="#cc0000";
+                        } else if(data.Status==1||data.Status==4||data.Status==3) {
+                            $("B",row).html("是否发货:");
+                            $("SPAN",row).html(data.IsConsigned?"是":"否");
+                            $("B",row).html("物流公司:").css({ marginLeft: "25px" });;
+                            $("SPAN",row).html(data.Logistics);
+                            $("B",row).html("物流单号:").css({ marginLeft: "25px" });;
+                            $("SPAN",row).html(data.LogisticsCode);
+                            $("B",row).html("运输类型:").css({ marginLeft: "25px" });;
+                            $("SPAN",row).html(data.TransportType=="POST"?"平邮":data.TransportType=="EXPRESS"?"快递":data.TransportType=="EMS"?"EMS":"");
+                        }
+                        row=$("LI",con);
+                        $("B",row).html("订单日期:");
+                        $("SPAN",row).html(data.CreationTime);
+                        if(data.Status==1||data.Status==4||data.Status==3) {
+                            $("B",row).html("付款日期:").css({ marginLeft: "25px" });
+                            $("SPAN",row).html(data.PayedTime);
+
+                            $("B",row).html("支付宝账号:").css({ marginLeft: "25px" });
+                            $("SPAN",row).html(data.BuyerEmail);
+                        }
+
+                        row=$("LI",con);
+                        $("B",row).html("收货人:");
+                        $("SPAN",row).html(data.Receiver);
+                        $("B",row).html("收货地址:").css({ marginLeft: "25px" });
+                        $("SPAN",row).html(data.ProvinceName+" "+data.CityName+" "+(data.RegionName||"")+"/"+data.Address);
+                        $("B",row).html("邮编:").css({ marginLeft: "25px" });
+                        $("SPAN",row).html(data.Zip||"无");
+                        $("B",row).html("手机:").css({ marginLeft: "25px" });
+                        $("SPAN",row).html(data.Mobile||"无");
+                        $("B",row).html("固话:").css({ marginLeft: "25px" });
+                        $("SPAN",row).html(data.Phone||"无");
+                        row=$("LI",con);
+                        $("B",row).html("备注:");
+                        $("SPAN",row).html(data.Memo||"暂无");
+                        row=$("LI",con);
+                        $("B",row).html("客服备注:");
+                        $("SPAN",row).html(data.ServiceMemo||"暂无");
+                    }
+                },{
+                    dataName: "children",
+                    rowHeight: 70,
+                    columns: [{
+                        header: "商品",
+                        type: "custom",
+                        width: 80,
+                        custom: function (cell,data) {
+                            var link=$("A",true).prop("target","_blank").prop("href","/Product/"+data.ProductID+".html");
+                            $("IMG",link).prop("src",media+data.Url).css({ width: "80px",height: "60px" });
+                            cell.append(link);
+                        }
+                    },{
+                        header: "名称",
+                        type: "custom",
+                        width: 200,
+                        custom: function (cell,data) {
+                            cell.append($("A",true).prop("target","_blank").prop("href","/Product/"+data.ProductID+".html").html(data.Name));
+                        }
+                    },{
+                        header: "型号",
+                        columnName: "Code",
+                        width: 60
+                    },{
+                        header: "单价",
+                        type: "custom",
+                        width: 60,
+                        custom: function (cell,data) {
+                            cell.html(formatPrice(data.OrignalPrice));
+                        }
+                    },{
+                        header: "赠送积分",
+                        columnName: "Points",
+                        width: 60
+                    },{
+                        header: "数量",
+                        columnName: "Quantity",
+                        width: 60
+                    },{
+                        header: "运费",
+                        type: "custom",
+                        width: 50,
+                        custom: function (cell,data) {
+                            cell.html("￥"+(data.Freight+(data.Quantity-1)*data.Freight1));
+                        }
+                    },{
+                        header: "优惠",
+                        type: "custom",
+                        width: 60,
+                        custom: function (cell,data) {
+                            cell.html(data.Discount);
+                        }
+                    },{
+                        header: "小记",
+                        type: "custom",
+                        width: 60,
+                        custom: function (cell,data) {
+                            cell.html(formatPrice(data.OrignalPrice*data.Quantity-data.Discount));
+                        }
+                    }]
+                }]
+            });
+
+            function search() {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnSurvey").css("btnDsb").prop("disabled",true);
+                $("btnSend").css("btnDsb").prop("disabled",true);
+                $("btnServiceMemo").css("btnDsb").prop("disabled",true);
+                $("btnCancel").css("btnDsb").prop("disabled",true);
+                orderList.load("/Manage/Order/GetOrders/",{
+                    page: 1,
+                    pageSize: 15,
+                    isSurvey: $("isSurvey").value,
+                    dtFrom: $("dtFrom").value,
+                    dtTo: $("dtTo").value,
+                    orderCode: $("code").value,
+                    receiver: $("receiver").value,
+                    status: $("status").value
+                });
+            };
+
+            window.reloadData=search;
+
+            search();
+
+            $("btnSearch").on("click",function () {
+                search();
+            });
+
+            $("btnModify").on("click",function () {
+                var selectedRow=orderList.getSelectedRow();
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+
+                openDialog("修改订单",950,"90%","/Manage/Order/OrderModify.html?id="+selectedRow.data.OrderID,function () {
+                    search();
+                });
+                return false;
+            });
+            var logisticDialog,isConsigned,logistics,logisticsCode,transportType;
+            $("btnSend").on("click",function () {
+                var selectedRow=orderList.getSelectedRow();
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+
+                openDialog("订单发货",350,170,"/Manage/Order/OrderSetExpress.html?id="+selectedRow.data.OrderID,function () {
+                    search();
+                });
+                return false;
+            });
+
+            $("btnServiceMemo").on("click",function () {
+                var selectedRow=orderList.getSelectedRow();
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+
+                openDialog("修改客服备注",550,320,"/Manage/Order/OrderServiceMemo.html?id="+selectedRow.data.OrderID,function () {
+                    search();
+                });
+            });
+
+            $("btnSurvey").on("click",function () {
+                var selectedRow=orderList.getSelectedRow();
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+
+                openDialog("查看上门测试申请单",800,500,"/Manage/Order/Survey.html?id="+selectedRow.data.OrderID);
+            });
+
+            $("btnCancel").on("click",function () {
+                var selectedRow=orderList.getSelectedRow();
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+
+                if(window.confirm("您确定要取消该订单吗？")) {
+
+                    $.post("/manage/Order/CancelOrder/",function (res) {
+                        if(res.success) {
+                            alert("取消订单成功！");
+                            search();
+
+                            logisticDialog.close();
+                        } else
+                            alert(res.msg);
+                    },{
+                        orderID: selectedRow.data.OrderID
+                    });
+                }
+
+                return false;
+            });
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <a id="btnModify" class="btn"><em><span class="ico3">修改选中的订单</span></em></a>
+                <a id="btnSend" class="btn"><em><span class="ico6">订单发货</span></em></a>
+                <a id="btnServiceMemo" class="btn"><em><span class="ico1">客服备注</span></em></a>
+                <a id="btnCancel" class="btn"><em><span class="ico4">取消订单</span></em></a>
+                <a id="btnSurvey" class="btn"><em><span class="ico10">查看上门测试单</span></em></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>订单日期 从</td>
+                        <td><input id="dtFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="dtTo" class="txt" /></td>
+                        <td>&nbsp;&nbsp;订单号</td>
+                        <td><input id="code" class="txt" /></td>
+                        <td>&nbsp;&nbsp;支付状态</td>
+                        <td><select id="status">
+                            <option value="-1">全部</option>
+                            <option value="0">未支付</option>
+                            <option value="1">已支付</option>
+                            <option value="2">已取消</option>
+                            <option value="3">已发货</option>
+                            <option value="4">已收货</option>
+                            <option value="5">退款中</option>
+                        </select>
+                        </td>
+                        <td>&nbsp;&nbsp;收货人</td>
+                        <td><input id="receiver" class="txt" /></td>
+                        <td>&nbsp; <select id="isSurvey">
+                            <option value="-1">有无申请上门测试</option>
+                            <option value="0">无申请上门测试</option>
+                            <option value="1">已申请上门测试</option>
+                        </select>
+                        </td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="GridScroll">
+                <div id="orders">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+﻿@{
+    Layout = null;
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <title>GLLO 洁利来 极致人性 随心所浴</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/global.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript" src="/Scripts/website/loginDialog.js"></script>
+</head>
+<body>
+    <div class="hpHeader">
+        <div class="hpLinks">
+            @if (user == null)
+            { 
+                <a href="javascript:login();">登录</a><text>|</text><a href="javascript:register();">免费注册</a>
+            }
+            else
+            {
+                <a class="hello">您好,<em>@user.UserName</em></a><a href="/Account.html">[我的账户]</a><text>|</text><a href="/Logout/">[注销]</a>
+            }|<a href="">导购车</a>|<a href="">工装</a>|<a href="">家装</a>
+        </div>
+    </div>
+    <div class="hpCon">
+        <div class="hpConL"></div>
+        <a class="hpConC" href="/product.html"><img src="/Content/themes/default/images/hpConC.jpg" alt="GLLO公司简介" /></a>
+        <div class="hpConR"></div>
+        <div class="hpConB">
+            <ul>
+                <li><a href="@(ViewBag.media1 == null ? "" : ViewBag.media1.Url)"><img src="@(ViewBag.media1 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media1.Src))" /></a></li>
+                <li><a href="@(ViewBag.media2 == null ? "" : ViewBag.media2.Url)"><img src="@(ViewBag.media2 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media2.Src))" /></a></li>
+                <li><a href=""><a href="@(ViewBag.media3 == null ? "" : ViewBag.media3.Url)"><img src="@(ViewBag.media3 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media3.Src))" /></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="hpFooter">
+        <div class="hpNav"><a href="/index.html" title="首页" class="hpIndex"></a>
+            <ul>
+                <li id="navItem4"><a href="/product.html" title="产品中心" class="hpPrd"></a>
+                    <span id="navDrop4">
+                        @if (ViewBag.cates != null)
+                        {
+                            Gllo.Models.JsonArray cates = ViewBag.cates;
+                            for (int i = 0; i < cates.Count; i++)
+                            { 
+                            <a href="/list/@(cates[i]["categoryID"]).html">@(cates[i]["categoryName"])</a>
+                            }
+                        }
+                    </span></li>
+                <li id="navItem1"><a href="/sale.html" title="促销专区"></a>
+                    <span id="navDrop1"><a href="/sale.html">整体</a>
+                        <a href="/sale.html">单品</a>
+                    </span></li>
+                <li id="navItem2"><a href="/show.html" title="整体空间"></a>
+                    <span id="navDrop2"><a href="/show.html">样板房</a>
+                        <a href="/show.html">案例展示</a>
+                    </span></li>
+                <li><a href="/guide.html" title="导购体验"></a>
+                </li>
+                <li id="navItem3"><a href="/help/87.html" title="购物指南"></a>
+                    <span id="navDrop3"><a href="/help/100.html">上门测试说明</a>
+                        <a href="/help/90.html">支付帮助</a>
+                        <a href="/help/91.html">物流帮助</a>
+                        <a href="/help/87.html">售后帮助</a>
+                    </span></li>
+                <li><a href="/guide.html" title="3D演示" class="hp3D"></a>
+                </li>
+                <li><a href="/guide.html" title="设计威客"></a>
+                </li>
+            </ul>
+            <div class="hpSearch">
+                <form method="get" action="/search/">
+                    <input id="txtKeywords" name="keywords" class="hpKeywords" />
+                    <input type="submit" value="" class="hpBtnSearch" />
+                </form>
+            </div>
+        </div>
+        <div class="hpCorporation">
+            <div class="hpCorporationIns"><a href="/map.html" title="网站地图"></a>
+                <a href="/" title="法律说明"></a>
+                <a href="/" title="招商合作"></a>
+                <a href="/" title="人才招聘"></a>
+                <a href="/" title="关于我们"></a>
+                <a href="/" title="联系我们"></a>
+            </div>
+            <div class="hpEntrance"><a href="/index.html" title="由此进入" class="hpEntrance"></a>
+                <div class="music">MUSIC <span id="musicOn">ON</span>|<span id="musicOff" class="cur">OFF</span></div>
+                <div style="margin-top: 100px;">
+                    <embed src="/content/upload/test.mp3" id="music" hidden="True" autostart="False" loop="False"></embed>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">        $.ready(function () {
+            for(var i=1;i<=4;i++) $("navItem"+i).on("mousemove",(function (j) { return function () { $("navDrop"+j).style.display="inline"; } })(i)).on("mouseout",(function (j) { return function () { $("navDrop"+j).style.display="none"; } })(i));
+            $("musicOff").on("click",function () {
+                document.getElementById("music").pause();
+                this.className="cur";
+                $("musicOn").className="";
+            });
+            $("musicOn").on("click",function () {
+                document.getElementById("music").play();
+                this.className="cur";
+                $("musicOff").className="";
+            })
+        }); </script>
+</body>
+</html>

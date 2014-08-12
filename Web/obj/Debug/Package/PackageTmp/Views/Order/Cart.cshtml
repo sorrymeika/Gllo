@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "我的购物车";
+    Layout = "~/Views/Shared/_CartLayout.cshtml";
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/cart.css" />
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+    </script>
+    <script type="text/javascript" src="/scripts/website/cart.js"></script>
+}
+<div class="main">
+    <div class="cart">
+        <div class="cartTit"><span>1.我的购物车</span> &gt; <em>2.填写核对订单信息</em> &gt; <em>3.成功提交订单</em> </div>
+        <div class="cartCon">
+            <table class="cartTable">
+                <tr>
+                    <th width="40px"><input type="checkbox" id="chkAll" checked="checked" /></th>
+                    <th width="70px">商品</th>
+                    <th width="200px">名称</th>
+                    <th width="60px">型号</th>
+                    <th width="70px">单价</th>
+                    <th width="70px">赠送积分</th>
+                    <th width="90px">数量</th>
+                    <th width="60px">优惠</th>
+                    <th width="100px">小记</th>
+                    <th>操作</th>
+                </tr>
+                <tbody id="productList">
+                </tbody>
+            </table>
+            <div class="totalInfo">商品数量总计：<span id="lblTotalQty"></span> 赠送积分总计：<span id="lblTotalPoints"></span> 商品金额总计(不含运费)：<b id="lblTotalAmount"></b> @*商品运费总计：<b id="lblTotalFreight"></b>*@
+                <div class="logisticTip"><b>@ViewBag.logisticText</b> </div>
+            </div>
+            <div class="cartBottom">
+                <div class="cartCtrl"><a id="delete" href="javascript:void(0);" class="cartDel">批量删除</a>
+                    <a id="fav" href="javascript:void(0);" href="" class="fav">收藏选中</a>
+                </div>
+                <div class="cartBtns"><input id="prev" type="button" class="prevBtn" />
+                    <input id="next" type="button" class="nextBtn" />
+                </div>
+            </div>
+        </div>
+        <div class="cartRec">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine"></div>
+                    <div class="boxTitBG"><strong>促销商品</strong></div>
+                </div>
+                <div class="boxCon">
+                    <div class="listCon">
+                        @ViewBag.onSaleProducts
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,148 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #grid { margin-top: 6px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+
+        $.ready(function () {
+
+            var grid=new $.Grid({
+                id: "grid",
+                onRowSelect: function () {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    header: "编号",
+                    columnName: "PpcID",
+                    width: 10
+                },{
+                    header: "名称",
+                    columnName: "PpcName",
+                    width: 90
+                }],
+                children: [{
+                    dataName: "children",
+                    columns: [{
+                        width: 50,
+                        header: "编号",
+                        columnName: "ProductID"
+                    },{
+                        width: 300,
+                        header: "商品名",
+                        columnName: "Name"
+                    },{
+                        width: 100,
+                        header: "型号",
+                        columnName: "Code"
+                    },{
+                        width: 100,
+                        header: "库存",
+                        columnName: "Quantity"
+                    },{
+                        width: 100,
+                        header: "价格",
+                        columnName: "Price"
+                    },{
+                        width: 100,
+                        header: "特价",
+                        columnName: "SpecialPrice"
+                    },{
+                        width: 50,
+                        header: "促销",
+                        columnName: "IsOnSale",
+                        type: "custom",
+                        custom: function (cell,data) {
+                            cell.html(data.IsOnSale?"是":"否");
+                        }
+                    },{
+                        width: 50,
+                        header: "新品",
+                        columnName: "IsNew",
+                        type: "custom",
+                        custom: function (cell,data) {
+                            cell.html(data.IsNew?"是":"否");
+                        }
+                    },{
+                        width: 50,
+                        header: "推荐",
+                        columnName: "IsRecommend",
+                        type: "custom",
+                        custom: function (cell,data) {
+                            cell.html(data.IsRecommend?"是":"否");
+                        }
+                    }]
+                }]
+            });
+
+            var load=function () {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+
+                grid.load("/manage/package/GetPackageDetails/",{
+                    id: $.getQueryString("id")
+                });
+            };
+
+            load();
+
+            $("btnAdd").on("click",function () {
+                if(this.prop("disabled"))
+                    return false;
+
+                window.location.href="/Manage/Package/AddPackageDetail.html?id="+$.getQueryString("id")
+            });
+
+            $("btnModify").on("click",function () {
+                selectedProductRow=grid.getSelectedRow();
+                if(this.prop("disabled")||!selectedProductRow)
+                    return false;
+
+                window.location.href="/Manage/Package/ModifyPackageDetail.html?id="+selectedProductRow.data.PpcID+"&packageID="+$.getQueryString("id");
+
+                return false;
+            });
+
+            $("btnDelete").on("click",function () {
+                selectedProductRow=grid.getSelectedRow();
+                if(this.prop("disabled")||!selectedProductRow)
+                    return false;
+
+                if(window.confirm("确定删除？")) {
+                    $.post("/Manage/Package/DeletePackageDetail/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            load();
+
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: selectedProductRow.data.PpcID
+                    });
+                }
+                return false;
+            });
+
+            $("btnClose").on("click",function () {
+                closeDialog();
+            });
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico2">新建产品组</span></em></a>
+                <a id="btnModify" class="btn"><em><span class="ico3">编辑产品组</span></em></a>
+                <a id="btnDelete" class="btn"><em><span class="ico4">删除产品组</span></em></a>
+            </div>
+            <div id="grid"></div>
+            <div class="buttons"><a id="btnClose" class="btn"><em>关闭</em></a>
+            </div>
+        </div>
+    </div>
+</div>

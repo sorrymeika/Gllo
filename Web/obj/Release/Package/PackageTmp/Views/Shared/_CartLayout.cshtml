@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.cates = new Gllo.BLL.ProductBLL().GetParentCates();
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/global.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript" src="/Scripts/website/loginDialog.js"></script>
+    @RenderSection("header", false)
+</head>
+<body>
+    <div class="header"><a href="/" class="logo"><img src="/Content/themes/default/images/logo.jpg" /></a>
+        <div class="headerR">
+            <div class="headerLink">
+                @if (user == null)
+                { 
+                    <a href="javascript:login();">登录</a>
+                    <a href="javascript:register();">免费注册</a>
+                }
+                else
+                {
+                    <a class="hello">您好,<em>@user.UserName</em></a><a href="/Account.html">[我的账户]</a><a href="/Logout/">[注销]</a>
+                }
+                <a href="/Cart.html">购物车<span id="lblCartNum">(0)</span></a>
+                <a href="/">工装</a>
+                <a href="/">家装</a>
+                <a href="/">客服</a>
+            </div>
+            <div class="headerSearch">
+                <form method="get" action="/search/">
+                    <input id="txtKeywords" type="text" name="keywords" class="keywords" value="请输入关键字……" />
+                    <input type="submit" value="" class="btnSearch" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function onSearch(id) {
+            $(id).on("focus",function () {
+                this.value="";
+            }).on("blur",function () {
+                if(!this.value)
+                    this.value="请输入关键字……";
+            })
+        };
+        function getCartNum() {
+            $.post("/Order/GetCartNum/",function (res) {
+                $("lblCartNum").html("("+(res.success?res.num:0)+")");
+            });
+        };
+        onSearch("txtKeywords");
+        getCartNum();
+    </script>
+    @RenderBody()
+    <div class="footer">
+        <div class="footerCon"><span>BATHROOM SPACES 5S.GLOBAL CHAIN</span>
+            <div class="footerLinks"><a href="/">网站地图</a>|<a href="/">法律说明</a>|<a href="/">招商合作</a>|<a href="/">人才招聘</a>|<a href="/">关于我们</a>|<a href="/">联系我们</a>
+            </div>
+        </div>
+        <div class="icp"><span>GLLO洁利来·卫浴空间5S·全球连锁 闽ICP备09032634号-2</span>
+            <div>咨询服务热线:<b>400 679 6110</b></div>
+        </div>
+    </div>
+</body>
+</html>

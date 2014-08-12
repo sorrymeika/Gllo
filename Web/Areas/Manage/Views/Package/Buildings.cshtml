@@ -1,0 +1,213 @@
+﻿@{
+    ViewBag.Title = "Buildings";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .search select { margin-left: 2px; }
+        #grid { margin-top: 6px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var provinceData,cityData={},regionData={};
+
+            $.post("/Area/GetProvince/",function (res) {
+                if(res.success&&res.data) {
+                    provinceData=res.data;
+                    $.each(provinceData,function (item) {
+                        $("cmbProvince").options.add(new Option(item.ProvinceName,item.ProvinceID));
+                    });
+                }
+            },null,false);
+
+            function loadCity(provinceId,cityId,regionId) {
+                for(var i=$("cmbCity").options.length-1;i>0;i--)
+                    $("cmbCity").options[i]=null;
+                $("cmbProvince").value=provinceId;
+                if(provinceId!=0) {
+                    if(!cityData[provinceId]) {
+                        $.post("/Area/GetCity/",function (res) {
+                            if(res.success&&res.data) {
+                                cityData[provinceId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                                });
+                            }
+                            $("cmbCity").value=cityId||0;
+                            loadRegion(cityId,regionId);
+                        },{
+                            provinceId: provinceId
+                        });
+                    } else {
+                        $.each(cityData[provinceId],function (item) {
+                            $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                        });
+                        $("cmbCity").value=cityId||0;
+                        loadRegion(cityId,regionId);
+                    }
+                }
+                else
+                    loadRegion(cityId,regionId);
+            };
+
+            function loadRegion(cityId,regionId) {
+                for(var i=$("cmbRegion").options.length-1;i>0;i--)
+                    $("cmbRegion").options[i]=null;
+
+                if(cityId!=0) {
+                    if(!regionData[cityId]) {
+                        $.post("/Area/GetRegion/",function (res) {
+                            if(res.success&&res.data) {
+                                regionData[cityId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                                });
+                            }
+                            $("cmbRegion").value=regionId||0;
+                        },{
+                            cityId: cityId
+                        });
+                    } else {
+                        $.each(regionData[cityId],function (item) {
+                            $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                        });
+                        $("cmbRegion").value=regionId||0;
+                    }
+                }
+            };
+
+            $("cmbProvince").on("change",function () {
+                loadCity(this.value);
+            });
+
+            $("cmbCity").on("change",function () {
+                loadRegion(this.value);
+            });
+
+            var grid=new $.Grid({
+                id: "grid",
+                pageEnabled: true,
+                onRowSelect: function () {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    header: "编号",
+                    width: 50,
+                    columnName: "BuildingID"
+                },{
+                    header: "名称",
+                    width: 200,
+                    columnName: "BuildingName"
+                },{
+                    header: "省",
+                    width: 100,
+                    columnName: "ProvinceName"
+                },{
+                    header: "市",
+                    width: 100,
+                    columnName: "CityName"
+                },{
+                    header: "区",
+                    width: 100,
+                    columnName: "RegionName"
+                }]
+            });
+
+            var page=1,pageSize=15;
+            function load() {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+                grid.load("/manage/Package/GetBuildings/",{
+                    page: page,
+                    pageSize: pageSize,
+                    regionID: $("cmbRegion").value,
+                    provinceID: $("cmbProvince").value,
+                    cityID: $("cmbCity").value,
+                    keywords: $("txtKeywords").value
+                });
+            };
+
+            load();
+
+            $("btnSearch").on("click",load);
+
+            $("btnAdd").on("click",function () {
+                if(this.prop("disabled"))
+                    return false;
+
+                openDialog("添加楼盘",500,200,"/Manage/Package/AddBuilding.html",function () {
+                    page=1;
+                    load();
+                });
+            });
+
+
+            $("btnModify").on("click",function () {
+                if(this.prop("disabled"))
+                    return false;
+
+                var selectedRow=grid.getSelectedRow();
+
+                openDialog("修改楼盘",500,200,"/Manage/Package/ModifyBuilding.html?id="+selectedRow.data.BuildingID,function () {
+                    load();
+                });
+
+            });
+
+            $("btnDelete").on("click",function () {
+                if(this.prop("disabled"))
+                    return false;
+                if(window.confirm("您确定要删除该楼盘吗？")) {
+                    var selectedRow=grid.getSelectedRow();
+                    $.post("/Manage/Package/DeleteBuilding/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            page=1;
+                            load();
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: selectedRow.data.BuildingID
+                    });
+                }
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico2">新增楼盘</span></em></a>
+                <a id="btnModify" class="btn"><em><span class="ico3">修改楼盘</span></em></a>
+                <a id="btnDelete" class="btn"><em><span class="ico4">删除楼盘</span></em></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>搜索</td>
+                        <td>
+                            <select id="cmbProvince">
+                                <option value="0">请选择省</option>
+                            </select></td>
+                        <td>
+                            <select id="cmbCity">
+                                <option value="0">请选择市</option>
+                            </select></td>
+                        <td>
+                            <select id="cmbRegion">
+                                <option value="0">请选择区</option>
+                            </select></td>
+                        <td>&nbsp;关键字</td>
+                        <td><input id="txtKeywords" class="txt" /></td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid"></div>
+        </div>
+    </div>
+</div>

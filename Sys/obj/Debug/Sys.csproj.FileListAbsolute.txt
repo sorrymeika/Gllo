@@ -1,0 +1,56 @@
+E:\channel\Sys\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\Sys\bin\Debug\Channel.Sys.dll
+E:\channel\Sys\bin\Debug\Channel.Sys.pdb
+E:\channel\Sys\obj\Debug\Channel.Sys.dll
+E:\channel\Sys\obj\Debug\Channel.Sys.pdb
+E:\channel\Sys\bin\Debug\Channel.Models.dll
+E:\channel\Sys\bin\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\Sys\bin\Debug\Channel.Sys.dll
+E:\Visual Studio 2010\Projects\channel\Sys\bin\Debug\Channel.Sys.pdb
+E:\Visual Studio 2010\Projects\channel\Sys\bin\Debug\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\Sys\bin\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\Sys\obj\Debug\ResolveAssemblyReference.cache
+E:\Visual Studio 2010\Projects\channel\Sys\obj\Debug\Channel.Sys.dll
+E:\Visual Studio 2010\Projects\channel\Sys\obj\Debug\Channel.Sys.pdb
+E:\Projects\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+E:\Projects\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+E:\Projects\Gllo\Sys\bin\Debug\Gllo.Models.dll
+E:\Projects\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+E:\Projects\Gllo\Sys\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+E:\Projects\Gllo\Sys\obj\Debug\Gllo.Sys.pdb
+H:\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+H:\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+H:\Gllo\Sys\bin\Debug\Gllo.Models.dll
+H:\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+H:\Gllo\Sys\obj\Debug\ResolveAssemblyReference.cache
+H:\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+H:\Gllo\Sys\obj\Debug\Gllo.Sys.pdb
+K:\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+K:\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+K:\Gllo\Sys\bin\Debug\Gllo.Models.dll
+K:\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+K:\Gllo\Sys\obj\Debug\ResolveAssemblyReference.cache
+K:\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+K:\Gllo\Sys\obj\Debug\Gllo.Sys.pdb
+L:\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+L:\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+L:\Gllo\Sys\bin\Debug\Gllo.Models.dll
+L:\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+L:\Gllo\Sys\obj\Debug\ResolveAssemblyReference.cache
+L:\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+L:\Gllo\Sys\obj\Debug\Gllo.Sys.pdb
+G:\Projects\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+G:\Projects\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+G:\Projects\Gllo\Sys\bin\Debug\Gllo.Models.dll
+G:\Projects\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+G:\Projects\Gllo\Sys\obj\Debug\ResolveAssemblyReference.cache
+G:\Projects\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+G:\Projects\Gllo\Sys\obj\Debug\Gllo.Sys.pdb
+D:\Projects\AspNet\XX\Gllo\Sys\bin\Debug\Gllo.Sys.dll
+D:\Projects\AspNet\XX\Gllo\Sys\bin\Debug\Gllo.Sys.pdb
+D:\Projects\AspNet\XX\Gllo\Sys\bin\Debug\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\Sys\bin\Debug\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\Sys\obj\Debug\Sys.csprojResolveAssemblyReference.cache
+D:\Projects\AspNet\XX\Gllo\Sys\obj\Debug\Gllo.Sys.dll
+D:\Projects\AspNet\XX\Gllo\Sys\obj\Debug\Gllo.Sys.pdb

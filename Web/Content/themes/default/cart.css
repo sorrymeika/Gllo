@@ -1,0 +1,110 @@
+﻿.cart { }
+.cartTit { background: url(images/cart.gif) no-repeat; height: 25px; padding-top: 25px; text-align: right; font-size: 14px; font-weight: bold; color: #74c6b4; font-family: 宋体,Verdana,Arial; border-top: 1px solid #74c6b4; }
+.cartTit span { color: #217272; }
+.cartTit em { font-style: normal; }
+.cartCon { border: 1px solid #b6e3da; height: 100%; padding: 1px; }
+
+.cartTable { width: 100%; color: #666; }
+.cartTable th { background: #74c6b4; height: 31px; vertical-align: middle; color: #fff; text-align: center; }
+.cartTable td { padding: 8px 6px 0px 6px; text-align: center; }
+.cartTable td img { height: 60px; width: 60px; border: 1px solid #ddd; padding: 2px; }
+.cartTable a { color: #333; }
+.cartTable a:hover { color: #ac0000; }
+.buyQty { border: 1px solid #bdbdbd; line-height: 18px; height: 18px; text-align: center; width: 30px; font-size: 12px; }
+.bagClose { display: inline-block; width: 10px; background: url(images/bagClose.gif) no-repeat 0px bottom; height: 15px; vertical-align: top; }
+.bagOpen { display: inline-block; width: 10px; margin-left: 1px; background: url(images/bagOpen.gif) no-repeat 0px bottom; height: 15px; vertical-align: top; }
+
+.totalInfo { border-top: 1px solid #74c6b4; margin: 15px 15px 0px 15px; padding: 13px 0px 12px 10px; text-align: right; color: #666; }
+.totalInfo span { color: #ac0000; display: inline-block; margin-right: 15px; }
+.totalInfo b { color: #ac0000; font-weight: bold; font-size: 14px; }
+.cartBottom { border-top: 1px solid #74c6b4; margin: 0px 15px 15px 15px; padding-top: 10px; height: 100%; overflow: hidden; }
+.cartCtrl { float: left; }
+.cartCtrl .cartDel { display: inline-block; background: url(images/cartDel.jpg) no-repeat 0px 0px; height: 16px; line-height: 19px; padding-left: 22px; }
+.cartCtrl .fav { display: inline-block; margin-left: 6px; }
+.cartBtns { text-align: right; }
+.cartBtns .nextBtn { cursor: pointer; border: 0px; background: url(images/nextBtn.gif) no-repeat 0px 0px; width: 125px; height: 35px; }
+.cartBtns .prevBtn { cursor: pointer; border: 0px; background: url(images/prevBtn.gif) no-repeat 0px 0px; width: 128px; height: 35px; }
+.logisticTip { margin-top: 6px; font-size: 12px; }
+.logisticTip b { font-size: 12px; }
+
+.order { border: 1px solid #b6e3da; height: 100%; padding: 1px 1px 20px 1px; }
+.orderTit { background: #74c6b4; height: 31px; padding-left: 10px; line-height: 32px; color: #fff; font-size: 14px; font-weight: bold; }
+.order h6 { font-size: 14px; color: #333; }
+.order h6 a { font-size: 12px; font-weight: normal; color: #217272; margin-left: 8px; }
+.order h6 a.more { float: right; }
+.orderCon { padding-top: 10px; }
+
+.orderInfo { margin: 10px 15px 0px 15px; padding: 10px 10px 10px 10px; border-bottom: 2px dotted #ddd; }
+.orderInfo .info { display: block; }
+.info { line-height: 26px; margin: 10px 0px 0px 25px; }
+.info span { color: #666; }
+#lblMemo { color: #666; display: inline; }
+.orderInfo .edit { display: none; }
+
+.orderEditor { margin: 10px 15px 0px 15px; padding: 10px 10px 10px 10px; border-top: 2px solid #cdcdcd; border-bottom: 1px solid #cdcdcd; background: #f1f1f1; }
+.orderEditor .edit { display: block; }
+.orderEditor .info { display: none; }
+
+.addressList { margin-top: 8px; padding: 6px 8px; border: 1px dotted #ddd; background: #fcfcfc; line-height: 24px; }
+.addressList ul { margin-left: 10px; color: #217272; }
+.addressList li input { display: inline-block; vertical-align: top; margin-top: 4px; *margin-top: 0px; }
+.addressList li b { display: inline-block; vertical-align: middle; margin-left: 5px; }
+.addressList li span { display: inline-block; vertical-align: middle; margin-left: 5px; }
+.addressList li a { color: #9c0000; margin-left: 5px; }
+.form { margin-top: 10px; }
+.form dl { clear: both; overflow: hidden; height: 100%; padding-top: 5px; }
+.form dl dt { float: left; width: 120px; text-align: right; padding-top: 3px; }
+.form dl dt span { color: #cc0000; margin-right: 4px; }
+.form dl dd { float: left; }
+.form dl dd em { color: #666; margin-left: 5px; }
+.txt { height: 16px; line-height: 16px; border: 1px solid #bdbdbd; font-size: 12px; width: 160px; }
+.memo { line-height: 16px; border: 1px solid #bdbdbd; height: 54px; width: 300px; font-size: 12px;}
+.pay li { line-height:25px;  }
+.pay li input { margin-right: 4px;}
+
+.buttons { padding: 15px 0px 4px 10px; }
+.redBtn { background: none repeat scroll 0 0 #CC0000; border-color: #FFCCCC #660000 #AA0000 #FFCCCC; border-style: solid; border-width: 1px; color: #FFFFFF; cursor: pointer; font-size: 12px; height: 22px; line-height: 22px; }
+
+.wareInfo { margin-top: 14px; }
+.wareInfo span { color:#cc0000; }
+.wareInfo h6 { font-size: 14px; color: #333; margin-left: 15px; }
+.wareInfo .orderEditor { margin-top: 4px;}
+.ware {font-size: 14px; margin-top: 10px; }
+.ware em { float: right; }
+.wareAmount { font-size: 14px; text-align: right; margin-top: 5px; font-weight: bold; }
+.confirmOrder { text-align: right; margin-top: 10px; }
+.confirmOrderBtn { width:125px; height: 35px; background:url(images/confirmOrderBtn.gif) no-repeat; border: 0px; cursor: pointer; }
+
+.thx { margin:20px 0px 0px 20px; }
+.orderNote { color: #666; margin: 20px 0px 0px 40px; line-height: 24px; }
+
+.myOrder{ margin-left: 8px; overflow: hidden; height:100%;}
+.myOrder ul { width: 300px; float: left; line-height: 22px; }
+.myOrder span { color: #666; }
+
+.payBtns { margin: 10px 0px 0px 10px; }
+.payBtn {width:125px; height: 35px; background:url(images/payBtn.gif) no-repeat; border: 0px; cursor: pointer;}
+.orderDetail { margin: 5px 15px; }
+
+.cartRec { margin-top: 10px; }
+
+.boxCon { width: 928px; overflow: hidden;}
+.listCon {overflow: hidden; width: 120%; }
+.listCon .pi { float: left; margin: 4px 6px 0px 10px; width: 140px; display: inline; }
+
+.survey { color: #cc0000; }
+.surveyBlk { margin-left: 20px; }
+.surveyBlk table td { padding: 6px 6px 6px 6px; line-height: 20px; }
+.surveyBlk table th { padding: 6px 6px 6px 6px; font-weight: bold; font-size: 14px; }
+#apply { background: url(images/apply.png) no-repeat; width: 161px; height: 46px; border: 0px; cursor: pointer; }
+.surveyBlk table.options td {  padding: 0px 6px 6px 6px; }
+span.need { color: #c00; padding-right: 4px; }
+.error { margin-top: 10px; text-align: left; color: #cc0000; line-height: 20px; }
+
+.returnExchange { margin: 15px 0px 0px 20px; font-size: 14px; line-height: 24px; }
+.returnExchange th { padding: 5px 0px 5px 20px; color: #333; }
+.returnExchange td { padding: 5px 40px 5px 10px; }
+.returnExchange td.np { padding: 0px; }
+
+
+

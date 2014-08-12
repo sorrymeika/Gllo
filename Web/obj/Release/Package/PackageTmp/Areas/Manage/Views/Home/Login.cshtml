@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <title>Gllo企业管理平台</title>
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/manage/global.css" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/manage/guide.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript" src="/Scripts/manage/login.js"></script>
+</head>
+<body>
+    <div id="login" class="login">
+        <div class="loginIns">
+        </div>
+        <form id="formLogin" method="post" action="/manage/">
+            <table>
+                <tr>
+                    <th>用户名：</th>
+                    <td><input type="text" id="userName" name="userName" /></td>
+                    <th>密码：</th>
+                    <td><input type="password" id="password" name="password" /></td>
+                    <th>验证码：</th>
+                    <td class="checkCode"><input type="text" id="checkCode" name="checkCode" />
+                        <img src="/CheckCode/0.jpg" id="imgChkCode" onclick="changeCode('imgChkCode');" title="点击刷新验证码" /> <span class="hid" id="msgCode"></span>
+                    </td>
+                    <th><input type="submit" value="登录" class="loginBtn" /></th>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                $.ready(function () {
+                });
+            </script>
+            @if (!ViewBag.Success)
+            {
+                <script type="text/javascript">
+                    $.ready(function () {
+                        @foreach (KeyValuePair<string, string> error in ViewBag.Msg)
+                        {
+                            <text>
+                                $("@error.Key").msg.innerHTML = "@error.Value";
+                                $("@error.Key").msg.className = "err";
+                            </text>
+                        }
+                    });
+                </script>
+            }
+        </form>
+    </div>
+</body>
+</html>

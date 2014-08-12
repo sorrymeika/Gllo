@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/manage/global.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript">
+        if(window.parent&&window.parent.openDialog) {
+            window.openDialog=window.parent.openDialog;
+            window.closeDialog=window.parent.closeDialog;
+        }
+    </script>
+    @RenderSection("header")
+</head>
+<body>
+    <table id="mainBody" cellspacing="6" cellpadding="0" border="0" width="100%" style="border-collapse: separate; border-spacing: 6px;">
+        <tr>
+            <td>
+                @RenderBody()
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

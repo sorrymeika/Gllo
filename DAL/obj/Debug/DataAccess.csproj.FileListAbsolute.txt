@@ -1,0 +1,5 @@
+E:\channel\DataAccess\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\DataAccess\bin\Debug\Channel.DataAccess.dll
+E:\channel\DataAccess\bin\Debug\Channel.DataAccess.pdb
+E:\channel\DataAccess\obj\Debug\Channel.DataAccess.dll
+E:\channel\DataAccess\obj\Debug\Channel.DataAccess.pdb

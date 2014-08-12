@@ -1,0 +1,371 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .cates { float: left; width: 182px; height: 480px; margin-left: -188px; display: inline; }
+        #cates { margin-top: 0px; width: 160px; height: 440px; overflow: auto; }
+        .main { padding-left: 188px; }
+        .news { float: left; width: 100%; }
+        .search { padding: 4px 0px; color: #666; }
+        .search input { border: 1px solid #bdbdbd; height: 18px; }
+        #txtDtFrom { width: 80px; }
+        #txtDtTo { width: 80px; }
+        #txtKeywords { width: 80px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var selectedRow;
+
+        function loadCates() {
+            $("btnAdd").css("btnDsb").prop("disabled",true);
+            $("cates").innerHTML="正在载入...";
+            $.post("/manage/news/GetNewsCates/",function (res) {
+
+                if(res.success) {
+                    $("cates").innerHTML="";
+                    loadCateData(res.data,0);
+                }
+                else
+                    $("cates").innerHTML=res.msg;
+            });
+        };
+        function loadCateData(data,deep,container,parentData) {
+            deep=deep||0;
+            container=container||$("cates");
+            var c=0,n=data.length;
+            $.each(data,function (dataRow) {
+                c++;
+                var childDeep=deep+1;
+                var row=$("UL",container).on("click",function () {
+                    if(selectedRow)
+                        selectedRow.css("");
+                    this.css("selected");
+                    selectedRow=this;
+                    $("btnAdd").css("btn").prop("disabled",false);
+                    $("txtDtFrom").value="";
+                    $("txtDtTo").value="";
+                    $("txtKeywords").value="";
+                    search(1,10);
+                });
+                dataRow._isLastLeave=c==n;
+                dataRow._parentData=parentData;
+                row.data=dataRow;
+                var leaveH=[dataRow._isLastLeave?"treeLast":"space"];
+                var pdata=dataRow._parentData;
+                while(pdata) {
+                    leaveH.push(pdata._isLastLeave?"treeNo":"treeSpace");
+                    pdata=pdata._parentData;
+                }
+                for(var i=deep-1;i>=0;i--) {
+                    $("LI",row).css(leaveH[i]);
+                }
+                if(dataRow.children) {
+                    $("LI",row).css("minus").on("click",function () {
+                        if(row.childHidden) {
+                            this.css("minus");
+                            row.childrenCon.style.display="block";
+                        } else {
+                            this.css("plus");
+                            row.childrenCon.style.display="none";
+                        }
+                        row.childHidden=!row.childHidden;
+                    });
+                    row.childrenCon=$("DIV",container);
+                    loadCateData(dataRow.children,childDeep,row.childrenCon,dataRow)
+                }
+                else
+                    $("LI",row).css("no");
+
+                $("LI",row).html(dataRow.categoryName);
+            });
+        };
+    </script>
+    <script type="text/javascript">
+        var pWin=window.parent;
+        var pDoc=window.parent.document;
+        var p$=pWin.$;
+        var selectedNewsRow;
+        $.ready(function () {
+
+            var newsGrid=new $.Grid({
+                id: "newsGrid",
+                pageEnabled: true,
+                onRowSelect: function () {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnView").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                    $("btnSort").css("btn").prop("disabled",false);
+                    selectedNewsRow=newsGrid.getSelectedRow();
+                },
+                columns: [{
+                    width: 50,
+                    header: "编号",
+                    columnName: "NewsID"
+                },{
+                    width: 250,
+                    header: "新闻标题",
+                    columnName: "Title"
+                },{
+                    width: 100,
+                    header: "作者",
+                    columnName: "Writer"
+                },{
+                    width: 100,
+                    header: "类别",
+                    columnName: "CategoryName"
+                },{
+                    width: 150,
+                    header: "发布时间",
+                    columnName: "PublishDate"
+                },{
+                    width: 50,
+                    type: "custom",
+                    custom: function (cell,data) {
+                        cell.html("<a target='_blank' href='/news/"+data.NewsID+".html'>[浏览]</a>")
+                    }
+                }]
+            });
+
+            window.search=function (page,pageSize) {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnView").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+                $("btnSort").css("btnDsb").prop("disabled",true);
+                newsGrid.load("/manage/news/SearchNews/",{
+                    categoryID: selectedRow?selectedRow.data.categoryID:0,
+                    page: page,
+                    pageSize: pageSize,
+                    dtFrom: $("txtDtFrom").value,
+                    dtTo: $("txtDtTo").value,
+                    keywords: $("txtKeywords").value
+                });
+                $("cates").style.height="440px";
+            };
+
+
+            search(1,10);
+        });
+    </script>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            new $.Calendar("txtDtFrom");
+            new $.Calendar("txtDtTo");
+
+            $("btnModify").css("btnDsb").prop("disabled",true);
+            $("btnView").css("btnDsb").prop("disabled",true);
+            $("btnDelete").css("btnDsb").prop("disabled",true);
+            $("btnSort").css("btnDsb").prop("disabled",true);
+
+            loadCates();
+
+            $("btnSearch").on("click",function () {
+                search(1,10);
+            });
+
+            $("btnAdd").on("click",function () {
+                if(this.prop("disabled")||!selectedRow)
+                    return false;
+                window.location.href="/Manage/News/NewsAdd.html?categoryID="+selectedRow.data.categoryID;
+                return false;
+            });
+
+            $("btnModify").on("click",function () {
+                if(this.prop("disabled")||!selectedNewsRow)
+                    return false;
+
+                window.location.href="/Manage/News/NewsModify.html?id="+selectedNewsRow.data.NewsID;
+                return false;
+            });
+
+            var frg=pDoc.createDocumentFragment();
+            var table,tbody,tr;
+            var newsDlgCon=p$("DIV",frg);
+            p$("TD",tr=p$("TR",tbody=p$("TBODY",table=p$("TABLE",newsDlgCon).css({ lineHeight: "16px" })))).css({ fontWeight: "bold" }).html("标题：");
+            var tit=p$("TD",tr).prop("colSpan","3");
+            p$("TD",tr=p$("TR",tbody)).css({ fontWeight: "bold" }).html("作者：");
+            var writer=p$("TD",tr);
+            p$("TD",tr).css({ fontWeight: "bold","paddingLeft": "15px" }).html("发布日期：");
+            var date=p$("TD",tr);
+            p$("TD",tr=p$("TR",tbody)).css({ fontWeight: "bold" }).html("标签：");
+            var tags=p$("TD",tr).prop("colSpan","3");
+            p$("TD",tr=p$("TR",tbody)).css({ fontWeight: "bold",verticalAlign: "top" }).html("正文：");
+            content=p$("TD",tr).prop("colSpan","3");
+            var newsDialog=new p$.Dialog({
+                title: "新闻详情",
+                width: 700,
+                content: frg
+            });
+
+            $("btnView").on("click",function () {
+                if(this.prop("disabled")||!selectedNewsRow)
+                    return false;
+                var data=selectedNewsRow.data;
+
+                window.open("/news/"+data.NewsID+".html","_blank");
+                return false;
+
+                tit.html(data.Title);
+                writer.html(data.Writer);
+                date.html(data.PublishDate);
+                tags.html(data.Tags);
+                content.html(data.Content);
+
+                newsDialog.show();
+                return false;
+            });
+
+            $("btnDelete").on("click",function () {
+                if(this.prop("disabled")||!selectedNewsRow)
+                    return false;
+                if(window.confirm("您确定要删除该新闻吗？")) {
+                    $.post("/Manage/News/DeleteNews/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            search(1,10);
+                        }
+                        else
+                            alert(res.msg);
+                    },{
+                        id: selectedNewsRow.data.NewsID
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var frg=pDoc.createDocumentFragment();
+
+            var newsDlgCon=p$("DIV",frg).css({ "height": "350px" });
+            var newsDlgSrchCon=p$("TR",p$("TBODY",p$("TABLE",newsDlgCon)));
+            p$("TD",newsDlgSrchCon).html("关键字：");
+            var txtDlgKeywords=p$("INPUT",p$("TD",newsDlgSrchCon));
+            p$("EM",p$("A",p$("TD",newsDlgSrchCon)).css("btn1").on("click",function () {
+                searchDlgNews();
+            })).html("搜索");
+
+            function searchDlgNews() {
+                newsDialogGrid.load("/manage/news/SearchNews/",{
+                    categoryID: 0,
+                    page: 1,
+                    pageSize: 10,
+                    keywords: txtDlgKeywords.value
+                },function () {
+                    newsDlgCon.css({ "height": "auto" });
+                });
+            };
+
+            var newsGridCon=p$("DIV",newsDlgCon).css({ "marginTop": "10px" });
+            var newsDialogGrid=new p$.Grid({
+                id: newsGridCon,
+                pageEnabled: true,
+                columns: [{
+                    header: "编号",
+                    columnName: "NewsID",
+                    width: 50
+                },{
+                    header: "新闻标题",
+                    columnName: "Title",
+                    width: 200
+                },{
+                    header: "作者",
+                    columnName: "Writer",
+                    width: 60
+                },{
+                    header: "发布时间",
+                    columnName: "PublishDate",
+                    width: 80
+                }]
+            });
+
+            var newsDlgBtm=p$("DIV",newsDlgCon).css("buttons").html("调整新闻顺序，使新闻排列在当前对话框选中的新闻之前<br>");
+            p$("EM",p$("A",newsDlgBtm).css("btn1").on("click",function () {
+                var row=newsDialogGrid.getSelectedRow();
+                if(!row) {
+                    alert("请选择一条新闻以调整顺序！");
+                    return false;
+                }
+                $.post("/Manage/News/SortNews/",function (res) {
+                    if(res.success) {
+                        alert("排序成功！");
+                        search(1,10);
+                        newsDialog.close();
+                    }
+                    else
+                        alert(res.msg);
+                },{
+                    id: selectedNewsRow.data.NewsID,
+                    beforeID: row.data.NewsID
+                });
+                return false;
+
+            })).html("确定");
+            p$("EM",p$("A",newsDlgBtm).css("btn1").on("click",function () {
+                newsDialog.close();
+            })).html("取消");
+
+            var newsDialog=new p$.Dialog({
+                title: "新闻排序",
+                width: 600,
+                content: frg
+            });
+
+            $("btnSort").on("click",function () {
+                if(this.prop("disabled")||!selectedNewsRow)
+                    return false;
+
+                searchDlgNews();
+                newsDlgCon.css({ "height": "350px" });
+                newsDialog.show();
+
+                return false;
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="cates">
+        <div class="container">
+            <div class="content">
+                <div class="tree">
+                    <strong>新闻分类</strong>
+                    <div id="cates">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="news">
+        <div class="container">
+            <div class="content">
+                <div class="toolbar">
+                    <a id="btnAdd" class="btn"><em><span class="ico2">新建新闻</span></em></a>
+                    <a id="btnView" class="btn"><em><span class="ico0">查看新闻</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">编辑新闻</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除新闻</span></em></a>
+                    <a id="btnSort" class="btn"><em><span class="ico6">排序</span></em></a>
+                </div>
+                <div class="search">
+                    <table>
+                        <tr>
+                            <td>从</td>
+                            <td><input id="txtDtFrom" /></td>
+                            <td>到</td>
+                            <td><input id="txtDtTo" /></td>
+                            <td>&nbsp;关键词:</td>
+                            <td><input id="txtKeywords" /></td>
+                            <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="newsGrid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

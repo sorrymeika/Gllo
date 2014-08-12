@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "OrderServiceMemo";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header {
+    <style type="text/css">
+        .form { margin: 0px auto; }
+        .form th span { margin-right: 4px; color: #cc0000; }
+        #txtServiceMemo { width: 400px; height: 240px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            $("txtSave").on("click",function () {
+
+                $.post("/Manage/Order/OrderServiceMemo/",function (res) {
+                    if(res.success) {
+                        alert("设置备注成功！");
+                        closeDialog(true);
+                    } else
+                        alert(res.msg);
+                },{
+                    id: @ViewBag.id,
+                    serviceMemo: $("txtServiceMemo").value
+                });
+            });
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th valign="top">客服备注：</th>
+            <td>
+                <textarea id="txtServiceMemo">@ViewBag.serviceMemo</textarea>
+            </td>
+        </tr>
+    </table>
+    <div class="buttons"><a id="txtSave" href="javascript:;" class="btn"><em>保存备注</em></a></div>
+</div>

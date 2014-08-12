@@ -1,0 +1,39 @@
+E:\channel\Models\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\Models\bin\Debug\Channel.Models.dll
+E:\channel\Models\bin\Debug\Channel.Models.pdb
+E:\channel\Models\obj\Debug\Channel.Models.dll
+E:\channel\Models\obj\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\Models\bin\Debug\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\Models\bin\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\Models\obj\Debug\ResolveAssemblyReference.cache
+E:\Visual Studio 2010\Projects\channel\Models\obj\Debug\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\Models\obj\Debug\Channel.Models.pdb
+E:\Projects\Gllo\Models\bin\Debug\Gllo.Models.dll
+E:\Projects\Gllo\Models\bin\Debug\Gllo.Models.pdb
+E:\Projects\Gllo\Models\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Gllo\Models\obj\Debug\Gllo.Models.dll
+E:\Projects\Gllo\Models\obj\Debug\Gllo.Models.pdb
+H:\Gllo\Models\bin\Debug\Gllo.Models.dll
+H:\Gllo\Models\bin\Debug\Gllo.Models.pdb
+H:\Gllo\Models\obj\Debug\ResolveAssemblyReference.cache
+H:\Gllo\Models\obj\Debug\Gllo.Models.dll
+H:\Gllo\Models\obj\Debug\Gllo.Models.pdb
+K:\Gllo\Models\bin\Debug\Gllo.Models.dll
+K:\Gllo\Models\bin\Debug\Gllo.Models.pdb
+K:\Gllo\Models\obj\Debug\ResolveAssemblyReference.cache
+K:\Gllo\Models\obj\Debug\Gllo.Models.dll
+K:\Gllo\Models\obj\Debug\Gllo.Models.pdb
+L:\Gllo\Models\bin\Debug\Gllo.Models.dll
+L:\Gllo\Models\bin\Debug\Gllo.Models.pdb
+L:\Gllo\Models\obj\Debug\ResolveAssemblyReference.cache
+L:\Gllo\Models\obj\Debug\Gllo.Models.dll
+L:\Gllo\Models\obj\Debug\Gllo.Models.pdb
+G:\Projects\Gllo\Models\bin\Debug\Gllo.Models.dll
+G:\Projects\Gllo\Models\bin\Debug\Gllo.Models.pdb
+G:\Projects\Gllo\Models\obj\Debug\ResolveAssemblyReference.cache
+G:\Projects\Gllo\Models\obj\Debug\Gllo.Models.dll
+G:\Projects\Gllo\Models\obj\Debug\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\Models\bin\Debug\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\Models\bin\Debug\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\Models\obj\Debug\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\Models\obj\Debug\Gllo.Models.pdb

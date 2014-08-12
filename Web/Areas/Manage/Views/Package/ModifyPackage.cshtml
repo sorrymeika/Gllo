@@ -1,0 +1,588 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="/Content/kindeditor/kindeditor.js"></script>
+    <style type="text/css">
+        .catesSelector { width: 200px; height: 200px; border: 1px solid #bdbdbd; padding: 4px; overflow-y: auto; float: left; }
+        .catesSelector a { cursor: default; }
+        .catesSelector a:hover { color: #333; text-decoration: none; }
+        
+        .txt { width: 400px; height: 18px; line-height: 18px; border: 1px solid #bdbdbd; }
+        .num { width: 150px; height: 18px; line-height: 18px; border: 1px solid #bdbdbd; }
+        .form input { }
+        .form td { padding-top: 8px; color: #999; }
+        .form th { padding: 8px 0px 0px 15px; font-weight: bold; color: #666; }
+        .form th span { color: #cc0000; padding-right: 4px; }
+        .newsContent strong span { color: #cc0000; padding-right: 4px; }
+        .newsContent { padding: 0px 0px 0px 5px; color: #666; margin: 10px; }
+        .newsContent strong { display: block; line-height: 26px; }
+        #memo { height: 80px; width: 400px; }
+        #intro { width: 600px; height: 440px; }
+        h1 { color: #333; font-size: 18px; }
+        #categories { color: #cc0000; font-weight: bold; }
+        #categories span { display: inline-block; border: 1px solid #cdcdcd; background: #f1f1f1; padding: 2px 4px; margin-left: 2px; }
+    </style>
+    <script type="text/javascript">
+
+        $.ready(function () {
+
+            var provinceData,cityData={},regionData={},buildingData={};
+
+            $.post("/Area/GetProvince/",function (res) {
+                if(res.success&&res.data) {
+                    provinceData=res.data;
+                    $.each(provinceData,function (item) {
+                        $("cmbProvince").options.add(new Option(item.ProvinceName,item.ProvinceID));
+                    });
+                }
+            },null,false);
+
+            function loadCity(provinceId,cityId,regionId,buildingID) {
+                for(var i=$("cmbCity").options.length-1;i>0;i--)
+                    $("cmbCity").options[i]=null;
+                $("cmbProvince").value=provinceId;
+                if(provinceId!=0) {
+                    if(!cityData[provinceId]) {
+                        $.post("/Area/GetCity/",function (res) {
+                            if(res.success&&res.data) {
+                                cityData[provinceId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                                });
+                            }
+                            $("cmbCity").value=cityId||0;
+                            loadRegion(cityId,regionId,buildingID);
+                        },{
+                            provinceId: provinceId
+                        });
+                    } else {
+                        $.each(cityData[provinceId],function (item) {
+                            $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                        });
+                        $("cmbCity").value=cityId||0;
+                        loadRegion(cityId,regionId,buildingID);
+                    }
+                }
+                else
+                    loadRegion(cityId,regionId,buildingID);
+            };
+
+            function loadRegion(cityId,regionId,buildingID) {
+                for(var i=$("cmbRegion").options.length-1;i>0;i--)
+                    $("cmbRegion").options[i]=null;
+
+                if(cityId!=0) {
+                    if(!regionData[cityId]) {
+                        $.post("/Area/GetRegion/",function (res) {
+                            if(res.success&&res.data) {
+                                regionData[cityId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                                });
+                            }
+                            $("cmbRegion").value=regionId||0;
+                            loadBuilding(regionId,buildingID);
+                        },{
+                            cityId: cityId
+                        });
+                    } else {
+                        $.each(regionData[cityId],function (item) {
+                            $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                        });
+                        $("cmbRegion").value=regionId||0;
+                        loadBuilding(regionId,buildingID);
+                    }
+                }
+
+            };
+
+            function loadBuilding(v,buildingID) {
+                $("cmbBuilding").options.length=1;
+                if(v!=0) {
+                    if(!buildingData[v]) {
+
+                        $.post("/Manage/Package/GetBuildingsByRegionID/",function (res) {
+                            if(res.success&&res.data) {
+                                buildingData[v]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbBuilding").options.add(new Option(item.BuildingName,item.BuildingID));
+                                });
+                            }
+                            $("cmbBuilding").value=buildingID||"";
+                        },{
+                            regionID: v
+                        });
+
+                    } else {
+                        $.each(buildingData[v],function (item) {
+                            $("cmbBuilding").options.add(new Option(item.BuildingName,item.BuildingID));
+                        });
+                        $("cmbBuilding").value=buildingID||"";
+                    }
+                }
+            };
+
+            $("cmbProvince").on("change",function () {
+                loadCity(this.value);
+            });
+
+            $("cmbCity").on("change",function () {
+                loadRegion(this.value);
+            });
+
+            $("cmbRegion").on("change",function () {
+                loadBuilding(this.value)
+            });
+
+            function CategorySelector(categoryIds,callback) {
+                var _self=this;
+                var selectedCates=[];
+                var selectors=[];
+                var selectedCate;
+                var preCate;
+                var cates;
+                var pFrg=document.createDocumentFragment();
+                var container=$("DIV",pFrg)
+                        .css({ width: "460px","overflow": "hidden" });
+
+                var catesSelector=$("DIV",container)
+                        .css("catesSelector");
+
+                function createCates(data,deep) {
+                    deep=deep||0;
+                    var space="";
+                    for(var i=0;i<deep;i++)
+                        space+="　 ";
+                    $.each(data,function (item) {
+                        selectors.push(
+                            $("A",catesSelector)
+                            .css({ "height": "20px","display": "block","lineHeight": "21px" })
+                            .prop("href","javascript:void(0);")
+                            .prop("categoryID",item.categoryID)
+                            .prop("categoryName",item.categoryName)
+                            .html(space+item.categoryName)
+                            .on("click",function () {
+                                if(this!=selectedCate) {
+                                    if(selectedCate)
+                                        selectedCate.css({ "background": "#fff" });
+
+                                    selectedCate=this;
+                                    this.css({ "background": "#D8F79D" });
+                                }
+                            })
+                        );
+                        if(item.children) {
+                            createCates(item.children,deep+1);
+                        }
+                    });
+                };
+
+                function clearCates() {
+                    for(var i=selectedCates.length-1;i>=0;i--) {
+                        selectedCates[i].remove();
+                        selectedCates.splice(i,1);
+                    };
+                    preCate=null;
+                }
+
+                function pushCate(cate) {
+                    selectedCates.push(
+                        $("A",cates)
+                        .prop("href","javascript:void(0);")
+                        .prop("categoryID",cate.categoryID)
+                        .css({ "height": "20px","display": "block","lineHeight": "21px" })
+                        .html(cate.categoryName)
+                        .on("click",function () {
+                            if(this!=preCate) {
+                                if(preCate)
+                                    preCate.css({ "background": "#fff" });
+
+                                preCate=this;
+                                this.css({ "background": "#D8F79D" });
+                            }
+                        })
+                    );
+                };
+
+                var cateDialog;
+                $.post("/Manage/Package/GetPackageCates/",function (res) {
+                    if(res.success) {
+                        var data=res.data;
+
+                        createCates(data);
+
+                        var buttons=$("DIV",container)
+                        .css({ "width": "40px","marginTop": "80px","textAlign": "center","float": "left" });
+
+                        $("BUTTON",buttons)
+                        .prop("value","=>")
+                        .on("click",function () {
+                            if(!selectedCate)
+                                alert("请选择商品类别");
+
+                            pushCate(selectedCate);
+                        });
+                        $("BR",buttons)
+
+                        $("BUTTON",buttons)
+                        .prop("value"," X ")
+                        .on("click",function () {
+                            if(!preCate)
+                                alert("请在右侧列表选择商品类别进行删除");
+
+                            $.each(selectedCates,function (item,i) {
+                                if(item.categoryID==preCate.categoryID) {
+                                    selectedCates.splice(i,1);
+                                    preCate.remove();
+                                    preCate=null;
+                                    return false;
+                                }
+                            });
+                        });
+
+                        cates=$("DIV",container)
+                        .css("catesSelector");
+
+                        var acceptCon=$("DIV",pFrg)
+                        .css({ marginTop: "10px",textAlign: "center" });
+
+                        $("A",acceptCon)
+                        .css("btn1")
+                        .html("<em>确定</em>")
+                        .on("click",function () {
+                            if(!selectedCates.length) {
+                                alert("请至少选择一个商品的类别");
+                                return false;
+                            }
+                            callback(_self.getSelectedCates());
+                            cateDialog.close();
+                        });
+
+                        $("A",acceptCon)
+                        .css("btn1")
+                        .html("<em>取消</em>")
+                        .on("click",function () {
+                            cateDialog.close();
+                        });
+
+                        cateDialog=new $.Dialog({
+                            title: "选择商品所属类别",
+                            width: 480,
+                            content: pFrg
+                        });
+
+                        beforeShow(categoryIds);
+                        callback(_self.getSelectedCates());
+                    }
+
+                });
+
+                function beforeShow(ids) {
+                    clearCates();
+                    $.each(selectors,function (item) {
+                        $.each(ids,function (id) {
+                            if(id==item.categoryID) {
+                                pushCate(item);
+                            }
+                        });
+                    });
+                }
+
+                this.show=function (ids) {
+                    beforeShow(ids);
+                    cateDialog.show();
+                };
+
+                this.getSelectedCates=function () {
+                    var ids=[];
+                    $.each(selectedCates,function (items) {
+                        ids.push({ id: items.categoryID,name: items.html() });
+                    });
+                    return ids;
+                };
+
+            };
+
+            var categoryID;
+            var categoryIds=[];
+            if(categoryID)
+                categoryIds.push(categoryID);
+
+            var categorySelector;
+
+            $("btnChangeCates").on("click",function () {
+                categorySelector.show(categoryIds);
+            });
+
+            var picCfg={
+                "0": ["图片","选择图片","图片描述","picUpload"],
+                "1": ["颜色","颜色图片","颜色描述","colors"]
+            };
+
+            var productData,pics,picForms,picViews,picIndex=0;
+            function load() {
+                productData=null;
+                pics=[];
+                picForms=[];
+                picViews={};
+                picIndex=0;
+
+                $.post("/Manage/Package/GetPackageByID/",function (res) {
+                    if(res.success) {
+                        productData=res.data;
+                        categoryID=productData.CategoryID;
+                        $("name").value=res.data.PackageName;
+                        $("code").value=res.data.Code;
+                        $("material").value=res.data.Material;
+                        $("memo").value=res.data.Memo;
+                        KE.html("intro",res.data.Intro);
+                        loadCity(res.data.ProvinceID,res.data.CityID,res.data.RegionID,res.data.BuildingID)
+
+                        $("picUpload").innerHTML="";
+                        $("A",$("picUpload"))
+                        .attr("href","javascript:;")
+                        .html("[添加图片]")
+                        .on("click",function () {
+                            createPicForm(0);
+                        });
+
+                        categorySelector=new CategorySelector(productData.Categories,function (cates) {
+                            categoryIds=[];
+                            $("categories").html("");
+                            $.each(cates,function (item) {
+                                categoryIds.push(item.id);
+                                $("SPAN",$("categories")).html(item.name);
+                                $("categories").appendText(" ");
+                            });
+                            categoryID=categoryIds[0];
+                        });
+
+                        if(res.data.Pictures) {
+                            $.each(res.data.Pictures,function (item) {
+                                createPicForm(0,item);
+                            });
+                        }
+
+                    } else
+                        alert(res.msg);
+
+                    window.scrollTo(0,0);
+                },{
+                    id: $.getQueryString("id")
+                });
+            };
+
+            load();
+            var validPrice=function () {
+                if(parseFloat($("specialPrice").value)>parseFloat($("price").value))
+                    return false;
+                return true;
+            }
+            var validation=new $.Validation();
+            validation.add("name",{ emptyAble: false,emptyText: "套餐名不可为空!" });
+            validation.add("intro",{ emptyAble: false,emptyText: "套餐描述不可为空!" });
+            validation.add("cmbBuilding",{ emptyAble: false,emptyText: "请选择楼盘!" });
+
+            $("btnCancel").on("click",function () {
+                closeDialog();
+            });
+
+            $("btnAdd").on("click",function () {
+                KE.util.setData("intro");
+
+                if(validation.validate()) {
+                    uploadPic();
+                }
+                else {
+                    alert("表单填写不完整，请检查是否有必填项未填！");
+                    window.scrollTo(0,0)
+                }
+            });
+
+            window.handleViewPic=function (res) {
+                if(res.success) {
+                    picViews[res.name].src="/home/ViewPic/?picGuid="+res.guid;
+                }
+                else
+                    alert(res.msg)
+            }
+
+            function createPicForm(type,picData) {
+                var cfg=picCfg[type];
+
+                var form=$("FORM",$(cfg[3]))
+                .prop("target","iframeProduct")
+                .prop("enctype","multipart/form-data")
+                .prop("encoding","multipart/form-data")
+                .prop("method","POST")
+                .prop("action","/manage/Package/InsertPackagePic/");
+
+                var index=picForms.length;
+                picForms.push(form);
+
+                var container=$("TBODY",$("TABLE",form));
+                var tr=$("TR",container);
+                $("TD",tr).html(cfg[1]+"：");
+                var td=$("TD",tr);
+                var file=$("FILE",td,"pic"+index).on("change",function () {
+                    form.action="/home/ViewPic/?width=60&height=60";
+                    form.submit();
+                });
+                var view=$("IMG",td).css({ "position": "absolute",width: "60px",height: "60px" });
+                var picId=$("HIDDEN",td,"id");
+
+
+                $("HIDDEN",td,"type").prop("value",type);
+                picViews["pic"+index]=view;
+                tr=$("TR",container);
+                $("TD",tr).html(cfg[2]+"：");
+                td=$("TD",tr);
+                var desc=$("INPUT",td,"desc");
+
+                if(picData) {
+                    view.src="@ViewBag.mediaServer"+picData.Url;
+                    picId.value=picData.PictureID;
+                    desc.value=picData.PictureDesc;
+                } else
+                    picId.value=0;
+
+                function removePic() {
+                    $.each(picForms,function (item,i) {
+                        if(item==form) {
+                            picForms.splice(i,1);
+                            return false;
+                        }
+                    });
+                    form.remove();
+                };
+                $("A",td).html("[删除]")
+                .attr("href","javascript:void(0);")
+                .on("click",function () {
+                    if(picData) {
+                        if(window.confirm("该套餐"+cfg[0]+"将被直接删除，您确定要删除该"+cfg[0]+"吗？")) {
+                            $.post("/manage/Package/DeletePackagePic/",function (res) {
+                                if(res.success) {
+                                    removePic();
+                                    alert("删除成功！")
+                                } else
+                                    alert(res.msg)
+                            },{
+                                pictureID: picData.PictureID
+                            });
+                        }
+                    } else
+                        removePic();
+                });
+            };
+
+            function uploadPic() {
+                if(picIndex>=picForms.length) {
+                    $.post("/manage/Package/ModifyPackage/",function (res) {
+                        if(res.success) {
+                            alert("修改成功！");
+                            closeDialog(true);
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: $.getQueryString("id"),
+                        categoryIDs: categoryIds.join(","),
+                        intro: encodeURIComponent($("intro").value),
+                        name: $("name").value,
+                        code: $("code").value,
+                        material: $("material").value,
+                        buildingID: $("cmbBuilding").value,
+                        pics: pics.join(",")
+                    });
+                }
+                else {
+                    picForms[picIndex].action="/manage/Package/InsertPackagePic/?"+new Date().getTime();
+                    picForms[picIndex].submit();
+                }
+            };
+
+            window.handleResult=function (res) {
+                if(res.success) {
+                    if(res.id)
+                        pics.push(res.id);
+                    picIndex++;
+                    uploadPic();
+                }
+                else
+                    alert(res.msg);
+            }
+        });
+
+
+        KE.show({
+            id: 'intro',
+            imageUploadJson: '/manage/home/upload/',
+            fileManagerJson: '',
+            allowFileManager: true,
+            afterCreate: function (id) {
+            }
+        });
+
+    </script>
+}
+<div style="width: 780px; margin: 0px auto;">
+    <iframe id="iframeProduct" name="iframeProduct" scrolling="no" height="0" width="0" frameborder="0"></iframe>
+    <table class="form">
+        <tr>
+            <th valign="top"><span>*</span>所属类别：</th>
+            <td><a id="btnChangeCates" href="javascript:void(0);">[更改类别]</a>
+                <div id="categories"></div>
+            </td>
+        </tr>
+        <tr>
+            <th><span>*</span>套餐名：</th>
+            <td><input id="name" name="name" type="text" class="txt" /></td>
+        </tr>
+        <tr>
+            <th><span>*</span>货号：</th>
+            <td><input id="code" name="code" type="text" class="txt" /></td>
+        </tr>
+        <tr>
+            <th><span>*</span>楼盘：</th>
+            <td>
+                <select id="cmbProvince">
+                    <option value="0">选择省</option>
+                </select>
+                <select id="cmbCity">
+                    <option value="0">选择市</option>
+                </select>
+                <select id="cmbRegion">
+                    <option value="0">选择区</option>
+                </select>
+                <select id="cmbBuilding">
+                    <option value="">选择楼盘</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>材质：</th>
+            <td><input id="material" name="material" type="text" class="txt" /></td>
+        </tr>
+        <tr>
+            <th valign="top">
+                <br>
+                套餐图片：</th>
+            <td id="picUpload"></td>
+        </tr>
+        <tr>
+            <th valign="top">备注：</th>
+            <td>
+                <textarea id="memo" name="memo"></textarea></td>
+        </tr>
+    </table>
+    <div class="newsContent"><strong><span>*</span>套餐描述</strong>
+        <div>
+            <textarea id="intro" name="intro"></textarea>
+        </div>
+        <br />
+        <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico5">修改套餐信息</span></em></a>
+            <a id="btnCancel" class="btn" href="/manage/product/products.html"><em>取消</em></a>
+        </div>
+        <br />
+    </div>
+</div>

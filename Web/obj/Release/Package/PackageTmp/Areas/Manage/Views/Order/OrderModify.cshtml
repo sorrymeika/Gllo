@@ -1,0 +1,383 @@
+﻿@{
+    ViewBag.Title = "订单信息修改";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderObj = ViewBag.orderInfo;
+}
+@section header{
+    <style type="text/css">
+        h1 { font-size: 14px; margin: 5px 0px 0px 10px; }
+        .myOrder { height: 100%; overflow: hidden; margin: 10px 0px 0px 20px; line-height: 25px; }
+        .myOrder ul { float: left; width: 30%; }
+        .myOrder table { float: left; width: 40%; }
+        .myOrder span { color: #666; }
+        .myOrder th span { color: #cc0000; }
+        .myOrder td { color: #666; }
+        .txt { height: 18px; line-height: 18px; border: 1px solid #bdbdbd; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        var media="@Gllo.Sys.Config.MediaServer";
+        function formatPrice(price) {
+            price=price+"";
+            return "￥"+price+(/^\d+$/.test(price)?".00":/^\d+\.\d{1}$/.test(price)?"0":"")
+        };
+        var provinceId="@orderObj.ProvinceID";
+        var cityId="@orderObj.CityID";
+        var regionId="@orderObj.RegionID";
+        var orderAmount=parseFloat("@orderObj.Amount");
+        var orderFreight=parseFloat("@orderObj.Freight");
+
+        $.ready(function () {
+            var errorToolTip=$("DIV",document.body)
+                .css({
+                    position: "absolute",
+                    left: "-1000px",
+                    top: "-1000px",
+                    border: "2px solid #cc0000",
+                    color: "#9c0000",
+                    padding: "4px",
+                    display: "none",
+                    background: "#fff"
+                });
+            function showError(e) {
+                errorToolTip.css({ display: "block",left: e.pageX+"px",top: e.pageY+20+"px" });
+            };
+            function hideError(e) {
+                errorToolTip.style.display="none"
+            };
+
+            var productGrid=new $.Grid({
+                id: "productList",
+                rowHeight: 70,
+                url: "/Manage/Order/GetOrderDetails/",
+                params: {
+                    orderId: "@orderObj.OrderID",
+                    userId: "@orderObj.UserID"
+                },
+                columns: [{
+                    header: "商品",
+                    type: "custom",
+                    width: 80,
+                    custom: function (cell,data) {
+                        var link=$("A",true).prop("target","_blank").prop("href","/Product/"+data.ProductID+".html");
+                        $("IMG",link).prop("src",media+data.Url).css({ width: "80px",height: "60px" });
+                        cell.append(link);
+                    }
+                },{
+                    header: "名称",
+                    type: "custom",
+                    width: 200,
+                    custom: function (cell,data) {
+                        cell.append($("A",true).prop("target","_blank").prop("href","/Product/"+data.ProductID+".html").html(data.Name));
+                    }
+                },{
+                    header: "型号",
+                    columnName: "Code",
+                    width: 60
+                },{
+                    header: "单价",
+                    type: "custom",
+                    width: 60,
+                    custom: function (cell,data) {
+                        cell.html(formatPrice(data.OrignalPrice));
+                    }
+                },{
+                    header: "赠送积分",
+                    columnName: "Points",
+                    width: 60
+                },{
+                    header: "数量",
+                    columnName: "Quantity",
+                    width: 60
+                },{
+                    header: "配送",
+                    type: "custom",
+                    width: 50,
+                    custom: function (cell,data) {
+                        if(data.ExpressID==0)
+                            cell.html("物流");
+                        else
+                            cell.html(data.ExpressName);
+                    }
+                },{
+                    header: "运费",
+                    type: "custom",
+                    width: 50,
+                    custom: function (cell,data) {
+                        cell.html("￥"+(data.Freight+(data.Quantity-1)*data.Freight1));
+                    }
+                },{
+                    header: "优惠",
+                    type: "custom",
+                    width: 60,
+                    custom: function (cell,data) {
+
+                        var frag=document.createDocumentFragment();
+
+                        var validate=function (a) {
+                            var flag=true;
+
+                            if(text.value&&!/^\d+(\.\d+){0,1}%{0,1}$/.test(text.value)) {
+                                errorToolTip.html("优惠格式错误！");
+                                flag=false;
+                            }
+
+                            if(flag) {
+                                var price=text.value;
+                                var m=price.match(/^(\d+(\.\d+){0,1})%$/);
+                                if(m)
+                                    price=(data.OrignalPrice*data.Quantity)*parseFloat(m[1])/100;
+                                else
+                                    price=parseFloat(price);
+
+                                var discount=Math.round(100*price)/100;
+                                if(data.OrignalPrice*data.Quantity-discount<0) {
+                                    errorToolTip.html("优惠金额不可大于商品金额！");
+                                    flag=false;
+                                } else {
+                                    orderAmount=orderAmount+cell.discount-discount;
+                                    $("lblAmount").html(formatPrice(orderAmount));
+                                    $("lblTotalAmount").html(formatPrice(orderFreight+orderAmount));
+
+                                    cell.row.cells[7].html(formatPrice(data.OrignalPrice*data.Quantity-discount));
+                                    cell.discount=discount;
+                                }
+                            }
+
+                            if(flag) {
+                                cell.cell.className="gridCell";
+                                $(cell.cell).remove("mousemove",showError);
+                                $(cell.cell).remove("mouseout",hideError);
+                                errorToolTip.style.display="none";
+                            } else {
+                                cell.cell.className="gridCell gridCellErr";
+                                $(cell.cell).on("mousemove",showError);
+                                $(cell.cell).on("mouseout",hideError);
+                            }
+
+                            return flag;
+                        };
+                        var text=$("INPUT",true).prop("value",data.Discount).css("txt").css({ width: "94%" }).on("blur",validate);
+
+                        cell.row.validate=validate;
+                        cell.row.textbox=text;
+                        cell.append(text);
+                        cell.discount=data.Discount;
+                    }
+                },{
+                    header: "小记",
+                    type: "custom",
+                    width: 60,
+                    custom: function (cell,data) {
+                        cell.html(formatPrice(data.Quantity*data.OrignalPrice-data.Discount));
+                    }
+                }]
+            });
+
+            var provinceData,cityData={},regionData={};
+
+            $.post("/Area/GetProvince/",function (res) {
+                if(res.success&&res.data) {
+                    provinceData=res.data;
+                    $.each(provinceData,function (item) {
+                        $("cmbProvince").options.add(new Option(item.ProvinceName,item.ProvinceID));
+                    });
+                }
+            },null,false);
+
+            function loadCity(provinceId,cityId,regionId) {
+                for(var i=$("cmbCity").options.length-1;i>0;i--)
+                    $("cmbCity").options[i]=null;
+                $("cmbProvince").value=provinceId;
+                if(provinceId!=0) {
+                    if(!cityData[provinceId]) {
+                        $.post("/Area/GetCity/",function (res) {
+                            if(res.success&&res.data) {
+                                cityData[provinceId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                                });
+                            }
+                            $("cmbCity").value=cityId||0;
+                            loadRegion(cityId,regionId);
+                        },{
+                            provinceId: provinceId
+                        });
+                    } else {
+                        $.each(cityData[provinceId],function (item) {
+                            $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                        });
+                        $("cmbCity").value=cityId||0;
+                        loadRegion(cityId,regionId);
+                    }
+                }
+                else
+                    loadRegion(cityId,regionId);
+            }
+
+            function loadRegion(cityId,regionId) {
+                for(var i=$("cmbRegion").options.length-1;i>0;i--)
+                    $("cmbRegion").options[i]=null;
+
+                if(cityId!=0) {
+                    if(!regionData[cityId]) {
+                        $.post("/Area/GetRegion/",function (res) {
+                            if(res.success&&res.data) {
+                                regionData[cityId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                                });
+                            }
+                            $("cmbRegion").value=regionId||0;
+                        },{
+                            cityId: cityId
+                        });
+                    } else {
+                        $.each(regionData[cityId],function (item) {
+                            $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                        });
+                        $("cmbRegion").value=regionId||0;
+                    }
+                }
+            };
+
+            $("cmbProvince").on("change",function () {
+                loadCity(this.value);
+            });
+
+            $("cmbCity").on("change",function () {
+                loadRegion(this.value);
+            });
+
+            loadCity(provinceId,cityId,regionId);
+
+            var orderVld=new $.Validation();
+            orderVld.add("Receiver",{ emptyAble: false,emptyText: "请填写收货人姓名" });
+            orderVld.add("Address",{ emptyAble: false,emptyText: "请填写收货地址" });
+            orderVld.add("Zip",{ regex: /^\d{6}$/,regexText: "邮编格式错误" });
+            orderVld.add("Mobile",{ regex: /^1\d{10}$/,regexText: "手机号码格式错误" });
+            orderVld.add("Phone",{ regex: /^\d+-\d+(,\d+-\d+)*$/,regexText: "固话号码格式错误，应为 “区号-号码”。<br>多个号码用,号隔开" });
+            orderVld.add("cmbCity",{ regex: /^[1-9]{1}\d*$/,regexText: "请选择城市" });
+            orderVld.add("Freight",{ emptyAble: false,emptyText: "请填写运费",regex: /^\d+(\.\d+){0,1}$/,regexText: "运费格式错误",
+                success: function () {
+                    orderFreight=parseFloat($("Freight").value);
+                    $("lblTotalAmount").html(formatPrice(orderAmount+orderFreight));
+                }
+            });
+
+            $("btnSave").on("click",function () {
+                if($("btnSave").prop("disabled"))
+                    return false;
+
+                if(orderVld.validate()) {
+
+                    if(!$("Mobile").value&&!$("Phone").value) {
+                        $("Mobile").msg.css("err").html("手机或固话必填一项！");
+                        return false;
+                    }
+                    else
+                        $("Mobile").msg.css("hid");
+
+                    var rows=productGrid.rows;
+                    var flag=true;
+                    var data=[];
+                    $.each(rows,function (row) {
+                        var res=row.validate();
+                        flag&=res;
+                        if(res) {
+                            var price=row.textbox.value;
+                            var m=price.match(/^(\d+(\.\d+){0,1})%$/);
+                            if(m)
+                                price=(row.data.OrignalPrice*row.data.Quantity)*parseFloat(m[1])/100;
+                            else
+                                price=parseFloat(price);
+                            data.push(row.data.DetailID+"|"+price);
+                        }
+                    });
+
+                    if(flag) {
+                        $("btnSave").prop("disabled",true).css("btnDsb");
+
+                        $.post("/Manage/Order/ModifyOrder/",function (res) {
+                            $("btnSave").prop("disabled",false).css("btn");
+                            if(res.success) {
+                                alert("修改成功！");
+                                window.location.href="/Manage/Order/Orders.html";
+                            } else {
+                                alert(res.msg);
+                            }
+                        },{
+                            orderId: "@orderObj.OrderID",
+                            receiver: $("Receiver").value,
+                            address: $("Address").value,
+                            zip: $("Zip").value,
+                            mobile: $("Mobile").value,
+                            phone: $("Phone").value,
+                            freight: $("Freight").value,
+                            cityId: $("cmbCity").value,
+                            regionId: $("cmbRegion").value,
+                            data: data.join(",")
+                        });
+                    }
+                }
+            });
+
+        });
+
+    </script>
+}
+<div class="main">
+    <h1>订单信息修改</h1>
+    <div class="myOrder">
+        <ul>
+            <li>订单号：<span>@orderObj.OrderCode</span></li>
+            <li>订单金额：<span id="lblAmount">￥@orderObj.Amount</span></li>
+            <li>订单运费：<input id="Freight" name="Freight" value="@(orderObj.Freight)" class="txt" style="width:90px" /></li>
+            <li>订单总金额：<span id="lblTotalAmount">￥@(orderObj.Amount + orderObj.Freight)</span></li>
+            <li>订单日期：<span>@orderObj.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")</span></li>
+            <li>支付方式：@(orderObj.PayType == 1 ? "支付宝" : orderObj.PayType == 2 ? "银行转账" : "电汇")，@(orderObj.PayStatus == 1 ? "已支付" : "未支付")</li>
+        </ul>
+        <table>
+            <tr>
+                <th>收货人姓名<span>*</span></th>
+                <td><input id="Receiver" name="Receiver" value="@(orderObj.Receiver)"  class="txt"/></td>
+            </tr>
+            <tr>
+                <th>配送省/市/区<span>*</span></th>
+                <td>
+                    <select id="cmbProvince">
+                        <option value="0">请选择</option>
+                    </select>
+                    <select id="cmbCity">
+                        <option value="0">请选择</option>
+                    </select>
+                    <select id="cmbRegion">
+                        <option value="0">请选择</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>递送地址<span>*</span></th>
+                <td><input id="Address" name="Address" value="@(orderObj.Address)" class="txt" /></td>
+            </tr>
+            <tr>
+                <th>递送邮编：</th>
+                <td><input id="Zip" name="Zip" value="@(orderObj.Zip)"  class="txt"/></td>
+            </tr>
+            <tr>
+                <th>手机<span>*</span></th>
+                <td><input id="Mobile" name="Mobile" value="@(orderObj.Mobile)" class="txt" /></td>
+            </tr>
+            <tr>
+                <th>固话：</th>
+                <td><input id="Phone" name="Phone" value="@(orderObj.Phone)"  class="txt"/></td>
+            </tr>
+        </table>
+    </div>
+    <h1>商品清单</h1>
+    <div class="orderProduct">
+        <div id="productList"></div>
+    </div>
+    <div class="buttons"><a id="btnSave" class="btn"><em><span class="ico5">修改订单信息</span></em></a>
+    </div>
+</div>

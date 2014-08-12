@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.navIndex = 1;
+    ViewBag.Title = "GLLO  洁利来  极致人性  随心所浴";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IDictionary<int, Gllo.Models.MediaObj> flash = ViewBag.flash;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/index.css" />
+}
+<div class="main">
+    <div class="iflash">
+        <div id="flash" class="iflashCon"><a href="@(flash[4] != null ? flash[4].Url : "")"><img src="@(flash[4] != null ? (Gllo.Sys.Config.MediaServer + flash[4].Src) : "")" alt="@(flash[4] != null ? flash[4].Description : "")" /></a>
+            <a style="display: none" href="@(flash[5] != null ? flash[5].Url : "")"><img src="@(flash[5] != null ? (Gllo.Sys.Config.MediaServer + flash[5].Src) : "")" alt="@(flash[5] != null ? flash[5].Description : "")" /></a>
+            <a style="display: none" href="@(flash[6] != null ? flash[6].Url : "")"><img src="@(flash[6] != null ? (Gllo.Sys.Config.MediaServer + flash[6].Src) : "")" alt="@(flash[6] != null ? flash[6].Description : "")" /></a>
+            <a style="display: none" href="@(flash[7] != null ? flash[7].Url : "")"><img src="@(flash[7] != null ? (Gllo.Sys.Config.MediaServer + flash[7].Src) : "")" alt="@(flash[7] != null ? flash[7].Description : "")" /></a>
+            <a style="display: none" href="@(flash[8] != null ? flash[8].Url : "")"><img src="@(flash[8] != null ? (Gllo.Sys.Config.MediaServer + flash[8].Src) : "")" alt="@(flash[8] != null ? flash[8].Description : "")" /></a>
+        </div>
+        <div id="flashNav" class="iflashNav">
+            <ul>
+                <li class="cur">@(flash[4] != null ? flash[4].Description : "")</li>
+                <li>@(flash[5] != null ? flash[5].Description : "")</li>
+                <li>@(flash[6] != null ? flash[6].Description : "")</li>
+                <li>@(flash[7] != null ? flash[7].Description : "")</li>
+                <li>@(flash[8] != null ? flash[8].Description : "")</li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var flashLinks=$("flash").getElementsByTagName("A");
+            var flashPics=$("flash").getElementsByTagName("IMG");
+            var flashNums=$("flashNav").getElementsByTagName("LI");
+            var flashLength=flashLinks.length;
+            if(flashLength!=0) {
+                var currentFlash=0;
+                var isStop=false;
+                var flashHeight=$("flash").offsetHeight;
+
+                function changeFlash(oldIndex,newIndex) {
+                    if(oldIndex==newIndex)
+                        return;
+                    var opt={
+                        element: flashLinks[oldIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: 0,
+                        topEnd: flashHeight* -1
+                    };
+
+                    var opt1={
+                        element: flashLinks[newIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: flashHeight,
+                        topEnd: 0
+                    };
+                    $(opt1.element).css({ top: flashHeight+"px",display: "block" });
+                    currentFlash=newIndex;
+
+                    $.gradual([opt,opt1],function () {
+                        flashNums[oldIndex].className="";
+                        flashNums[newIndex].className="cur";
+                        $(opt.element).css({ display: "none" });
+                    });
+                }
+
+                $.each(flashNums,function (item,i) {
+                    $(item).on("mouseover",function () {
+                        changeFlash(currentFlash,i);
+                        isStop=true;
+                    }).on("mouseout",function () {
+                        isStop=false;
+                    });
+                })
+
+                function flashStart() {
+                    if(!isStop)
+                        changeFlash(currentFlash,currentFlash==flashLength-1?0:currentFlash+1);
+
+                    window.setTimeout(function () { flashStart(); },6000);
+                }
+                window.setTimeout(function () { flashStart(); },6000);
+            }
+
+        });
+    </script>
+</div>
+<div class="main">
+    <div class="blks">
+        <div class="topBlks">
+            <div class="idxBlk">
+                <dl>
+                    <dt><a href="@(flash[9] != null ? flash[9].Url : "")"><img src="@(flash[9] != null ? (Gllo.Sys.Config.MediaServer + flash[9].Src) : "")" alt="@(flash[9] != null ? flash[9].Description : "")" /></a></dt>
+                    <dd><b><a href="@(flash[9] != null ? flash[9].Url : "")">@(flash[9] != null ? flash[9].Description : "")</a></b>
+                        <p>@(flash[9] != null ? flash[9].Content : "")</p>
+                    </dd>
+                </dl>
+            </div>
+            <div class="idxBlk">
+                <dl>
+                    <dt><a href="@(flash[10] != null ? flash[10].Url : "")"><img src="@(flash[10] != null ? (Gllo.Sys.Config.MediaServer + flash[10].Src) : "")" alt="@(flash[10] != null ? flash[10].Description : "")" /></a></dt>
+                    <dd><b><a href="@(flash[10] != null ? flash[10].Url : "")">@(flash[10] != null ? flash[10].Description : "")</a></b>
+                        <p>@(flash[10] != null ? flash[10].Content : "")</p>
+                    </dd>
+                </dl>
+            </div>
+            <div class="idxBlk">
+                <dl>
+                    <dt><a href="@(flash[11] != null ? flash[11].Url : "")"><img src="@(flash[11] != null ? (Gllo.Sys.Config.MediaServer + flash[11].Src) : "")" alt="@(flash[11] != null ? flash[11].Description : "")" /></a></dt>
+                    <dd><b><a href="@(flash[11] != null ? flash[11].Url : "")">@(flash[11] != null ? flash[11].Description : "")</a></b>
+                        <p>@(flash[11] != null ? flash[11].Content : "")</p>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="idxBlk">
+            <dl>
+                <dt><a href="@(flash[12] != null ? flash[12].Url : "")"><img src="@(flash[12] != null ? (Gllo.Sys.Config.MediaServer + flash[12].Src) : "")" alt="@(flash[12] != null ? flash[12].Description : "")" /></a></dt>
+                <dd><b><a href="@(flash[12] != null ? flash[12].Url : "")">@(flash[12] != null ? flash[12].Description : "")</a></b>
+                    <p>@(flash[12] != null && flash[12].Content != null ? new MvcHtmlString(flash[12].Content.Replace("\r\n", "<br>").Replace("\r", "<br>").Replace("\n", "<br>")) : null)</p>
+                </dd>
+            </dl>
+        </div>
+        <div class="idx1Blk">
+            <dl>
+                <dt><a href="@(flash[13] != null ? flash[13].Url : "")"><img src="@(flash[13] != null ? (Gllo.Sys.Config.MediaServer + flash[13].Src) : "")" alt="@(flash[13] != null ? flash[13].Description : "")" /></a></dt>
+                <dd><b><a href="@(flash[13] != null ? flash[13].Url : "")">@(flash[13] != null ? flash[13].Description : "")</a></b>
+                    <p>@(flash[13] != null && flash[13].Content != null ? new MvcHtmlString(flash[13].Content.Replace("\r\n", "<br>").Replace("\r", "<br>").Replace("\n", "<br>")) : null)</p>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="main s5"><a href="@(flash[14] != null ? flash[14].Url : "")"><img src="@(flash[14] != null ? (Gllo.Sys.Config.MediaServer + flash[14].Src) : "")" alt="@(flash[14] != null ? flash[14].Description : "")" /></a>
+</div>

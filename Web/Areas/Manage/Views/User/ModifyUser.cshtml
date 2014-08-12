@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "用户管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+    Gllo.Models.UserObj user = ViewBag.userInfo;
+}
+@section header{
+    <style type="text/css">
+        
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var U={
+                vld: new $.Validation(),
+                init: function () {
+                    U.vld.add("birthDay",{ regexText: "请写成2011-01-02格式",regex: /^\d{4}-\d{2}-\d{2}$/ });
+
+                    $("btnCancel").on("click",function () {
+                        closeDialog();
+                    });
+
+                    $("btnSave").on("click",function () {
+                        if(U.vld.validate()) {
+                            $.post("/Manage/User/ModifyUser/",function (res) {
+                                if(res.success) {
+                                    alert("保存成功！");
+                                    closeDialog(true);
+                                } else
+                                    alert(res.msg);
+                            },{
+                                id: $("?id"),
+                                nickName: $("nickName").value,
+                                birthDay: $("birthDay").value,
+                                gender: $$("gender").val()
+                            });
+                        }
+                    });
+                }
+            };
+            U.init();
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th>昵称：</th>
+            <td><input id="nickName" name="nickName" class="txt" value="@user.NickName" /></td>
+        </tr>
+        <tr>
+            <th>性别：</th>
+            <td><label><input name="gender" value="0" type="radio" @(user.Gender ? null : new MvcHtmlString("checked=\"checked\""))/>男</label>
+                <label><input name="gender" value="1" type="radio" @(user.Gender ? new MvcHtmlString("checked=\"checked\"") : null)/>女</label></td>
+        </tr>
+        <tr>
+            <th>邮箱：</th>
+            <td>@user.Email</td>
+        </tr>
+        <tr>
+            <th>生日：</th>
+            <td><input id="birthDay" name="birthDay" value="@(user.BirthDay == DateTime.MinValue ? "" : user.BirthDay.ToString("yyyy-MM-dd"))" class="txt" /></td>
+        </tr>
+    </table>
+    <div class="buttons">
+        <a id="btnSave" class="btn"><em>保存个人信息</em></a>
+        <a id="btnCancel" class="btn"><em>取消</em></a>
+    </div>
+</div>

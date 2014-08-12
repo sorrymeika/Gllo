@@ -1,0 +1,457 @@
+﻿@{
+    ViewBag.navIndex = 2;
+    ViewBag.Title = "产品中心";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    IDictionary<int, Gllo.Models.MediaObj> flash = ViewBag.flash;
+    Gllo.Models.JsonArray cates = ViewBag.cates;
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/product.css" />
+}
+<div class="main">
+    <div class="iflash">
+        <div id="flash" class="iflashCon"><a href="@(flash[15] != null ? flash[15].Url : "")"><img src="@(flash[15] != null ? (Gllo.Sys.Config.MediaServer + flash[15].Src) : "")" alt="@(flash[15] != null ? flash[15].Description : "")" /></a>
+            <a style="display: none" href="@(flash[16] != null ? flash[16].Url : "")"><img src="@(flash[16] != null ? (Gllo.Sys.Config.MediaServer + flash[16].Src) : "")" alt="@(flash[16] != null ? flash[16].Description : "")" /></a>
+            <a style="display: none" href="@(flash[17] != null ? flash[17].Url : "")"><img src="@(flash[17] != null ? (Gllo.Sys.Config.MediaServer + flash[17].Src) : "")" alt="@(flash[17] != null ? flash[17].Description : "")" /></a>
+            <a style="display: none" href="@(flash[18] != null ? flash[18].Url : "")"><img src="@(flash[18] != null ? (Gllo.Sys.Config.MediaServer + flash[18].Src) : "")" alt="@(flash[18] != null ? flash[18].Description : "")" /></a>
+            <a style="display: none" href="@(flash[19] != null ? flash[19].Url : "")"><img src="@(flash[19] != null ? (Gllo.Sys.Config.MediaServer + flash[19].Src) : "")" alt="@(flash[19] != null ? flash[19].Description : "")" /></a>
+        </div>
+        <div id="flashNav" class="iflashNav">
+            <ul>
+                <li class="cur"><img src="@(flash[15] != null ? (Gllo.Sys.Config.MediaServer + flash[15].Src) : "")" alt="@(flash[15] != null ? flash[15].Description : "")" /></li>
+                <li><img src="@(flash[16] != null ? (Gllo.Sys.Config.MediaServer + flash[16].Src) : "")" alt="@(flash[16] != null ? flash[16].Description : "")" /></li>
+                <li><img src="@(flash[17] != null ? (Gllo.Sys.Config.MediaServer + flash[17].Src) : "")" alt="@(flash[17] != null ? flash[17].Description : "")" /></li>
+                <li><img src="@(flash[18] != null ? (Gllo.Sys.Config.MediaServer + flash[18].Src) : "")" alt="@(flash[18] != null ? flash[18].Description : "")" /></li>
+                <li><img src="@(flash[19] != null ? (Gllo.Sys.Config.MediaServer + flash[19].Src) : "")" alt="@(flash[19] != null ? flash[19].Description : "")" /></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var flashLinks=$("flash").getElementsByTagName("A");
+            var flashPics=$("flash").getElementsByTagName("IMG");
+            var flashNums=$("flashNav").getElementsByTagName("LI");
+            var flashLength=flashLinks.length;
+            if(flashLength!=0) {
+                var currentFlash=0;
+                var isStop=false;
+                var flashHeight=$("flash").offsetHeight;
+
+                function changeFlash(oldIndex,newIndex) {
+                    if(oldIndex==newIndex)
+                        return;
+                    var opt={
+                        element: flashLinks[oldIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: 0,
+                        topEnd: flashHeight* -1
+                    };
+
+                    var opt1={
+                        element: flashLinks[newIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: flashHeight,
+                        topEnd: 0
+                    };
+                    $(opt1.element).css({ top: flashHeight+"px",display: "block" });
+                    currentFlash=newIndex;
+
+                    $.gradual([opt,opt1],function () {
+                        flashNums[oldIndex].className="";
+                        flashNums[newIndex].className="cur";
+                        $(opt.element).css({ display: "none" });
+                    });
+                }
+
+                $.each(flashNums,function (item,i) {
+                    $(item).on("mouseover",function () {
+                        changeFlash(currentFlash,i);
+                        isStop=true;
+                    }).on("mouseout",function () {
+                        isStop=false;
+                    });
+                })
+
+                function flashStart() {
+                    if(!isStop)
+                        changeFlash(currentFlash,currentFlash==flashLength-1?0:currentFlash+1);
+
+                    window.setTimeout(function () { flashStart(); },6000);
+                }
+                window.setTimeout(function () { flashStart(); },6000);
+            }
+
+        });
+    </script>
+</div>
+<div class="main">
+    <div class="cate1">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[0]["categoryID"]).html">@cates[0]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[0]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="ad1"><a href="@(flash[20] != null ? flash[20].Url : "")"><img src="@(flash[20] != null ? (Gllo.Sys.Config.MediaServer + flash[20].Src) : "")" alt="@(flash[20] != null ? flash[20].Description : "")" /></a></div>
+                <div class="prds">
+                    @(ViewBag.cate1)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cate2">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[1]["categoryID"]).html">@cates[1]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[1]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="ad2"><a href="@(flash[21] != null ? flash[21].Url : "")"><img src="@(flash[21] != null ? (Gllo.Sys.Config.MediaServer + flash[21].Src) : "")" alt="@(flash[21] != null ? flash[21].Description : "")" /></a></div>
+                <div class="prds">
+                    @(ViewBag.cate2)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="cate3">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[2]["categoryID"]).html">@cates[2]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[2]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="saleNews">
+                    <div class="saleNewsAd1"><a href="@(flash[22] != null ? flash[22].Url : "")"><img src="@(flash[22] != null ? (Gllo.Sys.Config.MediaServer + flash[22].Src) : "")" alt="@(flash[22] != null ? flash[22].Description : "")" /></a>
+                    </div>
+                    <div class="saleNewsAd2"><a href="@(flash[23] != null ? flash[23].Url : "")"><img src="@(flash[23] != null ? (Gllo.Sys.Config.MediaServer + flash[23].Src) : "")" alt="@(flash[23] != null ? flash[23].Description : "")" /></a>
+                    </div>
+                    <div class="news">
+                        <div class="newsTit">
+                            <div class="newsTitL">
+                                <div class="newsTitR">促销信息</div>
+                            </div>
+                        </div>
+                        <div class="newsCon">
+                            @{
+                                int total;
+                                Gllo.BLL.NewsBLL newsBLL = new Gllo.BLL.NewsBLL();
+                                Gllo.Models.JsonArray newsList = newsBLL.GetNews(117, null, DateTime.MinValue, DateTime.MinValue, 1, 8, out total);
+                                if (newsList != null)
+                                {
+                                    System.Text.StringBuilder sb = new System.Text.StringBuilder("<ul>");
+                                    for (int i = 0; i < newsList.Count; i++)
+                                    {
+                                        sb.Append("<li><span>[")
+                                            .Append(DateTime.Parse(newsList[i]["PublishDate"].ToString()).ToString("MM-dd"))
+                                            .Append("]</span><a href=\"/news/")
+                                            .Append(newsList[i]["NewsID"])
+                                            .Append(".html\">")
+                                            .Append(newsList[i]["Title"])
+                                            .Append("</a></li>");
+                                        if (i == 3)
+                                        {
+                                            sb.Append("</ul><div class=\"line\"></div><ul>");
+
+                                        }
+                                    }
+                                    sb.Append("</ul>");
+                                <text>@(new MvcHtmlString(sb.ToString()))</text>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="saleProds">
+                    @(ViewBag.cate3)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="cate3">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[3]["categoryID"]).html">@cates[3]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[3]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="saleNews">
+                    <div class="saleNewsAd1"><a href="@(flash[24] != null ? flash[24].Url : "")"><img src="@(flash[24] != null ? (Gllo.Sys.Config.MediaServer + flash[24].Src) : "")" alt="@(flash[24] != null ? flash[24].Description : "")" /></a>
+                    </div>
+                    <div class="saleNewsAd2"><a href="@(flash[25] != null ? flash[25].Url : "")"><img src="@(flash[25] != null ? (Gllo.Sys.Config.MediaServer + flash[25].Src) : "")" alt="@(flash[25] != null ? flash[25].Description : "")" /></a>
+                    </div>
+                    <div class="news">
+                        <div class="newsTit">
+                            <div class="newsTitL">
+                                <div class="newsTitR">促销信息 </div>
+                            </div>
+                        </div>
+                        <div class="newsCon">
+                            @{
+                                newsList = newsBLL.GetNews(117, null, DateTime.MinValue, DateTime.MinValue, 1, 8, out total);
+                                if (newsList != null)
+                                {
+                                    System.Text.StringBuilder sb = new System.Text.StringBuilder("<ul>");
+                                    for (int i = 0; i < newsList.Count; i++)
+                                    {
+                                        sb.Append("<li><span>[")
+                                            .Append(DateTime.Parse(newsList[i]["PublishDate"].ToString()).ToString("MM-dd"))
+                                            .Append("]</span><a href=\"/news/")
+                                            .Append(newsList[i]["NewsID"])
+                                            .Append(".html\">")
+                                            .Append(newsList[i]["Title"])
+                                            .Append("</a></li>");
+                                        if (i == 3)
+                                        {
+                                            sb.Append("</ul><div class=\"line\"></div><ul>");
+
+                                        }
+                                    }
+                                    sb.Append("</ul>");
+                                <text>@(new MvcHtmlString(sb.ToString()))</text>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="saleProds">
+                    @(ViewBag.cate4)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="cate3">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[4]["categoryID"]).html">@cates[4]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[4]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="saleNews">
+                    <div class="saleNewsAd1"><a href="@(flash[26] != null ? flash[26].Url : "")"><img src="@(flash[26] != null ? (Gllo.Sys.Config.MediaServer + flash[26].Src) : "")" alt="@(flash[26] != null ? flash[26].Description : "")" /></a>
+                    </div>
+                    <div class="saleNewsAd2"><a href="@(flash[27] != null ? flash[27].Url : "")"><img src="@(flash[27] != null ? (Gllo.Sys.Config.MediaServer + flash[27].Src) : "")" alt="@(flash[27] != null ? flash[27].Description : "")" /></a>
+                    </div>
+                    <div class="news">
+                        <div class="newsTit">
+                            <div class="newsTitL">
+                                <div class="newsTitR">促销信息 </div>
+                            </div>
+                        </div>
+                        <div class="newsCon">
+                            @{
+                                newsList = newsBLL.GetNews(117, null, DateTime.MinValue, DateTime.MinValue, 1, 8, out total);
+                                if (newsList != null)
+                                {
+                                    System.Text.StringBuilder sb = new System.Text.StringBuilder("<ul>");
+                                    for (int i = 0; i < newsList.Count; i++)
+                                    {
+                                        sb.Append("<li><span>[")
+                                            .Append(DateTime.Parse(newsList[i]["PublishDate"].ToString()).ToString("MM-dd"))
+                                            .Append("]</span><a href=\"/news/")
+                                            .Append(newsList[i]["NewsID"])
+                                            .Append(".html\">")
+                                            .Append(newsList[i]["Title"])
+                                            .Append("</a></li>");
+                                        if (i == 3)
+                                        {
+                                            sb.Append("</ul><div class=\"line\"></div><ul>");
+
+                                        }
+                                    }
+                                    sb.Append("</ul>");
+                                <text>@(new MvcHtmlString(sb.ToString()))</text>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="saleProds">
+                    @(ViewBag.cate5)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="cate3">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[5]["categoryID"]).html">@cates[5]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[5]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="saleNews">
+                    <div class="saleNewsAd1"><a href="@(flash[28] != null ? flash[28].Url : "")"><img src="@(flash[28] != null ? (Gllo.Sys.Config.MediaServer + flash[28].Src) : "")" alt="@(flash[28] != null ? flash[28].Description : "")" /></a>
+                    </div>
+                    <div class="saleNewsAd2"><a href="@(flash[29] != null ? flash[29].Url : "")"><img src="@(flash[29] != null ? (Gllo.Sys.Config.MediaServer + flash[29].Src) : "")" alt="@(flash[29] != null ? flash[29].Description : "")" /></a>
+                    </div>
+                    <div class="news">
+                        <div class="newsTit">
+                            <div class="newsTitL">
+                                <div class="newsTitR">促销信息 </div>
+                            </div>
+                        </div>
+                        <div class="newsCon">
+                            @{
+                                newsList = newsBLL.GetNews(117, null, DateTime.MinValue, DateTime.MinValue, 1, 8, out total);
+                                if (newsList != null)
+                                {
+                                    System.Text.StringBuilder sb = new System.Text.StringBuilder("<ul>");
+                                    for (int i = 0; i < newsList.Count; i++)
+                                    {
+                                        sb.Append("<li><span>[")
+                                            .Append(DateTime.Parse(newsList[i]["PublishDate"].ToString()).ToString("MM-dd"))
+                                            .Append("]</span><a href=\"/news/")
+                                            .Append(newsList[i]["NewsID"])
+                                            .Append(".html\">")
+                                            .Append(newsList[i]["Title"])
+                                            .Append("</a></li>");
+                                        if (i == 3)
+                                        {
+                                            sb.Append("</ul><div class=\"line\"></div><ul>");
+
+                                        }
+                                    }
+                                    sb.Append("</ul>");
+                                <text>@(new MvcHtmlString(sb.ToString()))</text>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="saleProds">
+                    @(ViewBag.cate6)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="cate3">
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong><a href="/list/@(cates[6]["categoryID"]).html">@cates[6]["categoryName"]</a></strong></div>
+                <a class="more" href="/list/@(cates[6]["categoryID"]).html">MORE&gt;&gt;</a>
+            </div>
+            <div class="boxCon">
+                <div class="saleNews">
+                    <div class="saleNewsAd1"><a href="@(flash[30] != null ? flash[30].Url : "")"><img src="@(flash[30] != null ? (Gllo.Sys.Config.MediaServer + flash[30].Src) : "")" alt="@(flash[30] != null ? flash[30].Description : "")" /></a>
+                    </div>
+                    <div class="saleNewsAd2"><a href="@(flash[31] != null ? flash[31].Url : "")"><img src="@(flash[31] != null ? (Gllo.Sys.Config.MediaServer + flash[31].Src) : "")" alt="@(flash[31] != null ? flash[31].Description : "")" /></a>
+                    </div>
+                    <div class="news">
+                        <div class="newsTit">
+                            <div class="newsTitL">
+                                <div class="newsTitR">促销信息 </div>
+                            </div>
+                        </div>
+                        <div class="newsCon">
+                            @{
+                                newsList = newsBLL.GetNews(117, null, DateTime.MinValue, DateTime.MinValue, 1, 8, out total);
+                                if (newsList != null)
+                                {
+                                    System.Text.StringBuilder sb = new System.Text.StringBuilder("<ul>");
+                                    for (int i = 0; i < newsList.Count; i++)
+                                    {
+                                        sb.Append("<li><span>[")
+                                            .Append(DateTime.Parse(newsList[i]["PublishDate"].ToString()).ToString("MM-dd"))
+                                            .Append("]</span><a href=\"/news/")
+                                            .Append(newsList[i]["NewsID"])
+                                            .Append(".html\">")
+                                            .Append(newsList[i]["Title"])
+                                            .Append("</a></li>");
+                                        if (i == 3)
+                                        {
+                                            sb.Append("</ul><div class=\"line\"></div><ul>");
+
+                                        }
+                                    }
+                                    sb.Append("</ul>");
+                                <text>@(new MvcHtmlString(sb.ToString()))</text>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="saleProds">
+                    @(ViewBag.cate7)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*
+<div class="main">
+    <div class="onSale">
+        <div class="onSaleTit"></div>
+        <div class="onSaleCon">
+            <div class="onSaleConIns">
+                <ul>
+                    @ViewBag.onSaleProducts
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="prods">
+        <div class="prodsTit">
+            <div class="prodsTabs">
+                <ul>
+                    <li id="prd1TabTit" class="cur">新品</li>
+                    <li id="prd2TabTit">单品</li>
+                    <li id="prd3TabTit">整体</li>
+                </ul>
+                <div class="tabR"></div>
+            </div>
+            <div class="prodsSearch">
+                <form method="get" action="/search/">
+                    <input id="txtKeywords1" type="text" name="keywords" class="keywords" value="请输入关键字……" />
+                    <input type="submit" value="" class="btnSearch1" />
+                </form>
+                <script type="text/javascript">
+                    onSearch("txtKeywords1"); 
+                </script>
+            </div>
+        </div>
+        <div class="prodsCon">
+            <ul id="prd1TabCon">
+                @ViewBag.newProducts
+            </ul>
+            <ul id="prd2TabCon" style="display: none">
+                @ViewBag.singleProducts
+            </ul>
+            <ul id="prd3TabCon" style="display: none">
+                @ViewBag.groupProducts
+            </ul>
+        </div>
+        <div class="prodsMore"><a href="/list/1.html"><img src="/Content/themes/default/images/moreInfo.jpg" /></a>
+        </div>
+    </div>
+    <div class="service">
+        <div class="servicePic"><img src="/Content/themes/default/images/service.jpg" /> </div>
+        <div class="serviceCon">
+            <ul>
+                <li><a href="/">疑难解答</a></li>
+                <li><a href="/">服务条例</a></li>
+                <li><a href="/">服务论坛</a></li>
+            </ul>
+        </div>
+    </div>
+</div>*@ 

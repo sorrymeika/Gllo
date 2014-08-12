@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "快递方式";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #express { margin-top: 6px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var gridExpress=new $.Grid({
+                id: "express",
+                onRowSelect: function () {
+                    $("btnModify").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    header: "快递编号",
+                    columnName: "ExpressID",
+                    width: 10
+                },{
+                    header: "快递名称",
+                    columnName: "ExpressName",
+                    align: "left",
+                    width: 90
+                }]
+            });
+
+            var load=function () {
+                $("btnModify").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+                gridExpress.load("/Manage/Express/GetExpress/");
+            };
+
+            load();
+
+            $("btnAdd").on("click",function () {
+                if(this.disabled)
+                    return false;
+
+                openDialog("添加快递",450,100,"/Manage/Express/AddExpress.html",function () {
+                    load();
+                });
+
+            });
+
+            $("btnModify").on("click",function () {
+                var selecteRow=gridExpress.getSelectedRow();
+
+                if(this.disabled&&selecteRow)
+                    return false;
+
+                openDialog("修改快递",450,100,"/Manage/Express/ModifyExpress.html?id="+selecteRow.data.ExpressID,function () {
+                    load();
+                });
+            });
+
+            $("btnDelete").on("click",function () {
+                var selecteRow=gridExpress.getSelectedRow();
+
+                if(this.disabled&&selecteRow)
+                    return false;
+
+                if(window.confirm("您确定要删除该快递吗？")) {
+
+                    $.post("/Manage/Express/DeleteExpress/",function (res) {
+                        if(res.success) {
+                            alert("删除成功！");
+                            load();
+                        } else
+                            alert(res.msg)
+                    },{
+                        id: selecteRow.data.ExpressID
+                    });
+                }
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar">
+                <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico2">新建快递</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">编辑快递</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除快递</span></em></a>
+                </div>
+                <div id="express"></div>
+            </div>
+        </div>
+    </div>
+</div>

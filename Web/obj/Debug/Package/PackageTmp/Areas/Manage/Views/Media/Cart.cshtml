@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .upload th { padding: 20px 5px 0px 10px; font-weight: bold; color: #333; }
+        .upload form { padding-top: 10px; }
+        .upload td { padding-top: 6px; }
+        b { color: #333; padding: 0px 5px 0px 10px; }
+        .view { position: absolute; width: 30px; height: 60px; }
+        .view1 { position: absolute; width: 60px; height: 30px; }
+        .view2 { position: absolute; width: 60px; height: 60px; }
+        #txtValue { width: 300px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var setSetting=function (key,val) {
+                $.post("/Manage/Media/SetSetting/",function (res) {
+                    if(res.success) {
+                        alert("设置成功！");
+                    } else
+                        alert(res.msg)
+                },{
+                    key: key,
+                    value: val
+                });
+            };
+
+            $("btnSet").on("click",function () {
+                setSetting("LogisticTips",$("txtValue").value);
+            });
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <h1>购物车设置</h1>
+            <table class="upload">
+                <tr>
+                    <td><b>物流提示文字：</b></td>
+                    <td><input id="txtValue" class="txt" value="@ViewBag.text" /></td>
+                    <td><a href="javascript:;" id="btnSet" class="btn1"><em>设置</em></a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

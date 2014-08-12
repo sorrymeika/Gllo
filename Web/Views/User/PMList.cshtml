@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "短消息";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/user.css" />
+    <script type="text/javascript">
+        $.ready(function () {
+            var media="@Gllo.Sys.Config.MediaServer";
+
+            function clearAllNode(parentNode) {
+                while(parentNode.firstChild) {
+                    var oldNode=parentNode.removeChild(parentNode.firstChild);
+                    oldNode=null;
+                }
+            }
+            function showMsg(msg) {
+                clearAllNode($("list"));
+                $("TD",$("TR",$("list"))).html(msg).prop({ "align": "left","colSpan": 3 });
+            }
+
+            function load(page,pageSize) {
+                showMsg("正在载入...");
+                $.post("/User/GetPM/",function (res) {
+                    if(res.success) {
+                        if(res.total==0) {
+                            showMsg("暂无短消息");
+                        } else {
+                            clearAllNode($("list"))
+                            var tr;
+                            $.each(res.data,function (item) {
+                                $("TD",tr=$("TR",$("list"))).html("<a href='/PM/"+item.PMID+".html' style='text-decoration:underline'>"+item.Title+"</a>");
+                                $("TD",tr).prop("align","center").html(item.PMTime);
+                            });
+
+                        }
+                        $.page(page,pageSize,res.total,$("page"),function (pageIndex) {
+                            load(pageIndex,pageSize);
+                        });
+
+                    } else
+                        showMsg(res.msg);
+                },{
+                    page: page,
+                    pageSize: pageSize
+                });
+            };
+            load(1,10);
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="here">
+        <a href="/">首页</a>&gt;<a href="/Account.html">我的账户</a>&gt;<span>我的评论</span></div>
+    <div class="sidebar">
+        <div class="newsCates">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine">
+                    </div>
+                    <div class="boxTitBG">
+                        <strong>用户中心</strong></div>
+                </div>
+            </div>
+            <div class="boxCon">
+                <div class="catesCon">
+                    <dl>
+                        <dt><a>交易管理</a></dt>
+                        <dd style="display: block"><ul>
+                            <li><b><a href="/User/Orders.html">我的订单</a></b></li>
+                            <li><b><a href="/Cart.html">购物车</a></b></li>
+                            <li><b><a href="/User/ReturnExchangeList.html">退换货申请单</a></b></li>
+                            <li><b><a href="/User/Fav.html">我的收藏</a></b></li>
+                            <li><b><a href="/User/Comments.html">我的评论</a></b></li>
+                        </ul>
+                        </dd>
+                        <dt><a>账号管理</a></dt>
+                        <dd style="display: block"><ul>
+                            <li class="cur"><b><a href="/PM/List.html">短消息</a></b></li>
+                            <li><b><a href="/User/Info.html">个人设置</a></b></li>
+                            <li><b><a href="/User/Password.html">修改密码</a></b></li>
+                        </ul>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="helpcenter">
+        <div class="helpcenterCon">
+            <h2>短消息列表</h2>
+            <table class="list">
+                <tbody>
+                    <tr>
+                        <th width="150" style="text-align: left">标题</th>
+                        <th width="80">日期</th>
+                    </tr>
+                </tbody>
+                <tbody id="list">
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="2" id="page" class="page"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

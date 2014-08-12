@@ -1,0 +1,10 @@
+E:\Projects\Gllo\Models\bin\Release\Gllo.Models.dll
+E:\Projects\Gllo\Models\bin\Release\Gllo.Models.pdb
+E:\Projects\Gllo\Models\obj\Release\ResolveAssemblyReference.cache
+E:\Projects\Gllo\Models\obj\Release\Gllo.Models.dll
+E:\Projects\Gllo\Models\obj\Release\Gllo.Models.pdb
+H:\Gllo\Models\bin\Release\Gllo.Models.dll
+H:\Gllo\Models\bin\Release\Gllo.Models.pdb
+H:\Gllo\Models\obj\Release\ResolveAssemblyReference.cache
+H:\Gllo\Models\obj\Release\Gllo.Models.dll
+H:\Gllo\Models\obj\Release\Gllo.Models.pdb

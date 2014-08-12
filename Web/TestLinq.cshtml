@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="/scripts/abs.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            $("asdf1").html("asdf1");
+        });
+
+        $.ready(function () {
+            $("asdf2").html("asdf2");
+        });
+    </script>
+</head>
+<body>
+    <img src="/home/testimage/" />
+    <div>
+        @{
+            string[] arr = new string[] { "c", "a", "bd", "c", "1", "2" };
+            int i = 0;
+            var c = arr.All<string>(a =>
+            {
+                i++;
+                return a == "c";
+            });
+
+
+            string res = "";
+            (from s in arr
+             orderby s
+             select s).ToList<string>().ForEach(s => res += s);
+            var b = (from s in arr where s == "c" select s);
+            // var c = b.DefaultIfEmpty<string>("asdcdtf").FirstOrDefault<string>();
+
+        }
+        @(i)
+        @(c)
+        @(res)
+        @{
+            var web = new Gllo.Sys.HttpWebClient()
+            {
+                HttpEncoding = System.Text.Encoding.UTF8
+            };
+
+
+            string verifycode = "";
+            string result = web.GetString("http://ptlogin2.qq.com/login", new Dictionary<string, string>()
+            {
+                { "u", "1765598293" },
+                { "p", System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile("7344EA081051AC4625C86767D0F7912F"+verifycode.ToUpper(), "md5") },
+                { "aid", "8000201" },
+                { "u1", "http://imgcache.qq.com/club/portal_new/redirect.html?jump_url=http%3A//yz.tuan.qq.com/" },
+                { "fp", "loginerroralert" },
+                { "h", "1" },
+                { "ptredirect", "0" },
+                { "ptlang", "2052" },
+                { "from_ui", "1" },
+                { "dumy", "" },
+                { "mibao_css", "" },
+                { "verifycode", verifycode },
+            });
+            result = web.GetString("http://yz.tuan.qq.com/deal/verify?stoken=5920315656&igrouponid=130353", null);
+
+            
+            
+        }
+        @(result)
+    </div>
+    <div id="asdf1">
+    </div>
+    <div id="asdf2">
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+E:\channel\DataAccess\bin\Debug\Channel.DAL.dll
+E:\channel\DataAccess\bin\Debug\Channel.DAL.pdb
+E:\channel\DataAccess\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\DataAccess\obj\Debug\Channel.DAL.dll
+E:\channel\DataAccess\obj\Debug\Channel.DAL.pdb
+E:\channel\DAL\bin\Debug\Channel.DAL.dll
+E:\channel\DAL\bin\Debug\Channel.DAL.pdb
+E:\channel\DAL\obj\Debug\ResolveAssemblyReference.cache
+E:\channel\DAL\obj\Debug\Channel.DAL.dll
+E:\channel\DAL\obj\Debug\Channel.DAL.pdb
+E:\channel\DAL\bin\Debug\Channel.Models.dll
+E:\channel\DAL\bin\Debug\Channel.Models.pdb
+E:\channel\DAL\bin\Debug\Channel.Sys.dll
+E:\channel\DAL\bin\Debug\Channel.Sys.pdb
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.DAL.dll
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.DAL.pdb
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.Models.dll
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.Sys.dll
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.Models.pdb
+E:\Visual Studio 2010\Projects\channel\DAL\bin\Debug\Channel.Sys.pdb
+E:\Visual Studio 2010\Projects\channel\DAL\obj\Debug\ResolveAssemblyReference.cache
+E:\Visual Studio 2010\Projects\channel\DAL\obj\Debug\Channel.DAL.dll
+E:\Visual Studio 2010\Projects\channel\DAL\obj\Debug\Channel.DAL.pdb
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.Models.dll
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+E:\Projects\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+E:\Projects\Gllo\DAL\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+E:\Projects\Gllo\DAL\obj\Debug\Gllo.DAL.pdb
+H:\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+H:\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+H:\Gllo\DAL\bin\Debug\Gllo.Models.dll
+H:\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+H:\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+H:\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+H:\Gllo\DAL\obj\Debug\ResolveAssemblyReference.cache
+H:\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+H:\Gllo\DAL\obj\Debug\Gllo.DAL.pdb
+K:\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+K:\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+K:\Gllo\DAL\bin\Debug\Gllo.Models.dll
+K:\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+K:\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+K:\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+K:\Gllo\DAL\obj\Debug\ResolveAssemblyReference.cache
+K:\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+K:\Gllo\DAL\obj\Debug\Gllo.DAL.pdb
+L:\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+L:\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+L:\Gllo\DAL\bin\Debug\Gllo.Models.dll
+L:\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+L:\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+L:\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+L:\Gllo\DAL\obj\Debug\ResolveAssemblyReference.cache
+L:\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+L:\Gllo\DAL\obj\Debug\Gllo.DAL.pdb
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.Models.dll
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+G:\Projects\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+G:\Projects\Gllo\DAL\obj\Debug\ResolveAssemblyReference.cache
+G:\Projects\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+G:\Projects\Gllo\DAL\obj\Debug\Gllo.DAL.pdb
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.DAL.dll
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.DAL.pdb
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.Models.dll
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.Sys.dll
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.Models.pdb
+D:\Projects\AspNet\XX\Gllo\DAL\bin\Debug\Gllo.Sys.pdb
+D:\Projects\AspNet\XX\Gllo\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
+D:\Projects\AspNet\XX\Gllo\DAL\obj\Debug\Gllo.DAL.dll
+D:\Projects\AspNet\XX\Gllo\DAL\obj\Debug\Gllo.DAL.pdb

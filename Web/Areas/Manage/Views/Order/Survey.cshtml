@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Survey";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .surveyBlk { margin-left: 20px; }
+        .surveyBlk table td { padding: 6px 6px 6px 6px; line-height: 20px; }
+        .surveyBlk table th { padding: 6px 6px 6px 6px; font-weight: bold; font-size: 14px; color: #cc0000; }
+        .surveyBlk table.options td { padding: 0px 6px 6px 6px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var S={
+                orderID: $.getQueryString("id"),
+                load: function () {
+                    $.post("/Manage/Order/GetSurveyByID/",function (res) {
+                        if(res.success) {
+                            if(res.data) {
+                                $("like").html({ 0: "有中意的样板间",1: "没想法，量房时和设计师沟通确定",2: "自己构想的卫生间"}[res.data.SurveyLike]);
+                                $("name").html(res.data.CustomerName);
+                                $("gender").html(res.data.Gender?"女":"男");
+                                $("mobile").html(res.data.Mobile);
+                                $("email").html(res.data.Email);
+                                $("area").html(res.data.ProvinceName+"/"+res.data.CityName+"/"+res.data.RegionName);
+                                $("address").html(res.data.Address);
+                                $("type").html({ 0: "毛坯房",1: "精装修房",2: "二次装修"}[res.data.Type]);
+                                $("square").html({ 0: "3平米以下",1: "3-4平米",2: "4-6平米",3: "6-8平米",4: "8平米以上 "}[res.data.SquareType]);
+
+                                var opts={ 0: "蹲便器",1: "马桶",2: "柱盆",3: "柜盆",4: "吊顶",5: "淋浴间",6: "普通浴缸",7: "独立浴缸",8: "瓷砖",9: "管道" }
+                                res.data.Options=res.data.Options.replace(/,\s+/,",").replace(/,/g,", ");
+                                var options=res.data.Options.split(', ');
+                                var aOpt=[];
+                                $.each(options,function (opt) {
+                                    aOpt.push(opts[opt]||opt);
+                                });
+                                $("options").html(aOpt.join(","));
+                                $("days").html({ 0: "三天内",1: "一周内",2: "10天内",3: "15天内",4: "5天之后 "}[res.data.Days]);
+                                if(!/^\d+$/.test(res.data.HopeTime)) {
+                                    $("time").html("其他："+res.data.HopeTime);
+                                } else {
+                                    $("time").html({ 0: "工作日",1: "周末 ",2: "都行"}[res.data.HopeTime]);
+                                }
+                                $("time").appendText({ 0: "10点~12点",1: "12点~15点",2: "15点~18点 "}[res.data.HopeHour]);
+                                $("pic").prop("src","@(Gllo.Sys.Config.MediaServer)"+res.data.Pic);
+                                $("memo").html(res.data.Memo);
+                            }
+                        } else
+                            alert(res.msg);
+
+                    },{
+                        orderID: S.orderID
+                    });
+                }
+            };
+
+            S.load();
+        });
+    </script>
+}
+<div class="main ">
+    <div class="survey">
+        <div class="surveyBlk">
+            <table>
+                <tr>
+                    <th colspan="2">A、意向方案</th>
+                </tr>
+                <tr>
+                    <td colspan="2" id="like"></td>
+                </tr>
+                <tr>
+                    <th colspan="2">B、客户信息</th>
+                </tr>
+                <tr>
+                    <td>姓名：<span id="name"></span></td>
+                    <td>性别：<span id="gender"></span></td>
+                </tr>
+                <tr>
+                    <td>手机：<span id="mobile"></span></td>
+                    <td>邮箱：<span id="email"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2">省/市/区：<span id="area"></span></td>
+                </tr>
+                <tr>
+                    <td>量房地址：<span id="address"></span></td>
+                    <td>装修类型：<span id="type"></span></td>
+                </tr>
+                <tr>
+                    <th colspan="2">C、卫生间信息</th>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td valign="top">面积：</td>
+                    <td id="square"></td>
+                </tr>
+                <tr>
+                    <td valign="top">计划配置：</td>
+                    <td id="options"></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td valign="top">希望量房日期：</td>
+                    <td id="days"></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td valign="top">希望上门时间：</td>
+                    <td id="time"></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">房屋构架图</th>
+                </tr>
+                <tr>
+                    <td colspan="2"><img id="pic" /></td>
+                </tr>
+                <tr>
+                    <th colspan="2">其他备注</th>
+                </tr>
+                <tr>
+                    <td colspan="2" id="memo"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,193 @@
+﻿@{
+    ViewBag.cates = new Gllo.BLL.ProductBLL().GetParentCates();
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+    var friends = new Gllo.BLL.FriendLinkBLL().GetFriendLinks();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/global.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript" src="/Scripts/website/loginDialog.js"></script>
+    @RenderSection("header", false)
+</head>
+<body>
+    <div class="header"><a href="/" class="logo"><img src="/Content/themes/default/images/logo.jpg" /></a>
+        <div class="headerR">
+            <div class="headerLink">
+                @if (user == null)
+                { 
+                    <a href="javascript:login();">登录</a>
+                    <a href="javascript:register();">免费注册</a>
+                }
+                else
+                {
+                    <a class="hello">您好,<em>@user.UserName</em></a><a href="/Account.html">[我的账户]</a><a href="/Logout/">[注销]</a>
+                }
+                <a href="/Cart.html">购物车<span id="lblCartNum">(0)</span></a>
+                <a href="/">工装</a>
+                <a href="/">家装</a>
+                <a href="/">客服</a>
+            </div>
+            <div class="headerSearch">
+                <form method="get" action="/search/">
+                    <input id="txtKeywords" type="text" name="keywords" class="keywords" value="请输入关键字……" />
+                    <input type="submit" value="" class="btnSearch" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="nav">
+        <div class="navIns">
+            <ul>
+                <li><a href="/index.html"><img src="/Content/themes/default/images/nav1@(ViewBag.navIndex == 1 ? "Cur" : "").jpg" alt="首页" /></a></li>
+                <li id="nav4"><a href="/product.html"><img src="/Content/themes/default/images/nav2@(ViewBag.navIndex == 2 ? "Cur" : "").jpg" alt="产品中心" /></a><span id="navChild4"><em>
+                    @if (ViewBag.cates != null)
+                    {
+                        Gllo.Models.JsonArray cates = ViewBag.cates;
+                        for (int i = 0; i < cates.Count; i++)
+                        { 
+                        <a href="/list/@(cates[i]["categoryID"]).html">@(cates[i]["categoryName"])</a>
+                        }
+                    }
+                </em></span></li>
+                <li id="nav1"><a href="/sale.html"><img src="/Content/themes/default/images/nav3@(ViewBag.navIndex == 3 ? "Cur" : "").jpg" alt="促销专区" /></a><span id="navChild1"><a href="/sale.html">整体</a>
+                    <a href="/sale.html">单品</a>
+                </span></li>
+                <li id="nav2"><a href="/show.html"><img src="/Content/themes/default/images/nav4@(ViewBag.navIndex == 4 ? "Cur" : "").jpg" alt="整体空间" /></a><span id="navChild2"><a href="/show.html">样板房</a>
+                    <a href="/show.html">案例展示</a>
+                </span></li>
+                <li><a href="/product.html"><img src="/Content/themes/default/images/nav5@(ViewBag.navIndex == 5 ? "Cur" : "").jpg" alt="导购体验" /></a></li>
+                <li id="nav3"><a href="/help/87.html"><img src="/Content/themes/default/images/nav6@(ViewBag.navIndex == 6 ? "Cur" : "").jpg" alt="购物指南" /></a><span id="navChild3"><a href="/help/100.html">上门测试说明</a>
+                    <a href="/help/90.html">支付帮助</a>
+                    <a href="/help/91.html">物流帮助</a>
+                    <a href="/help/13.html">售后帮助</a>
+                </span></li>
+                <li><a href="/product.html"><img src="/Content/themes/default/images/nav7@(ViewBag.navIndex == 7 ? "Cur" : "").jpg" alt="3D演示" /></a></li>
+                <li><a href="/product.html"><img src="/Content/themes/default/images/nav8@(ViewBag.navIndex == 8 ? "Cur" : "").jpg" alt="设计威客" /></a>
+                </li>
+            </ul>
+        </div>
+        <script type="text/javascript">
+        </script>
+    </div>
+    <script type="text/javascript">
+        function onSearch(id) {
+            $(id).on("focus",function () {
+                this.value="";
+            }).on("blur",function () {
+                if(!this.value)
+                    this.value="请输入关键字……";
+            })
+        };
+        function getCartNum() {
+            $.post("/Order/GetCartNum/",function (res) {
+                $("lblCartNum").html("("+(res.success?res.num:0)+")");
+            });
+        };
+
+        $.ready(function () {
+            for(var i=1;i<=4;i++) $("nav"+i).on("mousemove",(function (j) { return function () { $("navChild"+j).style.display="inline"; } })(i)).on("mouseout",(function (j) { return function () { $("navChild"+j).style.display="none"; } })(i));
+
+            onSearch("txtKeywords");
+            getCartNum();
+        });
+    </script>
+    @RenderBody()
+    <div class="help">
+        <div class="helpIns">
+            <dl>
+                <dt>购物指南</dt>
+                <dd><a href="/help/87.html">购物流程</a></dd>
+                <dd><a href="/help/93.html">会员介绍</a></dd>
+                <dd><a href="/help/89.html">订单状态</a></dd>
+                <dd><a href="/help/94.html">常见问题</a></dd>
+            </dl>
+            <dl>
+                <dt>支付及物流</dt>
+                <dd><a href="/help/90.html">支付帮助</a></dd>
+                <dd><a href="/help/91.html">物流帮助</a></dd>
+            </dl>
+            <dl>
+                <dt>售后服务</dt>
+                <dd><a href="/help/95.html">安装帮助</a></dd>
+                <dd><a href="/help/96.html">施工帮助</a></dd>
+                <dd><a href="/help/97.html">售后帮助</a></dd>
+                <dd><a href="/help/98.html">退换货政策</a></dd>
+                <dd><a href="/help/99.html">售后点查询</a></dd>
+            </dl>
+            <dl>
+                <dt>特色服务</dt>
+                <dd><a href="/help/100.html">上门测量预约申请</a></dd>
+                <dd><a href="/help/101.html">测量帮助小贴士</a></dd>
+                <dd><a href="/help/87.html">参与社区</a></dd>
+            </dl>
+            <dl>
+                <dt>关于我们</dt>
+                <dd><a href="/help/102.html">品牌故事</a></dd>
+                <dd><a href="/help/103.html">企业简介</a></dd>
+                <dd><a href="/help/104.html">企业宣传片</a></dd>
+            </dl>
+        </div>
+    </div>
+    <div class="friends" style="display: none">
+        <div class="friendsTit">合作伙伴：</div>
+        <div class="friendsCon">
+            <div id="friends">
+                @if (friends != null)
+                {
+                    var media = Gllo.Sys.Config.MediaServer;
+                    for (int i = 0; i < friends.Count; i++)
+                    { 
+                    <a href="@friends[i]["Url"]" title="@friends[i]["FriendName"]"><img src="@(media + friends[i]["Pic"])" alt="@friends[i]["FriendName"]" /></a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+            var links=$("friends").getElementsByTagName("A");
+            if(links&&links.length>5) {
+
+                function changeLink() {
+                    var link=links[0];
+                    var left=0;
+                    var width=link.offsetWidth* -1-19;
+
+                    var timer=window.setInterval(function () {
+                        if(left>width) {
+                            link.style.marginLeft=left+"px";
+                        }
+                        else {
+                            $("friends").appendChild(link);
+                            link.style.marginLeft="";
+                            window.clearInterval(timer);
+                            changeLink();
+                        }
+                        left--;
+                    },32);
+
+                };
+                changeLink();
+            }
+
+        });
+    </script>
+    <div class="footer">
+        <div class="footerCon"><span>BATHROOM SPACES 5S.GLOBAL CHINA</span>
+            <div class="footerLinks"><a href="/">网站地图</a>|<a href="/">法律说明</a>|<a href="/">招商合作</a>|<a href="/">人才招聘</a>|<a href="/">关于我们</a>|<a href="/">联系我们</a>
+            </div>
+        </div>
+        <div class="icp"><span>GLLO洁利来·卫浴空间5S·全球连锁 闽ICP备09032634号-2</span>
+            <div>咨询服务热线:<b>400 679 6110</b></div>
+        </div>
+        <div style="text-align: center">
+            <script src="http://s21.cnzz.com/stat.php?id=3161556&web_id=3161556&show=pic" language="JavaScript"></script>
+        </div>
+    </div>
+</body>
+</html>

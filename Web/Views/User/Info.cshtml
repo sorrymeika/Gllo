@@ -1,0 +1,320 @@
+﻿@{
+    ViewBag.Title = "个人设置";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.UserObj user = ViewBag.userInfo;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/user.css" />
+    <script type="text/javascript">
+        $.ready(function () {
+            new $.Calendar("birthDay");
+
+            $("btnSave").on("click",function () {
+                $.post("/User/ModifyUser/",function (res) {
+                    if(res.success) {
+                        alert("保存成功！");
+                    } else
+                        alert(res.msg);
+                },{
+                    nickName: $("nickName").value,
+                    birthDay: $("birthDay").value,
+                    gender: $$("gender").value()
+                });
+            });
+
+            var addressList,addressData,isAddressOpen=false,provinceData,cityData={},regionData={};
+
+            $.post("/Area/GetProvince/",function (res) {
+                if(res.success&&res.data) {
+                    provinceData=res.data;
+                    $.each(provinceData,function (item) {
+                        $("cmbProvince").options.add(new Option(item.ProvinceName,item.ProvinceID));
+                    });
+                }
+            },null,false);
+
+            function loadCity(provinceId,cityId,regionId) {
+                for(var i=$("cmbCity").options.length-1;i>0;i--)
+                    $("cmbCity").options[i]=null;
+                $("cmbProvince").value=provinceId;
+                if(provinceId!=0) {
+                    if(!cityData[provinceId]) {
+                        $.post("/Area/GetCity/",function (res) {
+                            if(res.success&&res.data) {
+                                cityData[provinceId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                                });
+                            }
+                            $("cmbCity").value=cityId||0;
+                            loadRegion(cityId,regionId);
+                        },{
+                            provinceId: provinceId
+                        });
+                    } else {
+                        $.each(cityData[provinceId],function (item) {
+                            $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                        });
+                        $("cmbCity").value=cityId||0;
+                        loadRegion(cityId,regionId);
+                    }
+                }
+                else
+                    loadRegion(cityId,regionId);
+            }
+
+            function loadRegion(cityId,regionId) {
+                for(var i=$("cmbRegion").options.length-1;i>0;i--)
+                    $("cmbRegion").options[i]=null;
+
+                if(cityId!=0) {
+                    if(!regionData[cityId]) {
+                        $.post("/Area/GetRegion/",function (res) {
+                            if(res.success&&res.data) {
+                                regionData[cityId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                                });
+                            }
+                            $("cmbRegion").value=regionId||0;
+                        },{
+                            cityId: cityId
+                        });
+                    } else {
+                        $.each(regionData[cityId],function (item) {
+                            $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                        });
+                        $("cmbRegion").value=regionId||0;
+                    }
+                }
+            }
+
+            $("cmbProvince").on("change",function () {
+                loadCity(this.value);
+            });
+
+            $("cmbCity").on("change",function () {
+                loadRegion(this.value);
+            })
+
+            function loadAddress(keepOpen) {
+                addressList=null;
+                $("addressList").html("");
+                $.post("/User/GetAddress/",function (res) {
+                    if(res.success) {
+                        addressList=res.data;
+                    }
+                    if(!addressList||!addressList.length) {
+                        addressData=null;
+                    } else {
+                        if(!addressData)
+                            addressData=addressList[0];
+
+                        $.each(addressList,function (item) {
+                            createAddress(item);
+                        });
+                    }
+                });
+            };
+
+            loadAddress();
+
+            function createAddress(data) {
+                var row=$("LI",$("addressList"));
+                var radio=$("RADIO",row,"address").on("click",function () {
+                    initAddressForm(data);
+                    addressData=data;
+                });
+                if(addressData&&addressData.AddressID==data.AddressID) {
+                    radio.checked=true;
+                    initAddressForm(data);
+                }
+                $("B",row).html(data.Receiver);
+                $("SPAN",row).html(data.ProvinceName+"/"+data.CityName+(data.RegionName?"/"+data.RegionName:"")+"/"+data.Address);
+                $("A",row).prop("href","javascript:void(0);").html("[删除]").on("click",function () {
+
+                    if(window.confirm("您确定要删除该地址吗？")) {
+                        $.post("/User/DeleteAddress/",function (res) {
+                            if(res.success) {
+                                if(addressData&&addressData.AddressID==data.AddressID)
+                                    addressData=null;
+                                loadAddress(true);
+                            } else
+                                alert(res.msg);
+                        },{
+                            addressId: data.AddressID
+                        });
+                    }
+                });
+            };
+
+            function initAddressForm(data) {
+                $("txtReceiver").value=data.Receiver||"";
+                $("txtAddress").value=data.Address||"";
+                $("txtZip").value=data.Zip||"";
+                $("txtMobile").value=data.Mobile||"";
+                $("txtPhone").value=data.Phone||"";
+                loadCity(data.ProvinceID,data.CityID,data.RegionID)
+            };
+
+            var addrVld=new $.Validation();
+            addrVld.add("txtReceiver",{ emptyAble: false,emptyText: "请填写收货人姓名" });
+            addrVld.add("txtAddress",{ emptyAble: false,emptyText: "请填写收货地址" });
+            addrVld.add("txtZip",{ regex: /^\d{6}$/,regexText: "邮编格式错误" });
+            addrVld.add("txtMobile",{ regex: /^1\d{10}$/,regexText: "手机号码格式错误" });
+            addrVld.add("txtPhone",{ regex: /^\d+-\d+(,\d+-\d+)*$/,regexText: "固话号码格式错误，应为 “区号-号码”。<br>多个号码用,号隔开" });
+            addrVld.add("cmbCity",{ regex: /^[1-9]{1}\d*$/,regexText: "请选择城市" });
+
+            function addAddr(isModify) {
+                if(addrVld.validate()) {
+                    if(!$("txtMobile").value&&!$("txtPhone").value) {
+                        $("txtMobile").msg.css("err").html("手机或固话必填一项！");
+                        return false;
+                    }
+                    else
+                        $("txtMobile").msg.css("hid");
+
+                    var addrId=isModify&&addressData?addressData.AddressID:0;
+                    $.post("/User/SaveAddress/",function (res) {
+                        if(res.success) {
+                            alert("保存成功！");
+                            loadAddress();
+                        } else
+                            alert(res.msg);
+                    },{
+                        addressId: addrId,
+                        receiver: $("txtReceiver").value,
+                        address: $("txtAddress").value,
+                        zip: $("txtZip").value,
+                        mobile: $("txtMobile").value,
+                        phone: $("txtPhone").value,
+                        cityId: $("cmbCity").value,
+                        regionId: $("cmbRegion").value
+                    })
+                }
+            };
+
+            $("btnAddAddress").on("click",function () {
+                addAddr();
+            });
+
+            $("btnSaveAddress").on("click",function () {
+                addAddr(true);
+            });
+
+            $$("gender").val(@(user.Gender ? 1 : 0))
+        });
+    </script>
+}
+<div class="main">
+    <div class="here">
+        <a href="/">首页</a>&gt;<a href="/Account.html">我的账户</a>&gt;<span>个人设置</span></div>
+    <div class="sidebar">
+        <div class="newsCates">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine">
+                    </div>
+                    <div class="boxTitBG">
+                        <strong>用户中心</strong></div>
+                </div>
+            </div>
+            <div class="boxCon">
+                <div class="catesCon">
+                    <dl>
+                        <dt><a>交易管理</a></dt>
+                        <dd style="display: block"><ul>
+                            <li><b><a href="/User/Orders.html">我的订单</a></b></li>
+                            <li><b><a href="/Cart.html">购物车</a></b></li>
+                            <li><b><a href="/User/ReturnExchangeList.html">退换货申请单</a></b></li>
+                            <li><b><a href="/User/Fav.html">我的收藏</a></b></li>
+                            <li><b><a href="/User/Comments.html">我的评论</a></b></li>
+                        </ul>
+                        </dd>
+                        <dt><a>账号管理</a></dt>
+                        <dd style="display: block"><ul>
+                            <li><b><a href="/PM/List.html">短消息</a></b></li>
+                            <li class="cur"><b><a href="/User/Info.html">个人设置</a></b></li>
+                            <li><b><a href="/User/Password.html">修改密码</a></b></li>
+                        </ul>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="helpcenter">
+        <h1>个人设置</h1>
+        <div class="helpcenterCon">
+            <h2>基本信息</h2>
+            <table class="form">
+                <tr>
+                    <th>昵称：</th>
+                    <td><input id="nickName" name="nickName" class="txt" value="@user.NickName" /></td>
+                </tr>
+                <tr>
+                    <th>性别：</th>
+                    <td><label><input name="gender" type="radio" value="0" @(user.Gender ? null : new MvcHtmlString("checked=\"checked\""))/>男</label>
+                        <label><input name="gender" type="radio" value="1" @(user.Gender ? new MvcHtmlString("checked=\"checked\"") : null)/>女</label></td>
+                </tr>
+                <tr>
+                    <th>邮箱：</th>
+                    <td>@user.Email</td>
+                </tr>
+                <tr>
+                    <th>生日：</th>
+                    <td><input id="birthDay" name="birthDay" value="@(user.BirthDay == DateTime.MinValue ? "" : user.BirthDay.ToString("yyyy-MM-dd"))" class="txt" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input id="btnSave" type="button" class="redBtn" value="保存个人信息" /></td>
+                </tr>
+            </table>
+            <h2>配送地址</h2>
+            <div class="addressList">
+                <b>常用地址</b> <ul id="addressList">
+                    <li><input type="radio" /><b>姓名</b><span>省/市/区/地址</span><a href="javascript:void(0);">[删除]</a></li>
+                </ul>
+            </div>
+            <table class="form">
+                <tr>
+                    <th><span>*</span>收货人姓名：</th>
+                    <td><input id="txtReceiver" class="txt" /></td>
+                </tr>
+                <tr>
+                    <th><span>*</span>配送省/市/区：</th>
+                    <td><select id="cmbProvince">
+                        <option value="0">请选择</option>
+                    </select>
+                        <select id="cmbCity">
+                            <option value="0">请选择</option>
+                        </select>
+                        <select id="cmbRegion">
+                            <option value="0">请选择</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span>*</span>详细地址：</th>
+                    <td><input id="txtAddress" class="txt" /></td>
+                </tr>
+                <tr>
+                    <th>邮政编码：</th>
+                    <td><input id="txtZip" class="txt" /></td>
+                </tr>
+                <tr>
+                    <th>手机：</th>
+                    <td><input id="txtMobile" class="txt" /></td>
+                </tr>
+                <tr>
+                    <th>固话：</th>
+                    <td><input id="txtPhone" class="txt" /><em>手机或固话必填一项</em></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input id="btnAddAddress" type="button" class="redBtn" value="添加到常用地址" />
+                        <input id="btnSaveAddress" type="button" class="redBtn" value="修改地址" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

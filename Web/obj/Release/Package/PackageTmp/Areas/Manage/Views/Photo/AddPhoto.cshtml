@@ -1,0 +1,423 @@
+﻿@{
+    ViewBag.Title = "AddPhoto";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        strong { display: block; color: #cc0000; margin: 10px 0px 5px 0px; }
+        .buttons { padding-top: 20px; }
+        .catesSelector { width: 200px; height: 200px; border: 1px solid #bdbdbd; padding: 4px; overflow-y: auto; float: left; }
+        .catesSelector a { cursor: default; }
+        .catesSelector a:hover { color: #333; text-decoration: none; }
+        h1 { color: #333; font-size: 18px; }
+        #categories { color: #cc0000; font-weight: bold; }
+        #categories span { display: inline-block; border: 1px solid #cdcdcd; background: #f1f1f1; padding: 2px 4px; margin-left: 2px; }
+    </style>
+    <script type="text/javascript">
+
+        $.ready(function () {
+
+            function CategorySelector(categoryIds,callback) {
+                var _self=this;
+                var selectedCates=[];
+                var selectors=[];
+                var selectedCate;
+                var preCate;
+                var cates;
+                var pFrg=document.createDocumentFragment();
+                var container=$("DIV",pFrg)
+                        .css({ width: "480px","overflow": "hidden" });
+
+                var catesSelector=$("DIV",container)
+                        .css("catesSelector");
+
+                function createCates(data,deep) {
+                    deep=deep||0;
+                    var space="";
+                    for(var i=0;i<deep;i++)
+                        space+="　 ";
+                    $.each(data,function (item) {
+                        selectors.push(
+                            $("A",catesSelector)
+                            .css({ "height": "20px","display": "block","lineHeight": "21px" })
+                            .prop("href","javascript:void(0);")
+                            .prop("categoryID",item.categoryID)
+                            .prop("categoryName",item.categoryName)
+                            .html(space+item.categoryName)
+                            .on("click",function () {
+                                if(this!=selectedCate) {
+                                    if(selectedCate)
+                                        selectedCate.css({ "background": "#fff" });
+
+                                    selectedCate=this;
+                                    this.css({ "background": "#D8F79D" });
+                                }
+                            })
+                        );
+                        if(item.children) {
+                            createCates(item.children,deep+1);
+                        }
+                    });
+                };
+
+                function clearCates() {
+                    for(var i=selectedCates.length-1;i>=0;i--) {
+                        selectedCates[i].remove();
+                        selectedCates.splice(i,1);
+                    };
+                    preCate=null;
+                }
+
+                function pushCate(cate) {
+                    selectedCates.push(
+                        $("A",cates)
+                        .prop("href","javascript:void(0);")
+                        .prop("categoryID",cate.categoryID)
+                        .css({ "height": "20px","display": "block","lineHeight": "21px" })
+                        .html(cate.categoryName)
+                        .on("click",function () {
+                            if(this!=preCate) {
+                                if(preCate)
+                                    preCate.css({ "background": "#fff" });
+
+                                preCate=this;
+                                this.css({ "background": "#D8F79D" });
+                            }
+                        })
+                    );
+                };
+
+                var cateDialog;
+                $.post("/Manage/Package/GetPackageCates/",function (res) {
+                    if(res.success) {
+                        var data=res.data;
+
+                        createCates(data);
+
+                        var buttons=$("DIV",container)
+                        .css({ "width": "40px","marginTop": "80px","textAlign": "center","float": "left" });
+
+                        $("BUTTON",buttons)
+                        .prop("value","=>")
+                        .on("click",function () {
+                            if(!selectedCate)
+                                alert("请选择套餐类别");
+
+                            pushCate(selectedCate);
+                        });
+
+                        $("BUTTON",buttons)
+                        .prop("value","X")
+                        .on("click",function () {
+                            if(!preCate)
+                                alert("请在右侧列表选择套餐类别进行删除");
+
+                            $.each(selectedCates,function (item,i) {
+                                if(item.categoryID==preCate.categoryID) {
+                                    selectedCates.splice(i,1);
+                                    preCate.remove();
+                                    preCate=null;
+                                    return false;
+                                }
+                            });
+                        });
+
+                        cates=$("DIV",container)
+                        .css("catesSelector");
+
+                        var acceptCon=$("DIV",pFrg)
+                        .css({ marginTop: "10px",textAlign: "center" });
+
+                        $("A",acceptCon)
+                        .css("btn1")
+                        .html("<em>确定</em>")
+                        .on("click",function () {
+                            if(!selectedCates.length) {
+                                alert("请至少选择一个套餐的类别");
+                                return false;
+                            }
+                            callback(_self.getSelectedCates());
+                            cateDialog.close();
+                        });
+
+                        $("A",acceptCon)
+                        .css("btn1")
+                        .html("<em>取消</em>")
+                        .on("click",function () {
+                            cateDialog.close();
+                        });
+
+                        cateDialog=new $.Dialog({
+                            title: "选择套餐所属类别",
+                            width: 480,
+                            content: pFrg
+                        });
+                        _self.show(categoryIds);
+                    }
+
+                });
+
+                this.show=function (ids) {
+                    clearCates();
+                    $.each(selectors,function (item) {
+                        $.each(ids,function (id) {
+                            if(id==item.categoryID) {
+                                pushCate(item);
+                            }
+                        });
+                    });
+
+                    cateDialog.show();
+                };
+
+                this.getSelectedCates=function () {
+                    var ids=[];
+                    $.each(selectedCates,function (items) {
+                        ids.push({ id: items.categoryID,name: items.html() });
+                    });
+                    return ids;
+                };
+
+            };
+
+            var categoryID=parseInt($.getQueryString("categoryID"));
+            var categoryIds=[];
+            if(categoryID)
+                categoryIds.push(categoryID);
+
+            var categorySelector=new CategorySelector(categoryIds,function (cates) {
+                categoryIds=[];
+                $("categories").html("");
+                $.each(cates,function (item) {
+                    categoryIds.push(item.id);
+                    $("SPAN",$("categories")).html(item.name);
+                    $("categories").appendText(" ");
+                });
+                categoryID=categoryIds[0];
+            });
+
+            $("btnChangeCates").on("click",function () {
+                categorySelector.show(categoryIds);
+            });
+
+            var pics=[];
+            var picForms=[];
+            var picViews={};
+
+            window.handleViewPic=function (res) {
+                if(res.success) {
+                    picViews[res.name].src="/home/ViewPic/?picGuid="+res.guid;
+                }
+                else
+                    alert(res.msg)
+            }
+
+            function createPicForm() {
+                var form=$("FORM",$("photoPoints"))
+                    .prop("target","iframeProduct")
+                    .prop("enctype","multipart/form-data")
+                    .prop("encoding","multipart/form-data")
+                    .prop("method","POST")
+                    .prop("action","/manage/Photo/AddPhotoPoint/");
+
+                var index=picForms.length+1;
+                var vld=new $.Validation();
+
+                var container=$("TBODY",$("TABLE",form));
+                var tr=$("TR",container);
+                $("TD",tr).html("选择图片<span style='color:#c00'>*</span>");
+                var td=$("TD",tr);
+                var file=$("FILE",td,"pic"+index).on("change",function () {
+                    form.action="/home/ViewPic/?width=60&height=60";
+                    form.submit();
+                });
+
+                $("TD",tr).html("坐标 X<span style='color:#c00'>*</span>").css("padding-left:8px;");
+                var xPoint=$("INPUT",$("TD",tr),"x").css("width:20px;");
+                vld.add(xPoint,{ emptyAble: false,emptyText: "X坐标必填",regex: /^\d+$/,regexText: "X坐标必须为数字" });
+
+                $("TD",tr).html("图片描述：").css("text-align:right;");
+                var cab=$("TEXTAREA",$("TD",tr).prop({ "rowSpan": 2 }),"cab").css("width: 200px;height:40px;");
+                var view=$("IMG",$("TD",tr).prop("rowSpan",2).css("vertical-align:top;padding-left:5px;width:50px;")).css("position:absolute;width: 46px;height: 46px;background:#ddd;");
+                picViews["pic"+index]=view;
+                $("A",$("TD",tr).prop({ "rowSpan": 2 })).html("[删除]")
+                    .attr("href","javascript:void(0);")
+                    .on("click",function () {
+                        $.each(picForms,function (item,i) {
+                            if(item==form) {
+                                picForms.splice(i,1);
+                                return false;
+                            }
+                        });
+                        form.remove();
+                    }).css("color:#cc0000;");
+
+                tr=$("TR",container);
+                $("TD",tr).html("图片名称<span style='color:#c00'>*</span>");
+                td=$("TD",tr);
+                var name=$("INPUT",td,"name");
+                vld.add(name,{ emptyAble: false,emptyText: "图片名称必填" });
+
+                var hidPhotoID=$("HIDDEN",td,"photoID");
+
+                $("TD",tr).html("Y<span style='color:#c00'>*</span>").css("padding-left:8px;text-align:right;");
+                var yPoint=$("INPUT",$("TD",tr).css("padding-right:15px;"),"y").css("width:20px;");
+                vld.add(yPoint,{ emptyAble: false,emptyText: "Y坐标必填",regex: /^\d+$/,regexText: "Y坐标必须为数字" });
+
+                var formData={
+                    form: form,
+                    vld: vld,
+                    hidPhotoID: hidPhotoID
+                };
+                picForms.push(formData);
+            };
+
+            createPicForm();
+
+            $("addForm").on("click",function () {
+                createPicForm();
+            });
+
+            var mainForm,mainCates;
+
+            function createMainForm() {
+                var form=$("FORM",$("mainPhoto"))
+                    .prop("target","iframeProduct")
+                    .prop("enctype","multipart/form-data")
+                    .prop("encoding","multipart/form-data")
+                    .prop("method","POST")
+                    .prop("action","/manage/Photo/AddPhoto/");
+
+                var vld=new $.Validation();
+
+                var container=$("TBODY",$("TABLE",form));
+                var tr=$("TR",container);
+                $("TD",tr).html("选择图片<span style='color:#c00'>*</span>");
+                var td=$("TD",tr);
+                var file=$("FILE",td,"pic0").on("change",function () {
+                    form.action="/home/ViewPic/?width=60&height=60";
+                    form.submit();
+                });
+
+                mainForm=form;
+                mainForm.vld=vld;
+
+                $("TD",tr).html("图片描述：").css("padding-left:10px;");
+                var info=$("TEXTAREA",$("TD",tr).prop({ "rowSpan": 2 }),"info").css("width: 250px;height:40px;");
+                var view=$("IMG",$("TD",tr).prop("rowSpan",2).css("vertical-align:top;padding-left:5px;width:50px;")).css("position:absolute;width: 46px;height: 46px;background:#ddd;");
+                picViews["pic0"]=view;
+
+                tr=$("TR",container);
+                $("TD",tr).html("图片名称<span style='color:#c00'>*</span>");
+                td=$("TD",tr);
+                var name=$("INPUT",td,"name");
+                vld.add(name,{ emptyAble: false,emptyText: "图片名称必填" });
+
+                mainCates=$("HIDDEN",td,"categoryIDs");
+            };
+
+            createMainForm();
+
+            $("btnCancel").on("click",function () {
+                closeDialog();
+
+            });
+
+            var msgDlg,msgDlgCon;
+            var picIndex=0;
+
+            $("btnAdd").on("click",function () {
+
+                if(!msgDlg) {
+                    var msgDlgCon=$("DIV",true)
+                    msgDlg=new $.Dialog({
+                        title: "上传进度",
+                        width: 300,
+                        content: msgDlgCon
+                    });
+                }
+
+                mainCates.value=categoryIds.join(",");
+                if(!mainCates.value) {
+                    alert("请选择类别！");
+                    return;
+                }
+
+                if(picForms.length==0) {
+                    alert("请添加各坐标照片！");
+                    return;
+                }
+
+                if(picForms.length==0) {
+                    alert("请添加各坐标照片！");
+                    return;
+                }
+
+                if(!mainForm.vld.validate()) {
+                    alert("请查看是否有未填项！");
+                    return;
+                }
+                $.each(picForms,function (form) {
+                    if(!form.vld.validate()) {
+                        alert("请查看是否有未填项！");
+                        return;
+                    }
+                });
+
+                window.handleResult=function (res) {
+                    if(!res.success) {
+                        alert(res.msg);
+                        return;
+                    } else {
+                        $.each(picForms,function (form) {
+                            form.hidPhotoID.value=res.id;
+                        });
+                    }
+
+                    picIndex++;
+                    msgDlgCon.html("正在上传，当前"+picIndex+"/"+(picForms.length+1));
+
+                    window.handleResult=function (result) {
+                        if(!result.success) {
+                            alert(res.msg);
+                            return;
+                        }
+
+                        picIndex++;
+                        msgDlgCon.html("正在上传，当前"+picIndex+"/"+(picForms.length+1));
+
+                        if(picIndex==picForms.length+1) {
+                            msgDlg.close();
+                            alert("上传完成");
+
+                            closeDialog(true);
+                        } else {
+                            picForms[picIndex-1].form.action="/manage/Photo/AddPhotoPoint/";
+                            picForms[picIndex-1].form.submit();
+                        }
+                    };
+
+                    picForms[picIndex-1].form.action="/manage/Photo/AddPhotoPoint/";
+                    picForms[picIndex-1].form.submit();
+                };
+
+                msgDlgCon.html("正在上传，当前"+picIndex+"/"+(picForms.length+1));
+                msgDlg.show();
+                mainForm.action="/manage/Photo/AddPhoto/";
+                mainForm.submit();
+            });
+        });
+        
+    </script>
+}
+<div class="main"><strong>照片类别 &nbsp;&nbsp;<a id="btnChangeCates" href="javascript:void(0);">[更改类别]</a></strong>
+    <div id="categories"></div>
+    <strong>主照片</strong>
+    <iframe id="iframeProduct" name="iframeProduct" scrolling="no" height="0" width="0" frameborder="0"></iframe>
+    <div id="mainPhoto"></div>
+    <strong>各坐标照片 &nbsp;&nbsp;<a href="javascript:;" id="addForm">[添加]</a></strong>
+    <div id="photoPoints"></div>
+    <div class="buttons"><a id="btnAdd" class="btn"><em><span class="ico2">添加照片</span></em></a>
+        <a id="btnCancel" class="btn"><em>关闭</em></a>
+    </div>
+</div>

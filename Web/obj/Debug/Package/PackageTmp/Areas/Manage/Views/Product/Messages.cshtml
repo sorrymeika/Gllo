@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "商品留言";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #grid { margin-top: 10px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var media="@Gllo.Sys.Config.MediaServer";
+            var grid=new $.Grid({
+                id: "grid",
+                rowHeight: 80,
+                pageEnabled: true,
+                onRowSelect: function () {
+                    $("btnRe").css("btn").prop("disabled",false);
+                    $("btnDelete").css("btn").prop("disabled",false);
+                },
+                columns: [{
+                    header: "商品",
+                    type: "custom",
+                    width: 15,
+                    custom: function (cell,data) {
+                        var img=$("IMG",true).prop("src",media+data.PictureUrl).css("height: 60px; width: 60px; border: 1px solid #ddd; padding: 2px;");
+                        cell.append(img);
+                    }
+                },{
+                    header: "留言",
+                    type: "custom",
+                    align: "left",
+                    width: 80,
+                    custom: function (cell,data) {
+                        cell.append($("B",true).html(data.Name).css("color:#666;"));
+                        cell.append($("SPAN",true).html((data.IsAnonymity?"[匿名]":"")+data.UserName).css("margin-left:20px;color:#666;"));
+                        cell.append($("SPAN",true).html("["+data.AddTime+"]").css("margin-left:5px;color:#999;"));
+                        cell.append($("BR",true));
+
+                        cell.append($("DIV",true).html(data.Content).css("padding:4px;color:#333;"));
+
+                        if(data.Re) {
+                            cell.append($("P",true).html("<b>客服回复：</b>"+data.Re).css("border:1px solid #dedede;color:#666;padding:4px;margin:4px;background:#f1f1f1;"));
+                        } else {
+                            cell.append($("P",true).html("暂未回复").css("color:#c00;"));
+                        }
+                    }
+                }]
+            });
+
+            var search=function (page,pageSize) {
+                $("btnRe").css("btnDsb").prop("disabled",true);
+                $("btnDelete").css("btnDsb").prop("disabled",true);
+
+                grid.load("/Manage/Product/GetMessages/",{
+                    page: page,
+                    pageSize: pageSize,
+                    dtFrom: $("dtFrom").value,
+                    dtTo: $("dtTo").value,
+                    product: $("product").value
+                });
+            };
+
+            search(1,15);
+
+            $("btnSearch").on("click",function () {
+                search(1,15);
+            });
+
+            new $.Calendar("dtFrom");
+            new $.Calendar("dtTo");
+
+            $("btnRe").on("click",function () {
+                if(this.disabled)
+                    return;
+
+                var selectedRow=grid.getSelectedRow();
+
+                openDialog("回复留言",500,200,"/Manage/Product/ReMessage.html?id="+selectedRow.data.MessageID,function () {
+                    search(1,15);
+                });
+            });
+
+            $("btnDelete").on("click",function () {
+                if(this.disabled)
+                    return;
+                var selectedRow=grid.getSelectedRow();
+
+                if(window.confirm("确定删除？")) {
+                    $.post("/Manage/Product/DeleteMessage/",function (res) {
+                        if(res.success) {
+                            alert("删除成功!");
+                            search(1,15);
+                        } else
+                            alert(res.msg);
+                    },{
+                        id: selectedRow.data.MessageID
+                    });
+                }
+            });
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbar"><a id="btnRe" class="btnDsb"><span class="ico3"><em>回复</em></span></a>
+                <a id="btnDelete" class="btnDsb"><span class="ico4"><em>删除</em></span></a>
+            </div>
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>留言日期 从</td>
+                        <td><input id="dtFrom" class="txt" /></td>
+                        <td>到</td>
+                        <td><input id="dtTo" class="txt" /></td>
+                        <td>&nbsp;商品</td>
+                        <td><input id="product" class="txt" /></td>
+                        <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grid"></div>
+        </div>
+    </div>
+</div>

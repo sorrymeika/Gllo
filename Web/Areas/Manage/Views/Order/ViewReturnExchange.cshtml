@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "用户管理";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderInfo = ViewBag.order;
+    Gllo.Models.UserObj userInfo = ViewBag.userInfo;
+    Gllo.Models.ExchangeInfo exchangeInfo = ViewBag.exchangeInfo;
+    Gllo.Models.ProductObj returnProduct = ViewBag.returnProduct;
+    Gllo.Models.ProductObj exchangeProduct = ViewBag.exchangeProduct;
+    Gllo.Models.JsonObject area = ViewBag.area;
+}
+@section header{
+    <style type="text/css">
+        .form td { padding-left: 10px; padding-right: 10px; }
+        .form td img { width: 60px; height: 60px; }
+    </style>
+    <script type="text/javascript" src="/Scripts/grid.js"></script>
+    <script type="text/javascript">
+        $.ready(function () {
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th>申请日：</th>
+            <td>@(exchangeInfo.AddTime.ToString())</td>
+            <th>处理方式：</th>
+            <td>@(exchangeInfo.ExchangeProductID == 0 ? "退货" : "换货")</td>
+        </tr>
+        <tr>
+            <th>订单编号：</th>
+            <td>@(orderInfo.OrderCode)</td>
+            <th>订单金额：</th>
+            <td>@(orderInfo.Amount)</td>
+        </tr>
+        <tr>
+            <th>购买日期：</th>
+            <td>@(orderInfo.CreationTime.ToString())</td>
+            <th>登陆账号：</th>
+            <td>@(userInfo.UserName)</td>
+        </tr>
+        <tr>
+            <th>姓名：</th>
+            <td>@(orderInfo.Receiver)</td>
+            <th>联系电话</th>
+            <td>手&nbsp;&nbsp;&nbsp;&nbsp;机：@(exchangeInfo.Mobile)<br>
+                固定电话：@(exchangeInfo.Phone)</td>
+        </tr>
+        <tr>
+            <th>收货地址</th>
+            <td>@(area["ProvinceName"])/@(area["CityName"])/@(area["RegionName"])<br>
+                地址：@(exchangeInfo.Address)</td>
+            <th>邮 编</th>
+            <td>@(exchangeInfo.Zip)</td>
+        </tr>
+        <tr>
+            <th colspan="4">
+                <br>
+                <strong>退货商品</strong></th>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td><img src="@(Gllo.Sys.Config.MediaServer)@(returnProduct.ProductPictures != null && returnProduct.ProductPictures.Count != 0 ? returnProduct.ProductPictures[0].Url : "")" /></td>
+                        <td>产品ID:@(returnProduct.ProductID)</td>
+                        <td>型号:@(returnProduct.Code)</td>
+                        <td>产品名:@(returnProduct.Name)</td>
+                        <td>数量:@(exchangeInfo.ReturnQty)</td>
+                        <td>价格:@((exchangeInfo.ReturnQty * returnProduct.Price).ToString("0.00"))</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        @if (exchangeInfo.ExchangeProductID != 0)
+        { 
+            <tr>
+                <th colspan="4">
+                    <br>
+                    <strong>换货商品</strong></th>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td><img src="@(Gllo.Sys.Config.MediaServer)@(exchangeProduct.ProductPictures != null && exchangeProduct.ProductPictures.Count != 0 ? exchangeProduct.ProductPictures[0].Url : "")" /></td>
+                            <td>产品ID:@(exchangeProduct.ProductID)</td>
+                            <td>型号:@(exchangeProduct.Code)</td>
+                            <td>产品名:@(exchangeProduct.Name)</td>
+                            <td>数量:@(exchangeInfo.ExchangeQty)</td>
+                            <td>价格:@((exchangeInfo.ExchangeQty * exchangeProduct.Price).ToString("0.00"))</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

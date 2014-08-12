@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        if(window.frameElement&&window.parent.handleResult) {
+        @if (ViewBag.success)
+        {
+            <text>
+            var data = {success: true, id: @ViewBag.picId};
+            </text>
+        }
+        else
+        {
+            <text>
+            var data = {success: false, msg:"@ViewBag.msg"};
+            </text>
+        }
+            window.parent.handleResult(data);
+        }
+    </script>
+</body>
+</html>

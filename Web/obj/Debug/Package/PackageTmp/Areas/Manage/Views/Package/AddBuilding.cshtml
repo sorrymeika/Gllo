@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "AddBuilding";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        #txtName { width: 200px; }
+        .form select { margin-left: 2px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var provinceData,cityData={},regionData={};
+
+            $.post("/Area/GetProvince/",function (res) {
+                if(res.success&&res.data) {
+                    provinceData=res.data;
+                    $.each(provinceData,function (item) {
+                        $("cmbProvince").options.add(new Option(item.ProvinceName,item.ProvinceID));
+                    });
+                }
+            },null,false);
+
+            function loadCity(provinceId,cityId,regionId) {
+                for(var i=$("cmbCity").options.length-1;i>0;i--)
+                    $("cmbCity").options[i]=null;
+                $("cmbProvince").value=provinceId;
+                if(provinceId!=0) {
+                    if(!cityData[provinceId]) {
+                        $.post("/Area/GetCity/",function (res) {
+                            if(res.success&&res.data) {
+                                cityData[provinceId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                                });
+                            }
+                            $("cmbCity").value=cityId||0;
+                            loadRegion(cityId,regionId);
+                        },{
+                            provinceId: provinceId
+                        });
+                    } else {
+                        $.each(cityData[provinceId],function (item) {
+                            $("cmbCity").options.add(new Option(item.CityName,item.CityID));
+                        });
+                        $("cmbCity").value=cityId||0;
+                        loadRegion(cityId,regionId);
+                    }
+                }
+                else
+                    loadRegion(cityId,regionId);
+            };
+
+            function loadRegion(cityId,regionId) {
+                for(var i=$("cmbRegion").options.length-1;i>0;i--)
+                    $("cmbRegion").options[i]=null;
+
+                if(cityId!=0) {
+                    if(!regionData[cityId]) {
+                        $.post("/Area/GetRegion/",function (res) {
+                            if(res.success&&res.data) {
+                                regionData[cityId]=res.data;
+                                $.each(res.data,function (item) {
+                                    $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                                });
+                            }
+                            $("cmbRegion").value=regionId||0;
+                        },{
+                            cityId: cityId
+                        });
+                    } else {
+                        $.each(regionData[cityId],function (item) {
+                            $("cmbRegion").options.add(new Option(item.RegionName,item.RegionID));
+                        });
+                        $("cmbRegion").value=regionId||0;
+                    }
+                }
+            };
+
+            $("cmbProvince").on("change",function () {
+                loadCity(this.value);
+            });
+
+            $("cmbCity").on("change",function () {
+                loadRegion(this.value);
+            });
+
+            var vld=new $.Validation();
+            vld.add("cmbRegion",{
+                validate: function () {
+                    return ($("cmbRegion").value!=0);
+                },
+                validationText: "请选择地区"
+            });
+
+            vld.add("txtName",{ emptyAble: false,emptyText: "请填写楼盘名称" });
+
+            $("btnAdd").on("click",function () {
+                if(vld.validate()) {
+
+                    $.post("/Manage/Package/AddBuilding/",function (res) {
+                        if(res.success) {
+                            alert("添加楼盘成功！");
+                            closeDialog(true);
+
+                        } else
+                            alert(res.msg)
+
+                    },{
+                        name: $("txtName").value,
+                        regionID: $("cmbRegion").value
+                    });
+                }
+
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th valign="top">地区：</th>
+            <td>
+                <select id="cmbProvince">
+                    <option value="0">请选择省</option>
+                </select></td>
+            <td>
+                <select id="cmbCity">
+                    <option value="0">请选择市</option>
+                </select></td>
+            <td>
+                <select id="cmbRegion">
+                    <option value="0">请选择区</option>
+                </select></td>
+        </tr>
+        <tr>
+            <th>楼盘名称：</th>
+            <td colspan="3"><input id="txtName" class="txt" /></td>
+        </tr>
+    </table>
+    <div class="buttons"><a id="btnAdd" class="btn" href="javascript:;"><em>添加楼盘</em></a></div>
+</div>

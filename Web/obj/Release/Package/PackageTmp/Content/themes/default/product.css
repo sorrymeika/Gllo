@@ -1,0 +1,68 @@
+﻿img { background-color: #ddd; }
+
+.cate1 { width: 470px; margin-top: 10px; overflow: hidden; float: left; }
+.cate1 .ad1 { width: 448px; height: 180px; margin: 10px 0px 0px 0px 10px; }
+.cate1 .ad1 img { width: 448px; height: 180px; }
+.cate1 .prds { width: 200%; margin-top: 10px; }
+.cate1 .pi { float: left; margin: 0px 15px 0px 10px; height: 200px; _display: inline; }
+.cate1 .boxCon { width: 448px; }
+.cate2 { width: 470px; margin-top: 10px; float: right; }
+.cate2 .ad2 { float: left; width: 290px; height: 390px; _display: inline; margin: 0px 0px 0px 0px; }
+.cate2 .ad2 img { width: 290px; height: 390px; }
+.cate2 .prds { float: right; width: 126px; _display: inline; margin: 0px 10px 0px 0px; }
+.cate2 .pi { height: 190px; margin-bottom: 5px; }
+.cate2 .pi dd { height: auto; line-height: 21px; }
+
+.cate3 { padding-bottom: 2px; margin-top: 10px; }
+.cate3 .boxCon { padding: 0px; }
+.cate3 .pi { height: 200px; float: left; margin: 0px 15px 0px 10px; _display: inline; }
+.lastCate { background: none; }
+.cate3 .boxCon { width: 948px; }
+
+.saleNews { height: 100%; overflow: hidden; }
+.saleNewsAd1 { float: left; margin: 10px 0px 0px 10px; _display: inline; }
+.saleNewsAd2 { float: left; margin: 10px 0px 0px 10px; _display: inline; }
+.saleNewsAd1 img { float: left; width: 400px; height: 250px; }
+.saleNewsAd2 img { float: left; width: 250px; height: 250px; }
+
+.news { float: right; padding: 10px 10px 10px 10px; width: 246px; height: 250px; border-left: 1px solid #dbdbdb; }
+.newsTit { height: 24px; line-height: 25px; background: url(images/titC.jpg) repeat-x; overflow: hidden; color: #fff; font-family: 微软雅黑,黑体; font-weight: bold; text-indent: 8px; }
+.newsTitL { height: 24px; background: url(images/titL.jpg) no-repeat; }
+.newsTitR { height: 24px; background: url(images/titR.jpg) no-repeat right 0px; }
+.newsCon { margin-top: 10px; }
+.newsCon .line { border-top: 1px dotted #ddd; margin: 6px 4px 8px 0px; }
+.newsCon ul { margin: 0px 0px 0px 4px; }
+.newsCon li { padding-left: 14px; line-height: 25px; height: 25px; background: url(images/ico.jpg) no-repeat left 7px; }
+.newsCon li span { float: right; color: #999; }
+
+.saleProds { border-top: 1px solid #dbdbdb; padding: 10px 10px 10px 24px; overflow: hidden; height: 100%; }
+
+.list { float: right; width: 740px; overflow: hidden; }
+.list .boxCon { width: 718px; overflow: hidden; }
+.listCon { width: 120%; overflow: hidden; }
+.listCon div { clear: both; overflow: hidden; }
+.listCon .pi { float: left; margin: 4px 6px 0px 10px; _display: inline; }
+
+.products .pi { width: 150px; float: left; margin: 10px 6px 0px 20px; _display: inline; }
+.products .pi dt { width: 150px; height: 150px; }
+.products .pi dd { height: auto; overflow: visible; line-height: 16px; padding: 4px 0px; width: 150px; }
+.products .pi img { width: 150px; height: 150px; }
+
+.list .box { margin-top: 10px; }
+.flash { position: relative; width: 740px; height: 208px; overflow: hidden; }
+.flash a { display: block; width: 740px; height: 208px; position: absolute; top: 0px; left: 0px; }
+.flash img { display: block; width: 740px; height: 208px; }
+.flash ul { position: absolute; top: 180px; right: 10px; }
+.flash ul li { text-align: center; background: #333; opacity: 0.8; filter: alpha(opacity=80); float: left; display: inline; margin-left: 4px; padding: 0px 5px; height: 20px; line-height: 20px; color: #fff; cursor: pointer; }
+.flash ul li.cur { background: #cc0000; font-weight: bold; }
+
+.searchResTit { margin-top: 10px; padding-top: 5px; }
+.price { padding: 10px 0px 10px 20px; border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; }
+.price a { display: inline-block; padding: 3px 4px 2px 4px; margin: 0px 0px 0px 10px; }
+.price a.cur { background: #51ac9a; color: #fff; }
+.prdSort .cur { color: #217272; background-color: #b6e3da; }
+
+.topBD { border-top: 1px solid #ddd; }
+
+#newP { position: relative; overflow: hidden; width: 100%; }
+#newP div { position: absolute; top: 0px; left: 0px; }

@@ -1,0 +1,17 @@
+﻿h2 { font-size: 14px; color: #666; margin: 14px 0px 0px 6px; }
+.list { margin-top: 10px; border: 1px solid #74c6b4; width: 100%; }
+.list th { border: 1px solid #74c6b4; line-height: 23px; height: 23px; overflow: hidden; text-align: center; background: #B6E4DA; }
+.list td { border: 1px solid #74c6b4; line-height: 23px; height: 23px; padding: 0px 4px; }
+
+.txt { border: 1px solid #bdbdbd; height: 18px; width: 120px; }
+.form { margin: 5px 0px 0px 6px; }
+.form th { text-align:right; padding: 8px 0px 0px 6px; }
+.form th span{ color:#c00; }
+.form td { padding: 8px 0px 0px 0px; }
+
+.addressList { margin-top: 8px; padding: 6px 8px; border: 1px dotted #ddd; background: #fcfcfc; line-height: 24px; }
+.addressList ul { margin-left: 10px; color: #217272; }
+.addressList li input { display: inline-block; vertical-align: top; margin-top: 4px; *margin-top: 0px; }
+.addressList li b { display: inline-block; vertical-align: middle; margin-left: 5px; }
+.addressList li span { display: inline-block; vertical-align: middle; margin-left: 5px; }
+.addressList li a { color: #9c0000; margin-left: 5px; }

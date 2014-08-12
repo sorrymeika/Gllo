@@ -1,0 +1,40 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+    <script type="text/javascript" charset="utf-8" src="/Content/kindeditor/kindeditor.js"></script>
+</head>
+<body>
+    <div style="width: 600px; height: 500px;">
+        
+    </div>
+    <div>
+        <textarea name="content1" id="content1" cols="100" rows="8" style="width: 700px; height: 200px; visibility: hidden;"></textarea>
+        <br />
+        <input type="button" value="提交内容" id="Button1" onclick="submit()" />
+    </div>
+    <script type="text/javascript">
+        function submit() {
+            KE.util.setData(id);
+            alert(document.getElementById(id).value);
+        }
+        KE.show({
+            id: 'content1',
+            imageUploadJson: '../../asp.net/upload_json.ashx',
+            fileManagerJson: '../../asp.net/file_manager_json.ashx',
+            allowFileManager: true,
+            afterCreate: function (id) {
+                KE.event.ctrl(document,13,function () {
+                    submit();
+                });
+                KE.event.ctrl(KE.g[id].iframeDoc,13,function () {
+                    submit();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.navIndex = 2;
+    Gllo.Models.ProductCateObj productCateObj = ViewBag.cates;
+    Gllo.Models.JsonArray allCates = ViewBag.allCates;
+    Gllo.Models.JsonArray products = ViewBag.data;
+    int total = ViewBag.total;
+
+    ViewBag.Title = productCateObj.CategoryName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    IDictionary<int, Gllo.Models.MediaObj> flash = ViewBag.flash;
+}
+@section header {
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/product.css" />
+}
+<div class="main">
+    <div class="here">@*<a href="/">首页</a>&gt;<a href="/product.html">产品中心</a>@ViewBag.current&gt;<span>@productCateObj.CategoryName</span>*@ </div>
+    <div class="sidebar">
+        <div class="cates">
+            <div class="catesTit">
+                <div class="catesTitL">
+                    <div class="catesTitR">商品分类 </div>
+                </div>
+            </div>
+            <div class="catesCon">
+                @for (int i = 0; i < allCates.Count; i++)
+                {
+                    <dl>
+                        <dt id="pCate@(i)" @(productCateObj.CategoryID == (int)allCates[i]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><a href="/list/@(allCates[i]["categoryID"]).html">@allCates[i]["categoryName"]</a></dt>
+                        @if (allCates[i].ContainsKey("children"))
+                        {
+                            Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)allCates[i]["children"];
+                            <dd id="sCate@(i)">
+                                <ul>
+                                    @for (int j = 0; j < children.Count; j++)
+                                    {
+                                        <li @(productCateObj.CategoryID == (int)children[j]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><b><a href="/list/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></b>
+                                            @if (children[j].ContainsKey("children"))
+                                            {
+                                                Gllo.Models.JsonArray subsub = (Gllo.Models.JsonArray)children[j]["children"];
+                                                <ol>
+                                                    @for (int k = 0; k < subsub.Count; k++)
+                                                    {
+                                                        <li @(productCateObj.CategoryID == (int)subsub[k]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><a href="/list/@(subsub[k]["categoryID"]).html">@subsub[k]["categoryName"]</a></li>
+                                                                                                                                                                                                               if (productCateObj.CategoryID == (int)subsub[k]["categoryID"])
+                                                                                                                                                                                                               {
+                                                        <script language="javascript">
+                                                            $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                                        </script>
+                                                                                                                                                                                                               }
+                                                    }
+                                                </ol>
+                                            }
+                                        </li>                                                                                                                     if (productCateObj.CategoryID == (int)children[j]["categoryID"])
+                                                                                                                                                                  {
+                                        <script language="javascript">
+                                            $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                        </script>
+                                                                                                                                                                  }
+                                    }
+                                </ul>
+                            </dd>
+                                    if (productCateObj.CategoryID == (int)allCates[i]["categoryID"])
+                                    {
+                            <script language="javascript">
+                                $.ready(function () { $("sCate@(i)").style.display="block";$("pCate@(i)").css("cur"); });
+                            </script>
+                                    }
+                        }
+                    </dl>
+                }
+            </div>
+            <script type="text/javascript">
+                $.ready(function () {
+                    var currentIndex= -1;
+                    for(var i=0;i<@(allCates.Count);i++) {
+                        $("pCate"+i).on("click",(function (j) {
+                            return function () {
+                                if(currentIndex!=j&&document.getElementById("sCate"+j)) {
+                                    if(currentIndex!== -1)
+                                        $("sCate"+currentIndex).css({ display: "none" });
+                                    $("sCate"+j).css({ display: "block" });
+                                    currentIndex=j;
+                                }
+                            }
+                        })(i));
+                    }
+                }); </script>
+        </div>
+    </div>
+    <div class="list">
+        <div class="flash">
+            <div id="flash"><a href="@(flash[32] != null ? flash[32].Url : "")"><img src="@(flash[32] != null ? (Gllo.Sys.Config.MediaServer + flash[32].Src) : "")" alt="@(flash[32] != null ? flash[32].Description : "")" /></a>
+                <a href="@(flash[33] != null ? flash[33].Url : "")" style="display: none"><img src="@(flash[33] != null ? (Gllo.Sys.Config.MediaServer + flash[33].Src) : "")" alt="@(flash[33] != null ? flash[33].Description : "")" /></a>
+                <a href="@(flash[34] != null ? flash[34].Url : "")" style="display: none"><img src="@(flash[34] != null ? (Gllo.Sys.Config.MediaServer + flash[34].Src) : "")" alt="@(flash[34] != null ? flash[34].Description : "")" /></a>
+                <a href="@(flash[35] != null ? flash[35].Url : "")" style="display: none"><img src="@(flash[35] != null ? (Gllo.Sys.Config.MediaServer + flash[35].Src) : "")" alt="@(flash[35] != null ? flash[35].Description : "")" /></a>
+                <ul>
+                    <li class="cur">1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                </ul>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $.ready(function () {
+
+                var flashLinks=$("flash").getElementsByTagName("A");
+                var flashPics=$("flash").getElementsByTagName("IMG");
+                var flashNums=$("flash").getElementsByTagName("LI");
+                var flashLength=flashLinks.length;
+                if(flashLength!=0) {
+                    var currentFlash=0;
+                    var isStop=false;
+                    var flashHeight=flashLinks[0].offsetHeight;
+
+                    function changeFlash(oldIndex,newIndex) {
+                        if(oldIndex==newIndex)
+                            return;
+                        var opt={
+                            element: flashLinks[oldIndex],
+                            startTime: 0,
+                            endTime: 5,
+                            topStart: 0,
+                            topEnd: flashHeight* -1
+                        };
+
+                        var opt1={
+                            element: flashLinks[newIndex],
+                            startTime: 0,
+                            endTime: 5,
+                            topStart: flashHeight,
+                            topEnd: 0
+                        };
+                        $(opt1.element).css({ top: flashHeight+"px",display: "block" });
+                        currentFlash=newIndex;
+
+                        $.gradual([opt,opt1],function () {
+                            flashNums[oldIndex].className="";
+                            flashNums[newIndex].className="cur";
+                            $(opt.element).css({ display: "none" });
+                        });
+                    }
+
+                    $.each(flashNums,function (item,i) {
+                        $(item).on("mouseover",function () {
+                            changeFlash(currentFlash,i);
+                            isStop=true;
+                        }).on("mouseout",function () {
+                            isStop=false;
+                        });
+                    })
+
+                    function flashStart() {
+                        if(!isStop)
+                            changeFlash(currentFlash,currentFlash==flashLength-1?0:currentFlash+1);
+
+                        window.setTimeout(function () { flashStart(); },6000);
+                    }
+                    window.setTimeout(function () { flashStart(); },6000);
+                }
+
+            });
+        </script>
+        <div class="searchResTit">
+            @productCateObj.CategoryName
+        </div>
+        <div class="price">价格：<a@(string.IsNullOrEmpty(ViewBag.price) ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)">全部</a>
+            <a@(ViewBag.price == "0-200" ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)&price=0-200">0-200</a>
+            <a@(ViewBag.price == "200-500" ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)&price=200-500">200-500</a>
+            <a@(ViewBag.price == "500-1000" ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)&price=500-1000">500-1000</a>
+            <a@(ViewBag.price == "1000-2000" ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)&price=1000-2000">1000-2000</a>
+            <a@(ViewBag.price == "2000-0" ? new MvcHtmlString(" class=\"cur\"") : null) href="/list/@(productCateObj.CategoryID).html?sort=@(ViewBag.sort)&price=2000-0">2000元以上</a>
+        </div>
+        <div class="prdSort">
+            <div class="prdSortTit">排序：</div>
+            <ul>
+                <li@(ViewBag.sort == 0 ? new MvcHtmlString(" class=\"cur\"") : null) ><a href="/list/@(productCateObj.CategoryID).html?sort=0&price=@(ViewBag.price)">默认</a></li>
+                <li@(ViewBag.sort == 4 ? new MvcHtmlString(" class=\"cur\"") : null) ><a href="/list/@(productCateObj.CategoryID).html?sort=4&price=@(ViewBag.price)">销量</a></li>
+                <li@(ViewBag.sort == 1 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/list/@(productCateObj.CategoryID).html?sort=1&price=@(ViewBag.price)">价格↑</a></li>
+                <li@(ViewBag.sort == 5 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/list/@(productCateObj.CategoryID).html?sort=5&price=@(ViewBag.price)">价格↓</a></li>
+                <li@(ViewBag.sort == 2 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/list/@(productCateObj.CategoryID).html?sort=2&price=@(ViewBag.price)">上架时间</a></li>
+                <li@(ViewBag.sort == 3 ? new MvcHtmlString(" class=\"cur\"") : null)><a href="/list/@(productCateObj.CategoryID).html?sort=3&price=@(ViewBag.price)">好评度</a></li>
+            </ul>
+        </div>
+        <div class="box">
+            <div class="boxCon topBD">
+                <div class="listCon">
+                    <div class="products">
+                        @if (products != null)
+                        {
+                            Gllo.Models.JsonObject prd;
+                            for (int i = 0; i < products.Count; i++)
+                            {
+                                prd = products[i];
+                            <dl class="pi">
+                                <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                                <dd><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></dd>
+                                @if ((decimal)prd["SpecialPrice"] == 0 || (decimal)prd["SpecialPrice"] >= (decimal)prd["Price"])
+                                {
+                                    <dd>价格：<span>￥@(((decimal)prd["Price"]).ToString("0"))</span></dd>
+                                }
+                                else
+                                {
+                                    <dd>原价：<del>￥@(((decimal)prd["Price"]).ToString("0"))</del></dd>
+                                    <dd>现价：<span>￥@(((decimal)prd["SpecialPrice"]).ToString("0"))</span></dd>
+                                }
+                            </dl>
+                                if ((i + 1) % 4 == 0)
+                                { 
+                            <div class="clear"></div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div id="page" class="page">
+                    @if (ViewBag.page != 1)
+                    {
+                        <a href="/list/@(productCateObj.CategoryID)_@(ViewBag.page - 1).html">上一页</a>
+                    }
+                    @if (ViewBag.page != total)
+                    {
+                        <a href="/list/@(productCateObj.CategoryID)_@(ViewBag.page + 1).html">下一页</a>
+                    }
+                </div>
+                <script type="text/javascript"> 
+                    $.ready(function () { 
+                        $.page(@ViewBag.page,@ViewBag.pageSize,@total,$("page"),function (pageIndex) { window.location.href="/list/@(productCateObj.CategoryID)_"+pageIndex+".html?sort=@(ViewBag.sort)&price=@(ViewBag.price)"; }); 
+                        var newPrds=$("newP").getElementsByTagName("DIV");
+                        if (newPrds.length!=0)
+                            $("newP").css("height:"+newPrds[0].offsetHeight+"px");
+
+                        if (newPrds.length>1){
+                            var curr=0;
+                            var isStop=false;
+                            var hgt=newPrds[0].offsetHeight;
+
+                            function changeN(oldIndex,newIndex) {
+                                var opt={
+                                    element: newPrds[oldIndex],
+                                    startTime: 0,
+                                    endTime: 5,
+                                    topStart: 0,
+                                    topEnd: hgt* -1
+                                };
+
+                                var opt1={
+                                    element: newPrds[newIndex],
+                                    startTime: 0,
+                                    endTime: 5,
+                                    topStart: hgt,
+                                    topEnd: 0
+                                };
+                                $(opt1.element).css({ top: hgt+"px",display: "block" });
+                                curr=newIndex;
+
+                                $.gradual([opt,opt1],function () {
+                                    $(opt.element).css({ display: "none" });
+                                });
+                            }
+
+                            $.each(newPrds,function(newPrd,i){
+                                if (i!=0) 
+                                    $(newPrd).css("display:none");
+
+                                $(newPrd).on("mousemove",function () {
+                                    isStop=true;
+                                }).on("mouseout",function () {
+                                    isStop=false;
+                                });
+                            });
+
+                            function nStart() {
+                                if(!isStop)
+                                    changeN(curr,curr==newPrds.length-1?0:curr+1);
+
+                                window.setTimeout(function () { nStart(); },6000);
+                            }
+                            window.setTimeout(function () { nStart(); },6000);
+                        }
+                        
+                    }); 
+                </script>
+            </div>
+        </div>
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong>新品</strong></div>
+            </div>
+            <div class="boxCon">
+                <div class="listCon">
+                    <div id="newP">
+                        @ViewBag.newProducts
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="boxTit">
+                <div class="boxTLine"></div>
+                <div class="boxTitBG"><strong>促销</strong></div>
+            </div>
+            <div class="boxCon">
+                <div class="listCon">
+                    @ViewBag.onSaleProducts
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

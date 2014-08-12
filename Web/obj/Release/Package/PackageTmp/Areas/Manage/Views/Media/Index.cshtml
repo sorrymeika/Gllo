@@ -1,0 +1,458 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .upload th { padding: 20px 5px 0px 10px; font-weight: bold; color: #333; }
+        .upload form { padding-top: 10px; }
+        .upload td { padding-top: 6px; }
+        .cont { width: 400px; height: 200px; }
+        .view { position: absolute; width: 30px; height: 60px; }
+        .view1 { position: absolute; width: 60px; height: 30px; }
+        .view2 { position: absolute; width: 60px; height: 60px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            window.handleViewPic=function (res) {
+                if(res.success) {
+                    $("view"+res.id).src="/home/ViewPic/?picGuid="+res.guid;
+                }
+                else
+                    alert(res.msg)
+            };
+
+            window.handleResult=function (res) {
+                if(res.success)
+                    alert("上传成功！");
+                else
+                    alert(res.msg)
+            };
+
+            for(var i=1;i<=14;i++) {
+                $("file"+i).on("change",(function (j) {
+                    return function () {
+                        $("form"+j).action="/home/ViewPic/?width=30&height=60&id="+j;
+                        $("form"+j).submit();
+                    }
+                })(i));
+                $("submit"+i).on("click",(function (j) {
+                    return function () {
+                        $("form"+j).action="/Manage/Media/Upload/";
+                        $("form"+j).submit();
+                    }
+                })(i))
+            }
+            $("submitn").on("click",function () {
+                $("formn").submit();
+            })
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <h1>媒体上传</h1>
+            <table class="upload">
+                <tr>
+                    <th valign="top">引导页图片1：</th>
+                    <td>
+                        <form id="form1" method="post" action="/home/ViewPic/?width=30&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="1" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file1" name="pic" type="file" /></td>
+                                    <td>(51 X 102)</td>
+                                    <td rowspan="3" valign="top"><img id="view1" class="view" src="@(ViewBag.media1 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media1.Src))" /></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url1" name="url" type="text" value="@(ViewBag.media1 == null ? "" : ViewBag.media1.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc1" name="desc" type="text" value="@(ViewBag.media1 == null ? "" : ViewBag.media1.Description)" /><input id="submit1" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">引导页图片2：</th>
+                    <td>
+                        <form id="form2" method="post" action="/home/ViewPic/?width=30&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="2" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file2" name="pic" type="file" /></td>
+                                    <td>(51 X 102)</td>
+                                    <td rowspan="3" valign="top"><img id="view2" class="view" src="@(ViewBag.media2 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media2.Src))" /></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url2" name="url" type="text" value="@(ViewBag.media2 == null ? "" : ViewBag.media2.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc2" name="desc" type="text" value="@(ViewBag.media2 == null ? "" : ViewBag.media2.Description)" /><input id="submit2" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">引导页图片3：</th>
+                    <td>
+                        <form id="form3" method="post" action="/home/ViewPic/?width=30&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="3" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file3" name="pic" type="file" /></td>
+                                    <td>(51 X 102)</td>
+                                    <td rowspan="3" valign="top"><img id="view3" class="view" src="@(ViewBag.media3 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media3.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url3" name="url" type="text" value="@(ViewBag.media3 == null ? "" : ViewBag.media3.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc3" name="desc" type="text" value="@(ViewBag.media3 == null ? "" : ViewBag.media3.Description)" /><input id="submit3" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">引导页音乐：</th>
+                    <td>
+                        <form id="formn" method="post" action="/Manage/Media/Upload/" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="15" type="hidden" />
+                            <input name="type" value="1" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>音频选择：</td>
+                                    <td><input id="filen" name="pic" type="file" /></td>
+                                    <td><input id="submitn" type="submit" value="设置" />(mp3、wma格式，大小4M之内)</td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <th valign="top">首页flash1：</th>
+                    <td>
+                        <form id="form4" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="4" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file4" name="pic" type="file" /></td>
+                                    <td>(820 × 416)</td>
+                                    <td rowspan="3" valign="top"><img id="view4" class="view1" src="@(ViewBag.media4 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media4.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url4" name="url" type="text" value="@(ViewBag.media4 == null ? "" : ViewBag.media4.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc4" name="desc" type="text" value="@(ViewBag.media4 == null ? "" : ViewBag.media4.Description)" /><input id="submit4" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页flash2：</th>
+                    <td>
+                        <form id="form5" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="5" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file5" name="pic" type="file" /></td>
+                                    <td>(820 × 416)</td>
+                                    <td rowspan="3" valign="top"><img id="view5" class="view1" src="@(ViewBag.media5 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media5.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url5" name="url" type="text" value="@(ViewBag.media5 == null ? "" : ViewBag.media5.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc5" name="desc" type="text" value="@(ViewBag.media5 == null ? "" : ViewBag.media5.Description)" /><input id="submit5" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页flash3：</th>
+                    <td>
+                        <form id="form6" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="6" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file6" name="pic" type="file" /></td>
+                                    <td>(820 × 416)</td>
+                                    <td rowspan="3" valign="top"><img id="view6" class="view1" src="@(ViewBag.media6 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media6.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url6" name="url" type="text" value="@(ViewBag.media6 == null ? "" : ViewBag.media6.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc6" name="desc" type="text" value="@(ViewBag.media6 == null ? "" : ViewBag.media6.Description)" /><input id="submit6" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页flash4：</th>
+                    <td>
+                        <form id="form7" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="7" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file7" name="pic" type="file" /></td>
+                                    <td>(820 × 416)</td>
+                                    <td rowspan="3" valign="top"><img id="view7" class="view1" src="@(ViewBag.media7 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media7.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url7" name="url" type="text" value="@(ViewBag.media7 == null ? "" : ViewBag.media7.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc7" name="desc" type="text" value="@(ViewBag.media7 == null ? "" : ViewBag.media7.Description)" /><input id="submit7" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页flash5：</th>
+                    <td>
+                        <form id="form8" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="8" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file8" name="pic" type="file" /></td>
+                                    <td>(820 × 416)</td>
+                                    <td rowspan="3" valign="top"><img id="view8" class="view1" src="@(ViewBag.media8 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media8.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url8" name="url" type="text" value="@(ViewBag.media8 == null ? "" : ViewBag.media8.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc8" name="desc" type="text" value="@(ViewBag.media8 == null ? "" : ViewBag.media8.Description)" /><input id="submit8" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <th valign="top">首页分块1：</th>
+                    <td>
+                        <form id="form9" method="post" action="/home/ViewPic/?width=60&height=30" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="9" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>分块图片：</td>
+                                    <td><input id="file9" name="pic" type="file" />(240 × 160) <img id="view9" class="view1" src="@(ViewBag.media9 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media9.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url9" name="url" type="text" value="@(ViewBag.media9 == null ? "" : ViewBag.media9.Url)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>标题描述：</td>
+                                    <td><input id="desc9" name="desc" type="text" value="@(ViewBag.media9 == null ? "" : ViewBag.media9.Description)" /><input id="submit9" type="button" value="设置" /></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">正文描述：</td>
+                                    <td>
+                                        <textarea id="content9" name="content" class="cont">@(ViewBag.media9 == null ? "" : ViewBag.media9.Content)</textarea></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页分块2：</th>
+                    <td>
+                        <form id="form10" method="post" action="/home/ViewPic/?width=60&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="10" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>分块图片：</td>
+                                    <td><input id="file10" name="pic" type="file" />(240 × 160) <img id="view10" class="view1" src="@(ViewBag.media10 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media10.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url10" name="url" type="text" value="@(ViewBag.media10 == null ? "" : ViewBag.media10.Url)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>标题描述：</td>
+                                    <td><input id="desc10" name="desc" type="text" value="@(ViewBag.media10 == null ? "" : ViewBag.media10.Description)" /><input id="submit10" type="button" value="设置" /></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">正文描述：</td>
+                                    <td>
+                                        <textarea id="content10" name="content" class="cont">@(ViewBag.media10 == null ? "" : ViewBag.media10.Content)</textarea></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <th valign="top">首页分块3：</th>
+                    <td>
+                        <form id="form11" method="post" action="/home/ViewPic/?width=60&height=32" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="11" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>分块图片：</td>
+                                    <td><input id="file11" name="pic" type="file" />(240 × 160) <img id="view11" class="view1" src="@(ViewBag.media11 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media11.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url11" name="url" type="text" value="@(ViewBag.media11 == null ? "" : ViewBag.media11.Url)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>标题描述：</td>
+                                    <td><input id="desc11" name="desc" type="text" value="@(ViewBag.media11 == null ? "" : ViewBag.media11.Description)" /><input id="submit11" type="button" value="设置" /></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">正文描述：</td>
+                                    <td>
+                                        <textarea id="content11" name="content" class="cont">@(ViewBag.media11 == null ? "" : ViewBag.media11.Content)</textarea></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">首页分块4：</th>
+                    <td>
+                        <form id="form12" method="post" action="/home/ViewPic/?width=60&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="12" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>分块图片：</td>
+                                    <td><input id="file12" name="pic" type="file" />(240 × 160) <img id="view12" class="view1" src="@(ViewBag.media12 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media12.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url12" name="url" type="text" value="@(ViewBag.media12 == null ? "" : ViewBag.media12.Url)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>标题描述：</td>
+                                    <td><input id="desc12" name="desc" type="text" value="@(ViewBag.media12 == null ? "" : ViewBag.media12.Description)" /><input id="submit12" type="button" value="设置" /></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">正文描述：</td>
+                                    <td>
+                                        <textarea id="content12" name="content" class="cont">@(ViewBag.media12 == null ? "" : ViewBag.media12.Content)</textarea></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <th valign="top">首页分块5：</th>
+                    <td>
+                        <form id="form13" method="post" action="/home/ViewPic/?width=60&height=32" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="13" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>分块图片：</td>
+                                    <td><input id="file13" name="pic" type="file" />(390 × 260) <img id="view13" class="view1" src="@(ViewBag.media13 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media13.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url13" name="url" type="text" value="@(ViewBag.media13 == null ? "" : ViewBag.media13.Url)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>标题描述：</td>
+                                    <td><input id="desc13" name="desc" type="text" value="@(ViewBag.media13 == null ? "" : ViewBag.media13.Description)" /><input id="submit13" type="button" value="设置" /></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">正文描述：</td>
+                                    <td>
+                                        <textarea id="content13" name="content" class="cont">@(ViewBag.media13 == null ? "" : ViewBag.media13.Content)</textarea></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th valign="top">5S介绍：</th>
+                    <td>
+                        <form id="form14" method="post" action="/home/ViewPic/?width=60&height=60" target="iframeMedia" enctype="multipart/form-data">
+                            <input name="id" value="14" type="hidden" />
+                            <table>
+                                <tr>
+                                    <td>图片选择：</td>
+                                    <td><input id="file14" name="pic" type="file" /></td>
+                                    <td>(950 × 120)</td>
+                                    <td rowspan="3" valign="top"><img id="view14" class="view1" src="@(ViewBag.media14 == null ? "" : (Gllo.Sys.Config.MediaServer + ViewBag.media14.Src))"/></td>
+                                </tr>
+                                <tr>
+                                    <td>链接地址：</td>
+                                    <td><input id="url14" name="url" type="text" value="@(ViewBag.media14 == null ? "" : ViewBag.media14.Url)" /></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>图片描述：</td>
+                                    <td><input id="desc14" name="desc" type="text" value="@(ViewBag.media14 == null ? "" : ViewBag.media14.Description)" /><input id="submit14" type="button" value="设置" /></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <iframe id="iframeMedia" name="iframeMedia" scrolling="no" height="0" width="0" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>

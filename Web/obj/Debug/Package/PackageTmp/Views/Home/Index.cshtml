@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.navIndex = 1;
+    ViewBag.Title = "GLLO  洁利来  极致人性  随心所浴";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IDictionary<int, Gllo.Models.MediaObj> flash = ViewBag.flash;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/index.css" />
+}
+<div class="main">
+    <div class="iflash">
+        <div id="flash" class="iflashCon"><a href="@(flash[4] != null ? flash[4].Url : "")"><img src="@(flash[4] != null ? (Gllo.Sys.Config.MediaServer + flash[4].Src) : "")" alt="@(flash[4] != null ? flash[4].Description : "")" /></a>
+            <a style="display: none" href="@(flash[5] != null ? flash[5].Url : "")"><img src="@(flash[5] != null ? (Gllo.Sys.Config.MediaServer + flash[5].Src) : "")" alt="@(flash[5] != null ? flash[5].Description : "")" /></a>
+            <a style="display: none" href="@(flash[6] != null ? flash[6].Url : "")"><img src="@(flash[6] != null ? (Gllo.Sys.Config.MediaServer + flash[6].Src) : "")" alt="@(flash[6] != null ? flash[6].Description : "")" /></a>
+            <a style="display: none" href="@(flash[7] != null ? flash[7].Url : "")"><img src="@(flash[7] != null ? (Gllo.Sys.Config.MediaServer + flash[7].Src) : "")" alt="@(flash[7] != null ? flash[7].Description : "")" /></a>
+            <a style="display: none" href="@(flash[8] != null ? flash[8].Url : "")"><img src="@(flash[8] != null ? (Gllo.Sys.Config.MediaServer + flash[8].Src) : "")" alt="@(flash[8] != null ? flash[8].Description : "")" /></a>
+        </div>
+        <div id="flashNav" class="iflashNav">
+            <ul>
+                <li class="cur">@(flash[4] != null ? flash[4].Description : "")</li>
+                <li>@(flash[5] != null ? flash[5].Description : "")</li>
+                <li>@(flash[6] != null ? flash[6].Description : "")</li>
+                <li>@(flash[7] != null ? flash[7].Description : "")</li>
+                <li>@(flash[8] != null ? flash[8].Description : "")</li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var flashLinks=$("flash").getElementsByTagName("A");
+            var flashPics=$("flash").getElementsByTagName("IMG");
+            var flashNums=$("flashNav").getElementsByTagName("LI");
+            var flashLength=flashLinks.length;
+            if(flashLength!=0) {
+                var currentFlash=0;
+                var isStop=false;
+                var flashHeight=$("flash").offsetHeight;
+
+                function changeFlash(oldIndex,newIndex) {
+                    if(oldIndex==newIndex)
+                        return;
+                    var opt={
+                        element: flashLinks[oldIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: 0,
+                        topEnd: flashHeight* -1
+                    };
+
+                    var opt1={
+                        element: flashLinks[newIndex],
+                        startTime: 0,
+                        endTime: 5,
+                        topStart: flashHeight,
+                        topEnd: 0
+                    };
+                    $(opt1.element).css({ top: flashHeight+"px",display: "block" });
+                    currentFlash=newIndex;
+
+                    $.gradual([opt,opt1],function () {
+                        flashNums[oldIndex].className="";
+                        flashNums[newIndex].className="cur";
+                        $(opt.element).css({ display: "none" });
+                    });
+                }
+
+                $.each(flashNums,function (item,i) {
+                    $(item).on("mouseover",function () {
+                        changeFlash(currentFlash,i);
+                        isStop=true;
+                    }).on("mouseout",function () {
+                        isStop=false;
+                    });
+                })
+
+                function flashStart() {
+                    if(!isStop)
+                        changeFlash(currentFlash,currentFlash==flashLength-1?0:currentFlash+1);
+
+                    window.setTimeout(function () { flashStart(); },6000);
+                }
+                window.setTimeout(function () { flashStart(); },6000);
+            }
+
+        });
+    </script>
+</div>
+<div class="main">
+    <div class="blks">
+        <div class="topBlks">
+            <div class="idxBlk">
+                <dl>
+                    <dt id="flv"><img src="@(flash[11] != null ? (Gllo.Sys.Config.MediaServer + flash[11].Src) : "")" alt="@(flash[11] != null ? flash[11].Description : "")" /></dt>
+                    <dd><b><a href="@(flash[11] != null ? flash[11].Url : "")">@(flash[11] != null ? flash[11].Description : "")</a></b>
+                        <p>@(flash[11] != null ? flash[11].Content : "")</p>
+                    </dd>
+                </dl>
+                <script type="text/javascript">
+                    $.ready(function () {
+                        $("flv").css("cursor:pointer").on("click",function () {
+                            this.html('<div style="overflow:hidden;width:276;height:184px;"><embed src="http://www.cnbruce.com/flv/googleplayer.swf?videoUrl=http://gllo5s.com/Content/Gllo.flv&thumbnailUrl=http://localhost:10225/Content/Media/20110430122455_1562.jpg&playerMode=normal&autoPlay=true" type="application/x-shockwave-flash" width="276" height="212" quality="high" /></div>');
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

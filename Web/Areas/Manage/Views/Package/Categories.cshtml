@@ -1,0 +1,206 @@
+﻿@{
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        var selectedCateID,selectedRow;
+        function load() {
+            $("btnAddChild").css("btnDsb").disabled=true;
+            $("btnModify").css("btnDsb").disabled=true;
+            $("btnDelete").css("btnDsb").disabled=true;
+            $("cateGridCon").innerHTML="正在载入...";
+            $.post("/manage/Package/GetPackageCates/",function (res) {
+
+                if(res.success) {
+                    if(!res.data||!res.data.length) {
+                        $("cateGridCon").innerHTML="暂无数据";
+                    } else {
+                        $("cateGridCon").innerHTML="";
+                        loadData(res.data,0);
+                    }
+                }
+                else
+                    $("cateGridCon").innerHTML=res.msg;
+            });
+        };
+        function loadData(data,deep,container) {
+            deep=deep||0;
+            container=container||$("cateGridCon");
+            $.each(data,function (dataRow) {
+                var childDeep=deep+1;
+                var row=$("UL",container).on("click",function () {
+                    if(selectedRow)
+                        selectedRow.css("");
+                    this.css("selected");
+                    selectedRow=this;
+                    selectedCateID=dataRow.categoryID;
+                    $("btnAddChild").css("btn").disabled=false;
+                    $("btnModify").css("btn").disabled=false;
+                    $("btnDelete").css("btn").disabled=false;
+                });
+                row.data=dataRow;
+                $("LI",row).css({ width: "50px" }).html(dataRow.categoryID);
+                for(var i=0;i<deep;i++) {
+                    $("LI",row).css("space");
+                }
+                if(dataRow.children) {
+                    $("LI",row).css("minus").on("click",function () {
+                        if(row.childHidden) {
+                            this.css("minus");
+                            row.childrenCon.css({ "height": "auto",visibility: "visible" });
+                        } else {
+                            this.css("plus");
+                            row.childrenCon.css({ "height": "0px",visibility: "hidden",overflow: "hidden" });
+                        }
+                        row.childHidden=!row.childHidden;
+                    });
+                    row.childrenCon=$("DIV",container);
+                    loadData(dataRow.children,childDeep,row.childrenCon)
+                }
+                else
+                    $("LI",row).css("no");
+
+                $("LI",row).html(dataRow.categoryName);
+                $("LI",row).css("float:right;width: 50px;").html(dataRow.sort);
+            });
+        };
+    </script>
+    <script type="text/javascript">
+        $.ready(function () {
+            var isModify=false;
+            var parentCategoryID=0;
+            var pWin=window.parent;
+            var pDoc=window.parent.document;
+            var p$=pWin.$;
+
+            var frg=pDoc.createDocumentFragment();
+            var dialogContent=p$("DIV",frg);
+            var tr,tbody;
+            p$("TD",tr=p$("TR",tbody=p$("TBODY",p$("TABLE",dialogContent)))).html("类别名称：");
+            var validatioin=new p$.Validation();
+            var categoryName=p$("INPUT",p$("TD",tr).css({ width: "200px" }));
+            validatioin.add(categoryName,{ emptyAble: false,emptyText: "类别名不可为空！",width: 100 });
+            p$("TD",tr=p$("TR",tbody)).html("类别权重：").css({ paddingTop: "4px" });
+            var categorySort=p$("INPUT",p$("TD",tr).css({ width: "100px",paddingTop: "4px" }));
+
+            var dialogButtons=p$("DIV",dialogContent).css("buttons");
+            var btnOK=p$("A",dialogButtons).css("btn").on("click",function () {
+                if(this.disabled)
+                    return false;
+                if(validatioin.validate()) {
+                    this.disabled=true;
+                    this.className="btnDsb";
+                    $.post(isModify?"/manage/Package/ModifyPackageCate/":"/manage/Package/AddPackageCate/",function (res) {
+                        btnOK.disabled=false;
+                        btnOK.className="btn";
+                        if(res.success) {
+                            alert(isModify?"修改类别成功！":"新增类别成功！");
+                            load();
+
+                            dialogAdd.close();
+                        } else
+                            alert(res.msg);
+                    },{
+                        categoryName: categoryName.value,
+                        categoryID: parentCategoryID,
+                        sort: categorySort.value||0
+                    });
+                }
+
+            });
+            p$("EM",btnOK).html("确认");
+
+            var btnCancel=p$("A",dialogButtons).css("btn").on("click",function () { dialogAdd.close(); });
+            p$("EM",btnCancel).html("取消");
+
+            var dialogAdd=new p$.Dialog({
+                title: "",
+                width: 300,
+                content: frg
+            });
+
+            window.onunload=function () {
+                dialogAdd.distroy();
+            }
+
+            function add(pid) {
+                isModify=false;
+                if(pid!==0) {
+                    if(!selectedCateID)
+                        return;
+                    pid=selectedCateID;
+                }
+                parentCategoryID=pid;
+                dialogAdd.title("新建分类");
+                categoryName.value="";
+                dialogAdd.show();
+            };
+
+            $("btnAdd").on("click",function () {
+                add(0);
+                return false;
+            });
+
+            $("btnAddChild").on("click",function () {
+                add();
+                return false;
+            });
+
+            load();
+
+            $("btnModify").on("click",function () {
+                if(this.disabled||!selectedCateID)
+                    return false;
+
+                isModify=true;
+                dialogAdd.title("修改分类");
+                dialogAdd.show();
+                parentCategoryID=selectedCateID;
+                categoryName.value=selectedRow.data.categoryName;
+                categorySort.value=selectedRow.data.sort;
+
+                return false;
+            });
+
+            $("btnDelete").on("click",function () {
+                if(this.disabled||!selectedCateID)
+                    return false;
+
+                if(window.confirm("您确定要删除该类别吗")) {
+                    $.post("/manage/Package/DeletePackageCate/",function (res) {
+                        if(res.success)
+                            load();
+                        else
+                            alert(res.msg)
+                    },{
+                        categoryID: selectedCateID
+                    });
+                }
+
+                return false;
+            });
+
+        });
+    </script>
+}
+<div class="main">
+    <div class="container">
+        <div class="content">
+            <div class="toolbarOut">
+                <div class="toolbar"><a id="btnAdd" class="btn"><em><span class="ico2">新建分类</span></em></a>
+                    <a id="btnAddChild" class="btn"><em><span class="ico2">创建子类</span></em></a>
+                    <a id="btnModify" class="btn"><em><span class="ico3">修改分类</span></em></a>
+                    <a id="btnDelete" class="btn"><em><span class="ico4">删除分类</span></em></a>
+                </div>
+            </div>
+            <div class="treeGrid">
+                <ol>
+                    <li style="width: 50px;">编号</li>
+                    <li>分类名称</li>
+                    <li style="width: 50px; float: right;">权重</li>
+                </ol>
+                <div id="cateGridCon"></div>
+            </div>
+        </div>
+    </div>
+</div>

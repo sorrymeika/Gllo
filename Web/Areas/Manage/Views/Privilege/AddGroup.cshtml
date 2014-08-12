@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "AddPrivilege";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .form { margin: 15px auto 0px auto; }
+        .form span { color: #c00; }
+        .txt { width: 150px; }
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+            var P={
+                vld: new $.Validation(),
+                add: function () {
+                    if(P.vld.validate()) {
+                        $.post("/Manage/Privilege/AddGroup/",function (res) {
+                            if(res.success) {
+                                alert("添加成功！");
+                                closeDialog(true);
+                            } else
+                                alert(res.msg)
+                        },{
+                            groupName: $("groupName").value
+                        });
+                    }
+                },
+                init: function () {
+                    P.vld.add("groupName",{
+                        emptyAble: false,
+                        emptyText: "请填写组名"
+                    });
+                    $("add").on("click",P.add);
+                }
+            }
+
+            P.init();
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <th valign="top"><span>*</span>组名：</th>
+            <td><input id="groupName" type="text" class="txt" /></td>
+            <td><a id="add" class="btn1"><em>添加</em></a></td>
+        </tr>
+    </table>
+</div>

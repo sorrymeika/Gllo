@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.navIndex = 4;
+    ViewBag.Title = "照片展示";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.JsonArray allCates = ViewBag.allCates;
+    int categoryID = ViewBag.categoryID;
+    Gllo.Models.JsonArray data = ViewBag.data;
+    int total = ViewBag.total;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/package.css" />
+    <script type="text/javascript">
+        var categoryID = @(categoryID);
+        var media = "@(Gllo.Sys.Config.MediaServer)";
+    </script>
+    <script type="text/javascript" src="/Scripts/website/show.js"></script>
+}
+<div class="main">
+    <div class="here">
+        <a href="/">首页</a>&nbsp;&nbsp;&gt;<span>整体空间</span></div>
+    <div class="sidebar">
+        <div class="newsCates">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine">
+                    </div>
+                    <div class="boxTitBG">
+                        <strong>产品分类列表</strong></div>
+                </div>
+            </div>
+            <div class="boxCon">
+                <div class="catesCon">
+                    @for (int i = 0; i < allCates.Count; i++)
+                    {
+                        <dl>
+                            <dt id="pCate@(i)"><a href="/show/@(allCates[i]["categoryID"]).html">@allCates[i]["categoryName"]</a></dt>
+                            @if (allCates[i].ContainsKey("children"))
+                            {
+                                Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)allCates[i]["children"];
+                                <dd id="sCate@(i)"><ul>
+                                    @for (int j = 0; j < children.Count; j++)
+                                    {
+                                        <li @(categoryID == (int)children[j]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><b><a href="/show/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></b>
+                                            @if (children[j].ContainsKey("children"))
+                                            {
+                                                Gllo.Models.JsonArray subsub = (Gllo.Models.JsonArray)children[j]["children"];
+                                                <ol>
+                                                    @for (int k = 0; k < subsub.Count; k++)
+                                                    {
+                                                        <li @(categoryID == (int)subsub[k]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><a href="/show/@(subsub[k]["categoryID"]).html">@subsub[k]["categoryName"]</a></li>
+                                                                                                                                                                                                if (categoryID == (int)subsub[k]["categoryID"])
+                                                                                                                                                                                                {
+                                                        <script language="javascript">
+                                                            $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                                        </script>
+                                                                                                                                                                                                }
+                                                    }
+                                                </ol>
+                                            }
+                                        </li>                                                                                                                     if (categoryID == (int)children[j]["categoryID"])
+                                                                                                                                                                  {
+                                        <script language="javascript">
+                                            $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                        </script>
+                                                                                                                                                                  }
+                                    }
+                                </ul>
+                                </dd>
+                                    if (categoryID == (int)allCates[i]["categoryID"])
+                                    {
+                                <script language="javascript">
+                                    $.ready(function () { $("sCate@(i)").style.display="block";$("pCate@(i)").css("cur"); });
+                                </script>
+                                    }
+                            }
+                        </dl>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="helpcenter">
+        <h1>照片展示</h1>
+        <div class="content" style="width: 690px; height: 517px; margin: 10px auto 20px auto;">
+            <iframe src="/photo/@(categoryID)/potoT.html" width="690" height="517" frameborder="0" scrolling="no"></iframe>
+        </div>
+        @*
+        <div class="searchPkg">
+            <table>
+                <tr>
+                    <td class="floor">楼盘:</td>
+                    <td><select id="cmbProvince">
+                        <option value="0">选择省</option>
+                    </select></td>
+                    <td><select id="cmbCity">
+                        <option value="0">选择市</option>
+                    </select></td>
+                    <td><select id="cmbRegion">
+                        <option value="0">选择区</option>
+                    </select></td>
+                    <td><select id="cmbBuilding">
+                        <option value="0">选择楼盘</option>
+                    </select></td>
+                    <td><a id="btnSearch" class="btn1"><em>搜索</em></a></td>
+                </tr>
+            </table>
+        </div>
+        <div id="list" class="pkgBlk">
+            @if (data != null)
+            {
+                for (int i = 0; i < data.Count; i++)
+                {
+                <dl>
+                    <dt><a href="/Package/@(data[i]["PackageID"]).html">@(data[i]["PackageName"])</a></dt>
+                    <dd><a href="/Package/@(data[i]["PackageID"]).html"><img src="@(Gllo.Sys.Config.MediaServer)@(data[i]["Url"])" /></a>
+                        <p>@(data[i]["Memo"] == null ? null : new MvcHtmlString(data[i]["Memo"].ToString().Replace("\r\n", "<br>").Replace("\r", "<br>").Replace("\n", "<br>")))</p>
+                    </dd>
+                </dl>
+                }
+            }
+        </div>
+        <div id="page" class="page">
+            @if (ViewBag.page != 1)
+            {
+                <a href="/show/@(categoryID)_@(ViewBag.page - 1).html">上一页</a>
+            }
+            @if (ViewBag.page != total)
+            {
+                <a href="/show/@(categoryID)_@(ViewBag.page + 1).html">下一页</a>
+            }
+            <script type="text/javascript"> $.ready(function () { $.page(@ViewBag.page,@ViewBag.pageSize,@total,$("page"),function (pageIndex) { window.location.href="/show/@(categoryID)_"+pageIndex+".html"; }); }); </script>
+        </div>
+        *@
+    </div>
+</div>

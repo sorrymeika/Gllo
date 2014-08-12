@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "订单发货";
+    Layout = "~/Areas/Manage/Views/Shared/_Layout.cshtml";
+    Gllo.Models.OrderObj orderObj = ViewBag.order;
+}
+@section header{
+    <style type="text/css">
+        
+    </style>
+    <script type="text/javascript">
+        $.ready(function () {
+
+            var E={
+                vld: new $.Validation(),
+                init: function () {
+                    this.vld.add("logisticsCode",{ emptyAble: false,emptyText: "物流单号不可为空！" });
+
+                    $("save").on("click",function () {
+                        if(E.vld.validate()) {
+                            $.post("/manage/Order/ModifyLogistic/",function (res) {
+                                if(res.success) {
+                                    alert("修改发货信息成功！");
+                                    closeDialog(true);
+
+                                } else
+                                    alert(res.msg);
+                            },{
+                                isConsigned: $("isConsigned").checked?1:0,
+                                expressId: $("expressId").value,
+                                logistics: $("expressId").options[$("expressId").selectedIndex].text,
+                                logisticsCode: $("logisticsCode").value,
+                                transportType: $("transportType").value,
+                                orderID: $.getQueryString("id")
+                            });
+                        }
+                    });
+
+                    $("cancel").on("click",function () {
+                        closeDialog();
+                    });
+                }
+            };
+
+            E.init();
+        });
+    </script>
+}
+<div class="main">
+    <table class="form">
+        <tr>
+            <td>是否发货：</td>
+            <td><input id="isConsigned" type="checkbox" checked="checked" /></td>
+        </tr>
+        <tr>
+            <td>运输类型：</td>
+            <td>
+                <select id="transportType">
+                    <option value="EXPRESS" selected="selected">快递</option>
+                    <option value="POST">平邮</option>
+                    <option value="EMS">EMS</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>物流公司：</td>
+            <td>
+                <select id="expressId">
+                    @if (ViewBag.express != null)
+                    {
+                        IList<Gllo.Models.ExpressObj> exp = ViewBag.express;
+                        for (int i = 0; i < exp.Count; i++)
+                        { 
+                        <option value="@exp[i].ExpressID">@exp[i].ExpressName</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>物流单号：</td>
+            <td><input id="logisticsCode" type="text" value="@orderObj.LogisticsCode" /></td>
+        </tr>
+    </table>
+    <div class="buttons"><a id="save" class="btn"><em>确认</em></a>
+        <a id="cancel" class="btn"><em>取消</em></a>
+    </div>
+</div>

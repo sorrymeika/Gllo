@@ -1,0 +1,173 @@
+﻿@{
+    ViewBag.navIndex = 4;
+    Gllo.Models.PackageObj packageObj = ViewBag.package;
+    ViewBag.Title = packageObj.PackageName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Gllo.Models.JsonArray allCates = ViewBag.allCates;
+    int categoryID = packageObj.CategoryID;
+    IList<Gllo.Models.PackagePictureObj> pics = packageObj.Pictures;
+}
+@section header{
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/package.css" />
+    <script type="text/javascript">
+        var categoryID = @(categoryID);
+        var packageID = @(packageObj.PackageID);
+        var media = "@(Gllo.Sys.Config.MediaServer)";
+    </script>
+    <script type="text/javascript" src="/Scripts/website/package.js"></script>
+}
+<div class="main">
+    <div class="pkg"></div>
+    <div class="sidebar">
+        <div class="newsCates">
+            <div class="box">
+                <div class="boxTit">
+                    <div class="boxTLine"></div>
+                    <div class="boxTitBG"><strong>产品分类列表</strong></div>
+                </div>
+            </div>
+            <div class="boxCon">
+                <div class="catesCon">
+                    @for (int i = 0; i < allCates.Count; i++)
+                    {
+                        <dl>
+                            <dt id="pCate@(i)"><a href="/show/@(allCates[i]["categoryID"]).html">@allCates[i]["categoryName"]</a></dt>
+                            @if (allCates[i].ContainsKey("children"))
+                            {
+                                Gllo.Models.JsonArray children = (Gllo.Models.JsonArray)allCates[i]["children"];
+                                <dd id="sCate@(i)">
+                                    <ul>
+                                        @for (int j = 0; j < children.Count; j++)
+                                        {
+                                            <li @(categoryID == (int)children[j]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><b><a href="/show/@(children[j]["categoryID"]).html">@children[j]["categoryName"]</a></b>
+                                                @if (children[j].ContainsKey("children"))
+                                                {
+                                                    Gllo.Models.JsonArray subsub = (Gllo.Models.JsonArray)children[j]["children"];
+                                                    <ol>
+                                                        @for (int k = 0; k < subsub.Count; k++)
+                                                        {
+                                                            <li @(categoryID == (int)subsub[k]["categoryID"] ? new MvcHtmlString(" class='cur'") : null)><a href="/show/@(subsub[k]["categoryID"]).html">@subsub[k]["categoryName"]</a></li>
+                                                                                                                                                                                                    if (categoryID == (int)subsub[k]["categoryID"])
+                                                                                                                                                                                                    {
+                                                            <script language="javascript">
+                                                                $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                                            </script>
+                                                                                                                                                                                                    }
+                                                        }
+                                                    </ol>
+                                                }
+                                            </li>                                                                                                                     if (categoryID == (int)children[j]["categoryID"])
+                                                                                                                                                                      {
+                                            <script language="javascript">
+                                                $.ready(function () { $("sCate@(i)").style.display="block"; });
+                                            </script>
+                                                                                                                                                                      }
+                                        }
+                                    </ul>
+                                </dd>
+                                        if (categoryID == (int)allCates[i]["categoryID"])
+                                        {
+                                <script language="javascript">
+                                    $.ready(function () { $("sCate@(i)").style.display="block";$("pCate@(i)").css("cur"); });
+                                </script>
+                                        }
+                            }
+                        </dl>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="cates recommend">
+                <div class="recommendTit">最新单品</div>
+                <div class="recommendCon">
+                    @if (ViewBag.recommends != null)
+                    {
+                        Gllo.Models.JsonArray products = ViewBag.recommends;
+                        foreach (Gllo.Models.JsonObject prd in products)
+                        {
+                        <dl>
+                            <dt><a href="/product/@(prd["ProductID"]).html"><img src="@(Gllo.Sys.Config.MediaServer + prd["PictureUrl"])" /></a></dt>
+                            <dd>
+                                <p><a href="/product/@(prd["ProductID"]).html">@(prd["Name"])</a></p>
+                                <span>￥@((decimal)prd["SpecialPrice"] == 0 || (decimal)prd["SpecialPrice"] >= (decimal)prd["Price"] ? prd["Price"] : prd["SpecialPrice"])</span></dd>
+                        </dl>
+                        }
+                    }
+                </div>
+            </div>
+    </div>
+    <div class="prodContent">
+        <div class="prodCon">
+        <div class="prodPics">
+            <div id="prodPics">
+                @if (pics != null)
+                {
+                    for (int i = 0; i < pics.Count; i++)
+                    { 
+                    <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                    }
+                }
+            </div>
+            <div class="prodSPicList"><a id="prevPic" class="dsb"></a>
+                <div id="prodSPicList">
+                    <ul id="picC">
+                        @if (pics != null)
+                        {
+                            for (int i = 0; i < pics.Count; i++)
+                            { 
+                            <li><img@(i == 0 ? new MvcHtmlString(" class='curr'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)"/></li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <a id="nextPic" class="dsb"></a>
+            </div>
+        </div>
+        <div class="prodInfo">
+            <div id="viewPics" class="viewPic" style="display: none;">
+                @if (pics != null)
+                {
+                    for (int i = 0; i < pics.Count; i++)
+                    { 
+                    <img@(i != 0 ? new MvcHtmlString(" style='display:none'") : null) src="@(Gllo.Sys.Config.MediaServer + pics[i].Url)" />
+                    }
+                }
+            </div>
+            <space[]></space>
+            <h1>@packageObj.PackageName</h1>
+            <ul>
+                <li>类别：套装　　　　货号：@(packageObj.Code)</li>
+                <li>材料：@(packageObj.Material)</li>
+                <li>累计售出：@(packageObj.SaleNum)</li>
+            </ul>
+            <div class="buy">
+                <div>价格：<b id="price">￥/套</b><input id="btnBuyPkg" type="button" value="" onclick="addToCart(1)" /></div>
+                <div class="buyBtm">
+                    <input id="btnPkgCart" type="button" value="" onclick="addToCart(0)" />
+                    <a href="javascript:addToFav(@(packageObj.PackageID));" class="fav">[加入收藏]</a>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="prodDesc">
+            <div class="prodDescTit">
+                <ul>
+                    <li class="cur">套餐产品</li>
+                </ul>
+            </div>
+            <div class="prodDescCon">
+                <div id="group" class="group">
+                </div>
+            </div>
+            <div class="prodDescTit">
+                <ul>
+                    <li class="cur">套餐说明</li>
+                </ul>
+            </div>
+            <div class="prodDescCon">
+                @(new MvcHtmlString(packageObj.Intro))
+            </div>
+         </div>
+    </div>
+</div>
+<a id="toTop" class="toTop" href="javascript:void(0);"></a>

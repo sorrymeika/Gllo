@@ -1,0 +1,214 @@
+﻿@{
+    ViewBag.cates = new Gllo.BLL.ProductBLL().GetParentCates();
+    Gllo.Models.UserObj user = Gllo.Sys.AppData.SessionUser;
+    var friends = new Gllo.BLL.FriendLinkBLL().GetFriendLinks();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title><meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <link type="text/css" rel="Stylesheet" href="/Content/themes/default/global.css" />
+    <script type="text/javascript" src="/Scripts/abs.js"></script>
+    <script type="text/javascript" src="/Scripts/website/loginDialog.js"></script>
+    @RenderSection("header", false)
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="logo"><img src="/Content/themes/default/images/logo.png" /></a>
+        <div class="headerR">
+            <div class="headerLink">
+                @if (user == null)
+                { 
+                    <a href="javascript:login();">登录</a> <em>/</em><a href="javascript:register();">免费注册</a>
+                }
+                else
+                {
+                    <a class="hello">您好,<em>@user.UserName</em></a><a href="/Account.html">[我的账户]</a><a href="/Logout/">[注销]</a>
+                }
+                <em>/</em><a href="/Cart.html">购物车<span id="lblCartNum">(0)</span></a>
+                @if (user != null)
+                { 
+                    <a href="/PM/List.html">短消息<span id="lblPMNum"></span></a>
+                }
+            </div>
+            <div class="nav">
+               <ul>
+                <li><a href="/index.html">首页</a></li>
+                <li id="nav1"><a href="/product.html">产品中心</a><span id="navChild1"><em>
+                    @if (ViewBag.cates != null)
+                    {
+                        Gllo.Models.JsonArray cates = ViewBag.cates;
+                        for (int i = 0; i < cates.Count; i++)
+                        { 
+                        <a href="/list/@(cates[i]["categoryID"]).html">@(cates[i]["categoryName"])</a>
+                        }
+                    }
+                </em></span></li>
+                <li id="nav4"><a href="/sale.html">促销专区</a></li>
+                <li id="nav2"><a href="/help/87.html">购物指南</a><span id="navChild2"><a href="/help/100.html">上门测试说明</a>
+                    <a href="/help/90.html">支付帮助</a>
+                    <a href="/help/91.html">物流帮助</a>
+                    <a href="/help/13.html">售后帮助</a>
+                </span></li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function getCartNum() {
+            $.post("/Order/GetCartNum/",function (res) {
+                $("lblCartNum").html("("+(res.success?res.num:0)+")");
+                @if (user != null)
+                {
+                <text>$("lblPMNum").html(res.success&&res.pm?"("+res.pm+")":"");</text>
+                }
+
+            });
+        };
+
+        $.ready(function () {
+            //for(var i=1;i<=2;i++) $("nav"+i).on("mousemove",(function (j) { return function () { $("navChild"+j).style.display="inline"; } })(i)).on("mouseout",(function (j) { return function () { $("navChild"+j).style.display="none"; } })(i));
+
+            getCartNum();
+        });
+    </script>
+    @RenderBody()
+    <div class="help">
+        <div class="helpIns">
+            <dl>
+                <dt>购物指南</dt>
+                <dd><a href="/help/87.html">购物流程</a></dd>
+                <dd><a href="/help/93.html">会员介绍</a></dd>
+                <dd><a href="/help/89.html">订单状态</a></dd>
+                <dd><a href="/help/94.html">常见问题</a></dd>
+            </dl>
+            <dl>
+                <dt>支付及物流</dt>
+                <dd><a href="/help/90.html">支付帮助</a></dd>
+                <dd><a href="/help/91.html">物流帮助</a></dd>
+            </dl>
+            <dl>
+                <dt>售后服务</dt>
+                <dd><a href="/help/95.html">安装帮助</a></dd>
+                <dd><a href="/help/96.html">施工帮助</a></dd>
+                <dd><a href="/help/97.html">售后帮助</a></dd>
+                <dd><a href="/help/98.html">退换货政策</a></dd>
+                <dd><a href="/help/99.html">售后点查询</a></dd>
+            </dl>
+            <dl>
+                <dt>特色服务</dt>
+                <dd><a href="/help/100.html">上门测量预约申请</a></dd>
+                <dd><a href="/help/101.html">测量帮助小贴士</a></dd>
+                <dd><a href="/help/87.html">参与社区</a></dd>
+            </dl>
+            <dl>
+                <dt>关于我们</dt>
+                <dd><a href="/help/102.html">品牌故事</a></dd>
+                <dd><a href="/help/103.html">企业简介</a></dd>
+                <dd><a href="/help/104.html">企业宣传片</a></dd>
+            </dl>
+        </div>
+    </div>
+    <div class="friends" style="display: none">
+        <div class="friendsTit">
+            合作伙伴：</div>
+        <div class="friendsCon">
+            <div id="friends">
+                @if (friends != null)
+                {
+                    var media = Gllo.Sys.Config.MediaServer;
+                    for (int i = 0; i < friends.Count; i++)
+                    { 
+                    <a href="@friends[i]["Url"]" title="@friends[i]["FriendName"]"><img src="@(media + friends[i]["Pic"])" alt="@friends[i]["FriendName"]" /></a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+            var links=$("friends").getElementsByTagName("A");
+            if(links&&links.length>5) {
+
+                function changeLink() {
+                    var link=links[0];
+                    var left=0;
+                    var width=link.offsetWidth* -1-19;
+
+                    var timer=window.setInterval(function () {
+                        if(left>width) {
+                            link.style.marginLeft=left+"px";
+                        }
+                        else {
+                            $("friends").appendChild(link);
+                            link.style.marginLeft="";
+                            window.clearInterval(timer);
+                            changeLink();
+                        }
+                        left--;
+                    },32);
+
+                };
+                changeLink();
+            }
+
+        });
+    </script>
+    <div class="footer">
+        <div class="footerCon">
+            <span>BATHROOM SPACES 5S.GLOBAL CHINA</span>
+            <div class="footerLinks">
+                <a href="/news/148.html">网站地图</a>|<a href="/news/149.html">法律说明</a>|<a href="/news/150.html">招商合作</a>|<a href="/news/151.html">人才招聘</a>|<a href="/news/152.html">关于我们</a>|<a href="/news/153.html">联系我们</a>
+            </div>
+        </div>
+        <div class="icp">
+            <span>GLLO洁利来·卫浴空间5S·全球连锁 闽ICP备09032634号-2</span>
+            <div>
+                咨询服务热线:<b>400-679-6110</b></div>
+        </div>
+        <div style="text-align: center">
+            <script src=" http://s21.cnzz.com/stat.php?id=3167752&web_id=3167752&show=pic" language="JavaScript"></script>
+        </div>
+    </div>
+    <div id="OnlineService">
+        <div class="OSTit">
+            在线客服</div>
+        <div class="OSCon">
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1963047418&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1963047418:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1342805507&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1342805507:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1340556524&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1340556524:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2252381138&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:2252381138:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1647022718&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1647022718:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1939732472&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1939732472:41" alt="点击这里给我发消息" title="点击这里给我发消息"></a>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ready(function () {
+            if(!$.ie6)
+                $("OnlineService").style.top=document.documentElement.scrollTop+(document.documentElement.clientHeight-$("OnlineService").offsetHeight)/2.5+"px";
+
+            //            $("DIV",document.body).css("overIt").html("因款项问题将于<br><span id='over_time'></span>内暂停服务");
+            //            (function () {
+            //                var endDate=new Date(2011,7,3,23,59,59);
+
+            //                var now=new Date();
+            //                var seconds=Math.round((endDate-now)/1000);
+
+            //                if(seconds>0) {
+            //                    var days=Math.floor(seconds/86400);
+            //                    seconds-=days*86400;
+            //                    var hours=Math.floor(seconds/3600);
+            //                    seconds-=hours*3600;
+            //                    var minutes=Math.floor(seconds/60);
+            //                    seconds-=minutes*60;
+
+            //                    $("over_time").html(days+"天"+hours+"小时"+minutes+"分"+seconds+"秒");
+            //                    window.setTimeout(arguments.callee,1000);
+            //                }
+
+            //            })();
+        });
+    </script>
+</body>
+</html>
